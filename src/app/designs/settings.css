@@ -1,0 +1,68 @@
+/* Settings → Design: a showroom for the candidate designs. Drawn from whichever design is on, so it reads in all of them. */
+@layer components {
+  .dz { max-width: 1320px; margin: 0 auto; }
+  .dz-head h1 { font-family: var(--d-display); font-size: clamp(2rem, 3.5vw, 2.75rem); line-height: 1.05; font-weight: 700; letter-spacing: -0.03em; }
+  .dz-head p { max-width: 44rem; margin-top: 0.5rem; font-size: 1rem; color: var(--d-ink-2); }
+
+  .dz-round { margin-top: 2.5rem; }
+  .dz-round-head { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 0.5rem 1.5rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--d-line-2); }
+  .dz-round-head h2 { font-family: var(--d-display); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.015em; }
+  .dz-round-head p { font-size: 0.9375rem; color: var(--d-ink-3); }
+  @media (max-width: 799px) { .dz-round-head { grid-template-columns: minmax(0, 1fr); } }
+
+  .dz-trio { display: grid; gap: 3rem; margin-top: 2rem; }
+  .dz-card { min-width: 0; animation: dz-rise 800ms var(--ease-out) calc(var(--i) * 90ms + 80ms) both; }
+  @keyframes dz-rise { from { opacity: 0; transform: translateY(18px); } }
+  .dz-card[data-big] { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(16rem, 1fr); gap: 2rem; align-items: center; }
+  .dz-card[data-big]:nth-child(even) { grid-template-columns: minmax(16rem, 1fr) minmax(0, 1.75fr); }
+  .dz-card[data-big]:nth-child(even) .dz-shot { order: 2; }
+  @media (max-width: 999px) { .dz-card[data-big], .dz-card[data-big]:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 1rem; } .dz-card[data-big]:nth-child(even) .dz-shot { order: 0; } }
+
+  .dz-shot { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: min(var(--d-r-box), 16px); background: var(--d-dock); box-shadow: 0 0 0 1px var(--d-line-2), 0 30px 60px -36px rgb(0 0 0 / 0.45);
+    transition: transform 600ms var(--ease-out), box-shadow 600ms var(--ease-out); }
+  .dz-shot iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; pointer-events: none; animation: dz-fade 600ms ease 300ms both; }
+  @keyframes dz-fade { from { opacity: 0; } }
+  .dz-card:not([data-big]) .dz-shot { aspect-ratio: 1640 / 930; box-shadow: 0 0 0 1px var(--d-line-2); }
+  .dz-card[data-on="true"] .dz-shot { box-shadow: 0 0 0 2px var(--d-link), 0 30px 60px -36px rgb(0 0 0 / 0.45); }
+  @media (hover: hover) and (pointer: fine) { .dz-card[data-big]:hover .dz-shot { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--d-line-2), 0 40px 70px -36px rgb(0 0 0 / 0.5); } }
+  .dz-live { position: absolute; left: 0.75rem; top: 0.75rem; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.55rem; border-radius: 999px; background: rgb(0 0 0 / 0.72); color: #fff; font: 600 0.6875rem/1 var(--font-sans); text-transform: uppercase; letter-spacing: 0.06em; }
+  .dz-live i { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: #30d158; animation: dz-blink 1.6s ease-in-out infinite; }
+  @keyframes dz-blink { 50% { opacity: 0.3; } }
+
+  .dz-cap { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-top: 0.75rem; }
+  .dz-card[data-big] .dz-cap { flex-direction: column; gap: 1.25rem; margin-top: 0; }
+  .dz-txt { min-width: 0; }
+  .dz-txt h3 { font-size: 1rem; font-weight: 600; color: var(--d-ink); }
+  .dz-card[data-big] .dz-txt h3 { font-family: var(--d-display); font-size: clamp(2.25rem, 4vw, 3.5rem); line-height: 1; font-weight: 700; letter-spacing: -0.04em; }
+  .dz-card[data-big] .dz-txt h3::before { content: "0" counter(dz) " "; counter-increment: dz; display: block; margin-bottom: 0.6rem; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; color: var(--d-ink-3); }
+  .dz-trio { counter-reset: dz; }
+  .dz-txt p { margin-top: 0.25rem; font-size: 0.875rem; color: var(--d-ink-2); }
+  .dz-card[data-big] .dz-txt p { margin-top: 0.75rem; font-size: 1rem; line-height: 1.5; }
+  .dz-traits { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+  .dz-traits li { padding: 0.3rem 0.65rem; border-radius: min(var(--d-r-ctl), 999px); box-shadow: inset 0 0 0 1px var(--d-line-2); font-size: 0.8125rem; font-weight: 500; color: var(--d-ink-2); }
+  .dz-act { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; }
+  .dz-use { min-width: 8rem; }
+  .dz-card[data-big] .dz-use { height: 2.75rem; padding: 0 1.4rem; font-size: 0.9375rem; }
+  .dz-now { display: inline-flex; align-items: center; gap: 0.35rem; height: var(--d-ctl-h); font-size: 0.875rem; font-weight: 600; color: var(--d-ok); white-space: nowrap; }
+  .dz-now svg { width: 1.1rem; height: 1.1rem; }
+  .dz-open { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.875rem; font-weight: 500; color: var(--d-ink-2); }
+  .dz-open svg { width: 1rem; height: 1rem; transition: transform 300ms var(--ease-out); }
+  .dz-open:hover { color: var(--d-ink); }
+  .dz-open:hover svg { transform: translate(2px, -2px); }
+
+  .dz-older { margin-top: 4rem; border-top: 1px solid var(--d-line-2); }
+  .dz-older summary { display: flex; align-items: center; gap: 0.5rem; padding: 1rem 0; cursor: pointer; list-style: none; font-family: var(--d-display); font-size: 1.125rem; font-weight: 600; }
+  .dz-older summary::-webkit-details-marker { display: none; }
+  .dz-older summary b { font-size: 0.875rem; font-weight: 500; color: var(--d-ink-3); }
+  .dz-older summary::after { content: ""; width: 0.5rem; height: 0.5rem; margin-left: 0.25rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform 300ms var(--ease-out); }
+  .dz-older[open] summary::after { transform: rotate(45deg); }
+  .dz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr)); gap: 1.75rem 1.25rem; padding-bottom: 1rem; }
+  .dz-foot { margin-top: 2rem; font-size: 0.875rem; color: var(--d-ink-3); }
+
+  /* switching design: the new one spreads out in a circle from the button that was pressed */
+  html[data-vt="design"]::view-transition-old(root) { animation: none; }
+  html[data-vt="design"]::view-transition-new(root) { animation: dz-reveal 900ms cubic-bezier(0.65, 0, 0.15, 1) both; }
+  @keyframes dz-reveal { from { clip-path: circle(0 at var(--vt-x) var(--vt-y)); } to { clip-path: circle(var(--vt-r) at var(--vt-x) var(--vt-y)); } }
+
+  @media (prefers-reduced-motion: reduce) { .dz-card, .dz-shot iframe { animation: none; } }
+}

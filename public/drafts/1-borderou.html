@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 1 · Borderou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#fbfbf9; --ink:#12161c; --soft:#5d6570; --rule:#d9dbd6; --blue:#1746c4; --red:#c4271b; --wash:#f1f2ee; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:#cfd2cc; color:var(--ink); font:400 14px/1.45 "IBM Plex Sans", system-ui, sans-serif; padding:28px; }
+  .intro { max-width:1560px; margin:0 auto 18px; display:flex; gap:18px; align-items:baseline; flex-wrap:wrap; }
+  .intro h1 { font:700 22px/1 "IBM Plex Sans Condensed"; }
+  .intro p { color:#3d434b; max-width:70ch; }
+  .stage { max-width:1560px; margin:0 auto; display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap; }
+  .mono { font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+  .cond { font-family:"IBM Plex Sans Condensed", sans-serif; }
+
+  /* ---------- office ---------- */
+  .sheet { flex:1 1 980px; min-width:0; background:var(--paper); border:1px solid #b9bcb5; }
+  .mast { display:flex; align-items:center; gap:28px; padding:14px 28px; border-bottom:2px solid var(--ink); }
+  .word { font:700 19px/1 "IBM Plex Sans Condensed"; letter-spacing:.01em; white-space:nowrap; }
+  .word span { font-weight:500; }
+  .mast nav { display:flex; gap:22px; font-weight:500; }
+  .mast nav a { color:var(--soft); text-decoration:none; padding:6px 0; border-bottom:2px solid transparent; }
+  .mast nav a.on { color:var(--ink); border-color:var(--ink); }
+  .mast nav a sup { color:var(--red); font-weight:600; margin-left:2px; }
+  .find { margin-left:auto; display:flex; align-items:center; gap:8px; width:270px; border-bottom:1.5px solid var(--ink); padding:5px 2px; color:var(--soft); }
+  .find kbd { margin-left:auto; font:500 11px "IBM Plex Mono"; border:1px solid var(--rule); padding:0 5px; border-radius:3px; }
+  .btn { font:600 14px "IBM Plex Sans"; padding:9px 16px; border:1.5px solid var(--ink); background:var(--ink); color:#fff; border-radius:3px; cursor:pointer; white-space:nowrap; }
+  .btn.line { background:transparent; color:var(--ink); }
+  .btn.sm { padding:4px 10px; font-size:13px; }
+  .btn:active { transform:translateY(1px); }
+
+  .lead { display:grid; grid-template-columns:1fr auto; gap:32px; padding:26px 28px 22px; border-bottom:1px solid var(--rule); align-items:end; }
+  .lead h2 { font:700 34px/1.05 "IBM Plex Sans Condensed"; letter-spacing:-.01em; }
+  .lead p { margin-top:8px; font-size:16px; color:var(--soft); }
+  .lead p b { color:var(--ink); font-weight:600; }
+  .lead p .red { color:var(--red); }
+  .figs { display:flex; gap:34px; }
+  .figs div { text-align:right; }
+  .figs small { display:block; color:var(--soft); font-size:12.5px; margin-bottom:2px; }
+  .figs b { font:500 22px/1 "IBM Plex Mono"; font-variant-numeric:tabular-nums; }
+  .figs i { font:400 12px "IBM Plex Mono"; color:var(--soft); font-style:normal; margin-left:3px; }
+
+  .cols { display:grid; grid-template-columns:minmax(0,1fr) 300px; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font:500 12.5px "IBM Plex Sans"; color:var(--soft); padding:9px 10px; border-bottom:1px solid var(--ink); white-space:nowrap; }
+  th:first-child, td:first-child { padding-left:28px; }
+  td { padding:9px 10px; border-bottom:1px solid var(--rule); vertical-align:top; }
+  tr.row:hover td { background:var(--wash); cursor:pointer; }
+  td.r, th.r { text-align:right; }
+  .grp td { background:var(--wash); border-bottom:1px solid var(--ink); border-top:1px solid var(--ink); padding-top:8px; padding-bottom:8px; }
+  .grp .who { font:700 16px/1.2 "IBM Plex Sans Condensed"; }
+  .grp .meta { color:var(--soft); margin-left:10px; }
+  .grp .cash { float:right; display:flex; gap:12px; align-items:center; }
+  .loc { font-weight:600; }
+  .sub { color:var(--soft); font-size:13px; }
+  .done td { color:#8a9098; }
+  .done .loc { font-weight:500; }
+  .stamp { display:inline-block; font:600 11.5px/1 "IBM Plex Sans Condensed"; letter-spacing:.07em; text-transform:uppercase; padding:4px 7px 3px; border:1.5px solid currentColor; border-radius:3px; color:var(--blue); white-space:nowrap; }
+  .stamp.red { color:var(--red); transform:rotate(-2deg); }
+  .stamp.ok { background:var(--ink); border-color:var(--ink); color:#fff; }
+  .stamp.wait { color:var(--soft); border-style:dashed; }
+  .total td { border-bottom:0; border-top:3px double var(--ink); font-weight:600; padding-top:12px; padding-bottom:18px; }
+
+  .margin { border-left:1px solid var(--ink); padding:18px 22px 22px; background:repeating-linear-gradient(var(--paper), var(--paper) 27px, #eceee8 28px); }
+  .margin h3 { font:700 16px/28px "IBM Plex Sans Condensed"; }
+  .todo { padding:0 0 14px; }
+  .todo p { line-height:28px; }
+  .todo p b { font-weight:600; }
+  .todo .why { color:var(--red); }
+  .todo .acts { display:flex; gap:8px; margin-top:6px; }
+
+  /* ---------- phone ---------- */
+  .phone { flex:0 0 390px; height:800px; background:var(--paper); border:10px solid #16191e; border-radius:38px; overflow:hidden; display:flex; flex-direction:column; }
+  .ptop { background:var(--ink); color:#fff; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; font-weight:600; }
+  .ptop span:last-child { font:500 13px "IBM Plex Mono"; opacity:.8; }
+  .label { margin:14px; border:2px solid var(--ink); flex:1; display:flex; flex-direction:column; }
+  .bars { height:44px; margin:12px 14px 4px; background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 5px,var(--ink) 5px 6px,transparent 6px 8px,var(--ink) 8px 11px,transparent 11px 13px,var(--ink) 13px 14px,transparent 14px 18px); }
+  .code { display:flex; justify-content:space-between; align-items:center; padding:0 14px 10px; border-bottom:2px solid var(--ink); }
+  .code b { font:600 16px "IBM Plex Mono"; }
+  .to { padding:12px 14px 14px; }
+  .to small { color:var(--soft); font-size:12.5px; }
+  .to h3 { font:700 29px/1.1 "IBM Plex Sans Condensed"; margin:2px 0 4px; letter-spacing:-.01em; }
+  .to .city { font:700 20px/1.1 "IBM Plex Sans Condensed"; text-transform:uppercase; letter-spacing:.02em; }
+  .to .name { margin-top:10px; font-size:16px; font-weight:500; }
+  .to .tel { font:500 16px "IBM Plex Mono"; }
+  .cod { background:var(--ink); color:#fff; padding:12px 14px; display:flex; justify-content:space-between; align-items:baseline; }
+  .cod span { font:600 13px "IBM Plex Sans Condensed"; letter-spacing:.07em; text-transform:uppercase; }
+  .cod b { font:600 26px/1 "IBM Plex Mono"; }
+  .facts { padding:4px 14px; }
+  .facts div { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid var(--rule); }
+  .facts div:last-child { border:0; }
+  .facts span { color:var(--soft); }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 14px; margin-top:auto; }
+  .two .btn { padding:14px; font-size:16px; text-align:center; }
+  .act { display:grid; grid-template-columns:auto 1fr; gap:10px; padding:12px 14px 16px; }
+  .act .btn { padding:17px 18px; font-size:17px; }
+  .act .go { background:var(--blue); border-color:var(--blue); }
+</style>
+</head>
+<body>
+  <div class="intro">
+    <h1>Varianta 1 · Borderou</h1>
+    <p>Ecranul arată ca hârtiile cu care lucrați deja: foaia de parcurs și eticheta. Fără carduri, fără umbre. Toată ziua pe o singură foaie, stările ca ștampile, banii ca într-un registru.</p>
+  </div>
+
+  <div class="stage">
+    <div class="sheet">
+      <div class="mast">
+        <div class="word">CN <span>Deliveries</span></div>
+        <nav>
+          <a class="on" href="#">Azi</a><a href="#">Expedieri<sup>1</sup></a><a href="#">Scanare</a><a href="#">Ramburs</a><a href="#">Clienți</a><a href="#">Setări</a>
+        </nav>
+        <div class="find">Caută nr., nume, telefon <kbd>/</kbd></div>
+        <button class="btn">Expediere nouă</button>
+      </div>
+
+      <div class="lead">
+        <div>
+          <h2>Marți, 17 noiembrie</h2>
+          <p><b>12 colete</b> azi: <b>6</b> livrate, <b>2</b> pe drum, <b>1</b> de ridicat, <b>2</b> în depozit, <b class="red">1 cere atenție</b></p>
+        </div>
+        <div class="figs">
+          <div><small>Ramburs încasat</small><b>2.720,50</b><i>MDL</i></div>
+          <div><small>Numerar la curieri</small><b>1.470,00</b><i>MDL</i></div>
+          <div><small>De încasat pe drum</small><b>1.165,00</b><i>MDL</i></div>
+        </div>
+      </div>
+
+      <div class="cols">
+        <table>
+          <thead>
+            <tr><th>Nr.</th><th>Destinatar</th><th>Adresă</th><th>Client</th><th class="r">Ramburs</th><th>Stare</th><th class="r">Ora</th></tr>
+          </thead>
+          <tbody>
+            <tr class="grp"><td colspan="7"><span class="who">Ion Curier</span><span class="meta">7 colete, 4 livrate</span>
+              <span class="cash"><span class="mono">1.470,00 MDL numerar</span><button class="btn line sm">Primește numerarul</button></span></td></tr>
+            <tr class="row"><td class="mono">0005</td><td><div class="loc">Igor Munteanu</div><div class="sub mono">+373 79 111 000</div></td><td><div class="loc">Durlești</div><div class="sub">str. Codrilor 5</div></td><td>Demo Shop SRL</td><td class="r mono">915,00</td><td><span class="stamp red">Nu răspunde</span></td><td class="r mono">15:32</td></tr>
+            <tr class="row"><td class="mono">0007</td><td><div class="loc">Natalia Rusu</div><div class="sub mono">+373 60 123 123</div></td><td><div class="loc">Ciocana</div><div class="sub">bd. Mircea cel Bătrân 30</div></td><td>Demo Shop SRL</td><td class="r mono">250,00</td><td><span class="stamp">În livrare</span></td><td class="r mono">14:48</td></tr>
+            <tr class="row"><td class="mono">0009</td><td><div class="loc">Olga Moraru</div><div class="sub mono">+373 78 123 456</div></td><td><div class="loc">Stăuceni</div><div class="sub">str. Unirii 7</div></td><td>Demo Shop SRL</td><td class="r mono">—</td><td><span class="stamp">De ridicat</span></td><td class="r mono">15:30</td></tr>
+            <tr class="row done"><td class="mono">0008</td><td><div class="loc">Victor Ceban</div></td><td><div class="loc">Botanica</div><div class="sub">bd. Dacia 44, ap. 9</div></td><td>Demo Shop SRL</td><td class="r mono">640,00</td><td><span class="stamp ok">Livrat</span></td><td class="r mono">15:25</td></tr>
+            <tr class="row done"><td class="mono">0004</td><td><div class="loc">Elena Ciobanu</div></td><td><div class="loc">Botanica</div><div class="sub">str. Dacia 23, ap. 14</div></td><td>Demo Shop SRL</td><td class="r mono">480,00</td><td><span class="stamp ok">Livrat</span></td><td class="r mono">14:50</td></tr>
+            <tr class="row done"><td class="mono">0003</td><td><div class="loc">Ana Botnaru</div></td><td><div class="loc">Buiucani</div><div class="sub">str. Alba Iulia 75</div></td><td>Demo Print Agency</td><td class="r mono">—</td><td><span class="stamp ok">Livrat</span></td><td class="r mono">13:40</td></tr>
+            <tr class="row done"><td class="mono">0001</td><td><div class="loc">Maria Popescu</div></td><td><div class="loc">Stăuceni</div><div class="sub">str. Livezilor 12</div></td><td>Demo Shop SRL</td><td class="r mono">350,00</td><td><span class="stamp ok">Livrat</span></td><td class="r mono">12:10</td></tr>
+
+            <tr class="grp"><td colspan="7"><span class="who">Vasile Curier</span><span class="meta">3 colete, 2 livrate</span>
+              <span class="cash"><span class="mono">0,00 MDL numerar</span></span></td></tr>
+            <tr class="row"><td class="mono">0011</td><td><div class="loc">Tipografia Nord</div><div class="sub mono">+373 22 444 555</div></td><td><div class="loc">Râșcani</div><div class="sub">str. Kiev 8/1</div></td><td>Demo Print Agency</td><td class="r mono">—</td><td><span class="stamp">În livrare</span></td><td class="r mono">15:05</td></tr>
+            <tr class="row done"><td class="mono">0002</td><td><div class="loc">Andrei Rusu</div></td><td><div class="loc">Centru</div><div class="sub">bd. Ștefan cel Mare 100</div></td><td>Demo Shop SRL</td><td class="r mono">1.250,50</td><td><span class="stamp ok">Livrat</span></td><td class="r mono">14:34</td></tr>
+            <tr class="row done"><td class="mono">0010</td><td><div class="loc">Cafeneaua Tucano</div></td><td><div class="loc">Centru</div><div class="sub">str. Pușkin 22</div></td><td>Demo Print Agency</td><td class="r mono">—</td><td><span class="stamp ok">Livrat</span></td><td class="r mono">13:02</td></tr>
+
+            <tr class="grp"><td colspan="7"><span class="who">Fără curier</span><span class="meta">2 colete în depozit</span></td></tr>
+            <tr class="row"><td class="mono">0006</td><td><div class="loc">Agenția Beta</div><div class="sub mono">+373 22 333 444</div></td><td><div class="loc">Bălți</div><div class="sub">str. Independenței 1</div></td><td>Demo Print Agency</td><td class="r mono">—</td><td><span class="stamp wait">În depozit</span></td><td class="r mono">09:15</td></tr>
+            <tr class="row"><td class="mono">0012</td><td><div class="loc">Doina Lungu</div><div class="sub mono">+373 69 222 333</div></td><td><div class="loc">Ialoveni</div><div class="sub">str. Alexandru cel Bun 3</div></td><td>Demo Shop SRL</td><td class="r mono">390,00</td><td><span class="stamp wait">În depozit</span></td><td class="r mono">10:40</td></tr>
+
+            <tr class="total"><td colspan="4">Total ramburs azi</td><td class="r mono">4.275,50</td><td colspan="2" class="sub">din care încasat 2.720,50</td></tr>
+          </tbody>
+        </table>
+
+        <aside class="margin">
+          <h3>De rezolvat acum</h3>
+          <div class="todo">
+            <p><b>Igor Munteanu</b>, Durlești</p>
+            <p class="why">Nu răspunde · încercarea 1 din 3</p>
+            <div class="acts"><button class="btn sm">Sună</button><button class="btn line sm">Reprogramează</button></div>
+          </div>
+          <div class="todo">
+            <p><b>Agenția Beta</b>, Bălți</p>
+            <p class="why">În depozit de la 09:15, fără curier</p>
+            <div class="acts"><button class="btn sm">Atribuie curier</button></div>
+          </div>
+          <div class="todo">
+            <p><b>Doina Lungu</b>, Ialoveni</p>
+            <p class="why">În depozit de la 10:40, fără curier</p>
+            <div class="acts"><button class="btn sm">Atribuie curier</button></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="ptop"><span>‹ Ion Curier</span><span>4 din 7</span></div>
+      <div class="label">
+        <div class="bars"></div>
+        <div class="code"><b>CN-261117-0007</b><span class="stamp">În livrare</span></div>
+        <div class="to">
+          <small>Către</small>
+          <h3>bd. Mircea cel Bătrân 30</h3>
+          <div class="city">Ciocana</div>
+          <div class="name">Natalia Rusu</div>
+          <div class="tel">+373 60 123 123</div>
+        </div>
+        <div class="cod"><span>Ramburs de încasat</span><b>250,00</b></div>
+        <div class="facts">
+          <div><span>Colet</span><b>1 buc · 2 kg</b></div>
+          <div><span>De la</span><b>Demo Shop SRL</b></div>
+          <div><span>Notă</span><b>Sunați cu 10 min înainte</b></div>
+        </div>
+        <div class="two"><button class="btn line">Sună</button><button class="btn line">Hartă</button></div>
+        <div class="act"><button class="btn line">Problemă</button><button class="btn go">Livrat</button></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

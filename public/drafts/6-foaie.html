@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 6 · Foaie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+<style>
+  .bar { display: grid; grid-template-columns: 1fr minmax(0, 460px) 1fr; align-items: center; gap: 16px; height: 48px; padding: 0 14px 0 18px; background: var(--van); color: #fff; }
+  .cmd { display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 8px 0 10px; border-radius: var(--r-ctl); background: rgb(255 255 255 / 0.13); color: rgb(255 255 255 / 0.8); }
+  .cmd kbd { margin-left: auto; border-color: rgb(255 255 255 / 0.3); color: rgb(255 255 255 / 0.8); }
+  .bar .right { display: flex; justify-content: flex-end; align-items: center; gap: 8px; }
+  .btn.onvan { background: transparent; border-color: rgb(255 255 255 / 0.35); color: #fff; }
+  .btn.onvan:hover { background: rgb(255 255 255 / 0.1); }
+
+  .tabs { display: flex; align-items: stretch; gap: 2px; height: 40px; padding: 0 10px; border-bottom: 1px solid var(--line); }
+  .tabs a { display: flex; align-items: center; padding: 0 9px; color: var(--ink-3); font-weight: 500; box-shadow: inset 0 -2px 0 transparent; white-space: nowrap; }
+  .tabs a:hover { color: var(--ink); }
+  .tabs a.on { color: var(--ink); box-shadow: inset 0 -2px 0 var(--van); }
+  .tabs a em { font-style: normal; margin-left: 6px; color: var(--stop); font-weight: 600; }
+  .tabs .day { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--ink-3); padding-right: 8px; white-space: nowrap; }
+  .tabs .day b { color: var(--ink); font-weight: 600; }
+  .tabs .day i { width: 6px; height: 6px; border-radius: 3px; background: var(--done); margin-left: 6px; }
+
+  /* couriers band */
+  .band { display: grid; grid-template-columns: 1.25fr 1fr 1fr 1.1fr; background: var(--dock); border-bottom: 1px solid var(--line); --run-bg: var(--dock); }
+  .band > div { padding: 10px 16px 12px; min-width: 0; }
+  .band > div + div { border-left: 1px solid var(--line); }
+  .band .t { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .band .t b { font-weight: 600; white-space: nowrap; }
+  .band .t span { color: var(--ink-3); font-size: 12px; white-space: nowrap; }
+  .band .run { margin: 3px 0 3px; }
+  .band .run i { flex: 0 1 26px; }
+  .band .b { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 26px; color: var(--ink-2); white-space: nowrap; }
+  .band .b b { font-weight: 600; color: var(--ink); }
+  .meter { height: 6px; margin: 11px 0 9px; border-radius: 3px; background: var(--line-strong); overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 63.6%; background: var(--done); }
+
+  .tools { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid var(--line); }
+  .tools .field { width: 148px; }
+  .tools .sp { margin-left: auto; color: var(--ink-3); font-size: 12px; }
+
+  /* the sheet: every cell is editable in place */
+  .sheet { position: relative; }
+  .sheet th { height: 30px; background: var(--dock); border-right: 1px solid var(--line); }
+  .sheet td { height: 34px; border-right: 1px solid var(--line); }
+  .sheet th:last-child, .sheet td:last-child { border-right: 0; padding-right: 14px; }
+  .sheet th:first-child, .sheet td:first-child { padding-left: 14px; width: 36px; }
+  .sheet tbody tr:hover td { background: #fafbfc; }
+  .sheet td.who { font-weight: 500; }
+  .sheet td.edit { cursor: pointer; }
+  .sheet td.edit span { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .sheet td.edit .i { width: 12px; height: 12px; color: var(--ink-4); stroke-width: 2.4; }
+  .sheet td.cell-road, .sheet tbody tr:hover td.cell-road { background: var(--road-wash); color: #0f3f9b; }
+  .sheet td.cell-ok, .sheet tbody tr:hover td.cell-ok { background: var(--done-wash); color: #0f5a36; }
+  .sheet td.cell-fail, .sheet tbody tr:hover td.cell-fail { background: var(--stop-wash); color: #9a1c12; font-weight: 500; }
+  .sheet tr.past td:not([class*="cell-"]) { color: var(--ink-3); }
+  .sheet td.focus { box-shadow: inset 0 0 0 2px var(--link); background: var(--label) !important; }
+  .menu { position: absolute; z-index: 5; width: 216px; padding: 4px; background: var(--label); border-radius: var(--r-box); box-shadow: 0 0 0 1px var(--line-strong), 0 8px 24px -6px rgb(15 27 45 / 0.22); }
+  .menu a { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 32px; padding: 0 8px; border-radius: 3px; }
+  .menu a:hover, .menu a.hi { background: var(--pick); }
+  .menu a span { color: var(--ink-3); font-size: 12px; }
+  .menu a .i { color: var(--link); stroke-width: 2.4; }
+
+  .status { display: flex; justify-content: space-between; gap: 16px; padding: 8px 14px; background: var(--dock); border-top: 1px solid var(--line-strong); color: var(--ink-2); font-size: 12px; white-space: nowrap; }
+  .status b { font-weight: 600; color: var(--ink); }
+  .status .bad { color: var(--stop); font-weight: 500; }
+
+  /* phone: one stop fills the screen, actions sit under the thumb */
+  .pager { display: flex; gap: 6px; }
+  .pager a { width: 36px; height: 36px; border-radius: 18px; display: grid; place-items: center; background: rgb(255 255 255 / 0.14); }
+  .pager a .i { width: 18px; height: 18px; }
+  .one { padding: 18px 16px 0; }
+  .one .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .one h2 { font-size: 27px; line-height: 1.12; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+  .one .city { margin-top: 6px; font-size: 18px; font-weight: 500; }
+  .one .person { margin-top: 2px; color: var(--ink-2); font-size: 16px; }
+  .phone .pay { margin-top: 16px; }
+  .facts { padding: 0 16px; }
+  .facts div { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .facts span { color: var(--ink-3); }
+  .facts b { font-weight: 500; text-align: right; }
+  .dockbar { margin-top: auto; padding: 12px 16px 14px; background: var(--dock); border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .dockbar .go, .dockbar .cant { grid-column: span 2; }
+  .dockbar .cant { padding-top: 2px; }
+  .phone .tabbar { margin-top: 0; }
+</style>
+</head>
+<body>
+<div class="intro"><b>Varianta 6 · Foaie</b><span>Pentru cine a lucrat în Google Sheets: ziua e un singur tabel pe toată lățimea și orice celulă se schimbă pe loc, de exemplu curierul sau starea, fără să deschizi coletul. Curierii stau într-o bandă sus, totalurile într-o bară jos.</span></div>
+
+<div class="stage">
+  <div class="app">
+    <div class="bar">
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#fff"/><g stroke="#fff" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#0e3b8e"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#3f6fc4"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#7da3e3"/><path d="M19.23 6.87 22.27 8.63 12.77 14.13V19.4L9.73 17.64V12.37Z" fill="#ffb020" stroke-width="0"/></g></svg>
+        CN <span>Deliveries</span>
+      </div>
+      <div class="cmd"><svg class="i"><use href="icons.svg#search"/></svg>Caută sau scanează un colet<kbd>Ctrl K</kbd></div>
+      <div class="right">
+        <button class="btn onvan"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</button>
+        <button class="btn go"><svg class="i"><use href="icons.svg#plus"/></svg>Expediere nouă</button>
+        <div class="me">AD</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <a class="on" href="#">Azi</a><a href="#">Expedieri<em>1</em></a><a href="#">Foi de parcurs</a><a href="#">Ramburs</a><a href="#">Clienți</a><a href="#">Setări</a>
+      <div class="day"><b>marți, 17 noiembrie</b><i></i>actualizat acum 12 secunde</div>
+    </div>
+
+    <div class="band">
+      <div>
+        <div class="t"><b>Ion Curier</b><span class="num">4 din 7 livrate</span></div>
+        <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+        <div class="b"><span><b class="num">1.470,00 MDL</b> numerar</span><button class="btn sm">Primește</button></div>
+      </div>
+      <div>
+        <div class="t"><b>Vasile Curier</b><span class="num">2 din 3 livrate</span></div>
+        <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="n"></i></div>
+        <div class="b"><span class="num">0,00 MDL numerar</span></div>
+      </div>
+      <div>
+        <div class="t"><b>Depozit</b><span>fără curier</span></div>
+        <div class="b" style="margin-top:3px"><span><b class="num">2</b> colete, 390,00 MDL ramburs</span></div>
+        <div class="b"><span>Bălți, Ialoveni</span><button class="btn sm">Atribuie</button></div>
+      </div>
+      <div>
+        <div class="t"><b>Ramburs azi</b><span class="num">2.720,50 din 4.275,50 MDL</span></div>
+        <div class="meter" title="64% încasat"><i></i></div>
+        <div class="b"><span>De încasat pe drum <b class="num">1.165,00</b></span></div>
+      </div>
+    </div>
+
+    <div class="tools">
+      <select class="field"><option>Toate stările</option></select>
+      <select class="field"><option>Toți curierii</option></select>
+      <select class="field"><option>Toți clienții</option></select>
+      <span class="sp">Clic pe o celulă ca să o schimbi</span>
+      <button class="btn"><svg class="i"><use href="icons.svg#print"/></svg>Etichete</button>
+    </div>
+
+    <div class="sheet">
+      <table>
+        <thead><tr><th><input type="checkbox" aria-label="Selectează tot"></th><th>Nr.</th><th>Client</th><th>Destinatar</th><th>Telefon</th><th>Localitate</th><th>Adresă</th><th class="r">Kg</th><th class="r">Ramburs</th><th>Curier</th><th>Stare</th><th class="r">Ora</th></tr></thead>
+        <tbody>
+          <tr><td><input type="checkbox"></td><td class="mono">0005</td><td class="soft">Demo Shop SRL</td><td class="who">Igor Munteanu</td><td class="num soft">079 111 000</td><td>Durlești</td><td class="soft">str. Codrilor 5</td><td class="r num soft">3,2</td><td class="r num">915,00</td><td class="edit"><span>Ion<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="edit cell-fail"><span>Nu răspunde · 1 din 3<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="r num soft">15:32</td></tr>
+          <tr><td><input type="checkbox"></td><td class="mono">0007</td><td class="soft">Demo Shop SRL</td><td class="who">Natalia Rusu</td><td class="num soft">060 123 123</td><td>Ciocana</td><td class="soft">bd. Mircea cel Bătrân 30</td><td class="r num soft">2</td><td class="r num">250,00</td><td class="edit"><span>Ion<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="edit cell-road"><span>În livrare<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="r num soft">14:48</td></tr>
+          <tr><td><input type="checkbox"></td><td class="mono">0011</td><td class="soft">Demo Print Agency</td><td class="who">Tipografia Nord</td><td class="num soft">022 444 555</td><td>Râșcani</td><td class="soft">str. Kiev 8/1</td><td class="r num soft">12</td><td class="r nil">—</td><td class="edit"><span>Vasile<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="edit cell-road"><span>În livrare<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="r num soft">15:05</td></tr>
+          <tr><td><input type="checkbox"></td><td class="mono">0009</td><td class="soft">Demo Shop SRL</td><td class="who">Olga Moraru</td><td class="num soft">078 123 456</td><td>Stăuceni</td><td class="soft">str. Unirii 7</td><td class="r num soft">2</td><td class="r nil">—</td><td class="edit"><span>Ion<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="edit"><span>De ridicat<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="r num soft">15:30</td></tr>
+          <tr id="edited"><td><input type="checkbox"></td><td class="mono">0006</td><td class="soft">Demo Print Agency</td><td class="who">Agenția Beta</td><td class="num soft">022 333 444</td><td>Bălți</td><td class="soft">str. Independenței 1</td><td class="r num soft">8,5</td><td class="r nil">—</td><td class="edit focus" id="cell"><span class="nil">Fără curier<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="edit"><span>În depozit<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="r num soft">09:15</td></tr>
+          <tr><td><input type="checkbox"></td><td class="mono">0012</td><td class="soft">Demo Shop SRL</td><td class="who">Doina Lungu</td><td class="num soft">069 222 333</td><td>Ialoveni</td><td class="soft">str. Alexandru cel Bun 3</td><td class="r num soft">1</td><td class="r num">390,00</td><td class="edit"><span class="nil">Fără curier<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="edit"><span>În depozit<svg class="i"><use href="icons.svg#down"/></svg></span></td><td class="r num soft">10:40</td></tr>
+          <tr class="past"><td><input type="checkbox"></td><td class="mono">0008</td><td>Demo Shop SRL</td><td>Victor Ceban</td><td class="num">069 777 888</td><td>Botanica</td><td>bd. Dacia 44, ap. 9</td><td class="r num">7,5</td><td class="r num">640,00</td><td>Ion</td><td class="cell-ok">Livrat</td><td class="r num">15:25</td></tr>
+          <tr class="past"><td><input type="checkbox"></td><td class="mono">0004</td><td>Demo Shop SRL</td><td>Elena Ciobanu</td><td class="num">069 555 666</td><td>Botanica</td><td>str. Dacia 23, ap. 14</td><td class="r num">3</td><td class="r num">480,00</td><td>Ion</td><td class="cell-ok">Livrat</td><td class="r num">14:50</td></tr>
+          <tr class="past"><td><input type="checkbox"></td><td class="mono">0002</td><td>Demo Shop SRL</td><td>Andrei Rusu</td><td class="num">078 111 222</td><td>Centru</td><td>bd. Ștefan cel Mare 100</td><td class="r num">4</td><td class="r num">1.250,50</td><td>Vasile</td><td class="cell-ok">Livrat</td><td class="r num">14:34</td></tr>
+          <tr class="past"><td><input type="checkbox"></td><td class="mono">0003</td><td>Demo Print Agency</td><td>Ana Botnaru</td><td class="num">068 444 111</td><td>Buiucani</td><td>str. Alba Iulia 75</td><td class="r num">0,5</td><td class="r nil">—</td><td>Ion</td><td class="cell-ok">Livrat</td><td class="r num">13:40</td></tr>
+          <tr class="past"><td><input type="checkbox"></td><td class="mono">0010</td><td>Demo Print Agency</td><td>Cafeneaua Tucano</td><td class="num">022 888 777</td><td>Centru</td><td>str. Pușkin 22</td><td class="r num">6</td><td class="r nil">—</td><td>Vasile</td><td class="cell-ok">Livrat</td><td class="r num">13:02</td></tr>
+          <tr class="past"><td><input type="checkbox"></td><td class="mono">0001</td><td>Demo Shop SRL</td><td>Maria Popescu</td><td class="num">069 123 456</td><td>Stăuceni</td><td>str. Livezilor 12</td><td class="r num">5,5</td><td class="r num">350,00</td><td>Ion</td><td class="cell-ok">Livrat</td><td class="r num">12:10</td></tr>
+        </tbody>
+      </table>
+      <div class="menu" id="menu">
+        <a class="hi" href="#">Ion Curier<span>3 în lucru</span></a>
+        <a href="#">Vasile Curier<span>1 în lucru</span></a>
+        <a href="#">Fără curier<svg class="i"><use href="icons.svg#check"/></svg></a>
+      </div>
+    </div>
+
+    <div class="status">
+      <span><b class="num">12</b> expedieri: <span class="num">6</span> livrate, <span class="num">2</span> în livrare, <span class="num">1</span> de ridicat, <span class="num">2</span> în depozit, <span class="bad num">1 problemă</span></span>
+      <span class="num">Ramburs: încasat <b>2.720,50</b> · de încasat <b>1.555,00</b> · total <b>4.275,50 MDL</b></span>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="ptop">
+      <div class="row"><h1>Oprirea 6 din 7</h1><div class="pager"><a href="#" aria-label="Oprirea anterioară"><svg class="i"><use href="icons.svg#left"/></svg></a><a href="#" aria-label="Oprirea următoare"><svg class="i"><use href="icons.svg#chev"/></svg></a></div></div>
+      <div class="run on-van"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+    </div>
+    <div class="one">
+      <div class="meta"><span class="st road"><i></i>În livrare</span><span class="mono soft">CN-261117-0007</span></div>
+      <h2>bd. Mircea cel Bătrân 30</h2>
+      <div class="city">Ciocana</div>
+      <div class="person">Natalia Rusu · +373 60 123 123</div>
+    </div>
+    <div class="pay"><span>De încasat</span><b class="num">250,00 MDL</b></div>
+    <div class="facts">
+      <div><span>Colet</span><b>1 buc · 2 kg</b></div>
+      <div><span>Client</span><b>Demo Shop SRL</b></div>
+      <div><span>Notă</span><b>Sunați cu 10 min înainte</b></div>
+    </div>
+    <div class="dockbar">
+      <button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button>
+      <button class="btn"><svg class="i"><use href="icons.svg#nav"/></svg>Hartă</button>
+      <button class="btn go">Livrat</button>
+      <a class="cant" href="#">Nu pot livra</a>
+    </div>
+    <div class="tabbar">
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#list"/></svg>Azi</a>
+      <a href="#"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</a>
+      <a href="#"><svg class="i"><use href="icons.svg#wallet"/></svg>Numerar</a>
+    </div>
+  </div>
+</div>
+<script>
+  // Places the open menu under the cell being edited (the draft shows this one state).
+  function place() {
+    const c = document.getElementById("cell").getBoundingClientRect(), s = document.querySelector(".sheet").getBoundingClientRect(), m = document.getElementById("menu");
+    m.style.left = c.left - s.left + "px";
+    m.style.top = c.bottom - s.top + 2 + "px";
+  }
+  addEventListener("load", place); addEventListener("resize", place); document.fonts && document.fonts.ready.then(place);
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+/* day-verde: styles for this design's screen. Keep every rule inside @layer components and under its own root class. */
+@layer components {
+  .day-verde {
+    /* A parcel waiting to be collected: a lighter tint of the road blue. */
+    --pickup: color-mix(in srgb, var(--d-road) 50%, white);
+    /* The mint column runs to the edge of the page, so the screen cancels the page padding. */
+    margin: -1.25rem -1rem -3rem;
+    display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(310px, 1fr);
+    font-size: 0.9375rem; line-height: 1.45; color: var(--d-ink); font-variant-numeric: tabular-nums;
+    @media (min-width: 640px) { margin: -1.5rem -1.5rem -3rem; }
+    @media (min-width: 1100px) { min-height: calc(100dvh - 4rem); }
+    /* Wider than the page container: close the sheet with hairlines instead of letting the column end in mid-air. */
+    @media (min-width: 1441px) { border-inline: 1px solid var(--d-line); }
+
+    a:focus-visible { border-radius: 4px; }
+    .ui-btn-sm { padding: 0 12px; font-size: 0.875rem; border-radius: 8px; }
+
+    .main { min-width: 0; padding: 30px 32px 28px; }
+    /* globals.css sets heading tracking outside any layer, which outranks this layer; the draft's own value needs the flag. */
+    .main h1 { font-size: 1.875rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.03em !important; }
+    .lede { margin-top: 6px; font-size: 1.0625rem; color: var(--d-ink-2); }
+    .lede b { font-weight: 600; color: var(--d-ink); }
+    .lede b.bad { color: var(--d-stop); }
+
+    .h2 { display: flex; align-items: baseline; gap: 10px; margin: 30px 0 4px; }
+    .h2 h2 { font-size: 1.1875rem; font-weight: 700; }
+    .h2 span { color: var(--d-ink-3); }
+    .h2 a { margin-left: auto; font-size: 0.875rem; font-weight: 600; color: var(--d-link); }
+    .none { padding: 14px 0; color: var(--d-ink-2); }
+
+    .task { display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 14px 0; border-bottom: 1px solid var(--d-line); }
+    .task > svg { flex: none; color: var(--d-ink-3); }
+    .task .txt { flex: 1; min-width: 0; }
+    .task b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.03125rem; font-weight: 600; letter-spacing: -0.01em; }
+    .task .txt span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--d-ink-3); }
+    .task .acts { flex: none; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .task.bad > svg, .task.bad b { color: var(--d-stop); }
+    .task.bad .txt span { color: color-mix(in srgb, var(--d-stop) 68%, black); }
+    .task.cash > svg { color: var(--d-pay-ink); }
+    .pick { width: 170px; height: var(--d-ctl-h-sm); padding: 0 2rem 0 12px; border-radius: 8px; font-size: 0.875rem; font-weight: 600; }
+    @media (max-width: 719px) {
+      .task { flex-wrap: wrap; row-gap: 10px; }
+      .task .txt { flex-basis: calc(100% - 38px); }
+      .task .acts { margin-left: 38px; justify-content: flex-start; }
+      .task b, .task .txt span { white-space: normal; }
+    }
+
+    .quiet .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) 84px 150px; align-items: center; gap: 14px; min-height: 52px; border-bottom: 1px solid var(--d-line); transition: background-color 80ms ease; }
+    .quiet .row > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .quiet .row b { font-weight: 600; }
+    .quiet .where { color: var(--d-ink-2); }
+    .quiet .amt { text-align: right; font-weight: 600; }
+    .quiet .amt.nil { font-weight: 400; color: var(--d-ink-4); }
+    .quiet .st { display: flex; align-items: center; gap: 8px; color: var(--d-ink-2); }
+    .quiet .st.nil { color: var(--d-ink-4); }
+    .quiet .st i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--d-road); }
+    .quiet .row:focus-visible { outline-offset: -2px; }
+    @media (max-width: 719px) {
+      .quiet .row { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 14px; padding: 10px 0; }
+    }
+
+    .side { min-width: 0; padding: 30px 26px 26px; background: var(--d-dock); border-left: 1px solid var(--d-line); }
+    .side h2 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 12px; font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em !important; }
+    .side h2 a { font-size: 0.875rem; font-weight: 600; letter-spacing: 0; color: var(--d-link); }
+    .side h2 span { font-size: 0.9375rem; font-weight: 400; letter-spacing: 0; color: var(--d-ink-3); }
+    .side section + section { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--d-line-2); }
+    .side .none { padding: 0; }
+
+    .split { display: flex; gap: 2px; height: 12px; margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
+    .split i { display: block; flex: 1 1 0; }
+    .legend a { display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 32px; }
+    .legend span { display: flex; align-items: center; gap: 10px; }
+    .legend span i { flex: none; width: 10px; height: 10px; border-radius: 50%; }
+    .legend b { font-weight: 600; }
+    .legend a.bad { font-weight: 600; color: var(--d-stop); }
+    i.done { background: var(--d-accent); }
+    i.road { background: var(--d-road); }
+    i.pickup { background: var(--pickup); }
+    i.depot { background: var(--d-ink-4); }
+    i.back { background: var(--d-ink-2); }
+    i.bad { background: var(--d-stop); }
+
+    .cr + .cr { margin-top: 16px; }
+    .cr .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .cr .top b { font-size: 1rem; font-weight: 600; }
+    .cr .top span { font-weight: 600; color: var(--d-ink-2); }
+    .cr p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--d-ink-2); }
+
+    .run { display: flex; align-items: center; height: 26px; margin: 4px 0 2px; padding-right: 9px; }
+    .run i { position: relative; flex: 0 1 38px; min-width: 0; height: 4px; background: var(--d-pick); }
+    .run i:first-child { flex: 0 0 6px; border-radius: 2px 0 0 2px; }
+    .run i::after { content: ""; position: absolute; right: -6px; top: -4px; z-index: 1; width: 12px; height: 12px; border-radius: 50%; background: var(--d-dock); border: 2.5px solid var(--d-ink-4); }
+    .run i:first-child::after { display: none; }
+    .run i.d, .run i.f, .run i.n { background: var(--d-accent); }
+    .run i.d::after { background: var(--d-accent); border-color: var(--d-accent); }
+    .run i.f::after { background: var(--d-stop); border-color: var(--d-stop); }
+    .run i.n::after { right: -9px; top: -7px; width: 18px; height: 18px; background: var(--d-surface); border: 5px solid var(--d-accent); }
+
+    dl { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; }
+    dt { color: var(--d-ink-2); }
+    dd { text-align: right; font-weight: 600; }
+    dl .sum { padding-top: 10px; border-top: 1px solid var(--d-line-2); font-size: 1.0625rem; font-weight: 700; color: var(--d-ink); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .quiet .row:hover { background: var(--d-dock); }
+      .h2 a:hover, .side h2 a:hover, .legend a:hover span, a.txt:hover b { text-decoration: underline; }
+    }
+
+    /* Narrow office screens: the mint column moves under the main one and lays its three blocks side by side. */
+    @media (max-width: 1099px) {
+      grid-template-columns: minmax(0, 1fr);
+      .side { border-left: 0; border-top: 1px solid var(--d-line); }
+    }
+    @media (min-width: 720px) and (max-width: 1099px) {
+      .side { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; align-items: start; }
+      .side section + section { margin-top: 0; padding-top: 0; border-top: 0; }
+    }
+    @media (max-width: 719px) {
+      .main { padding: 22px 16px 24px; }
+      .side { padding: 24px 16px; }
+    }
+  }
+}

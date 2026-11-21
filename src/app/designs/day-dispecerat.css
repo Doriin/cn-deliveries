@@ -1,0 +1,126 @@
+/* day-dispecerat: styles for this design's screen. Keep every rule inside @layer components and under its own root class. */
+@layer components {
+  .day-dispecerat {
+    /* The side column is a dock that runs to the edge of the page, so the screen cancels the page padding. */
+    margin: -1.25rem -1rem -3rem;
+    display: flex; flex-direction: column;
+    font-size: 0.8125rem; line-height: 1.45; color: var(--d-ink); font-variant-numeric: tabular-nums;
+    @media (min-width: 640px) { margin: -1.5rem -1.5rem -3rem; }
+    @media (min-width: 1100px) { min-height: calc(100dvh - 3.25rem); }
+    /* Wider than the page container: close the sheet with hairlines instead of letting the dock end in mid-air. */
+    @media (min-width: 1441px) { border-inline: 1px solid var(--d-line); }
+
+    a:focus-visible { border-radius: 2px; }
+    .ui-btn-sm { padding: 0 8px; font-size: 0.75rem; }
+
+    .head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding: 18px 20px 14px; }
+    .head h1 { font-size: 1.25rem; line-height: 1.2; font-weight: 600; }
+    .head h1 span { font-weight: 400; color: var(--d-ink-3); }
+    .sync { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--d-ink-3); }
+    .sync i { width: 6px; height: 6px; border-radius: 50%; background: var(--d-ok); }
+
+    .alert { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 20px 14px; padding: 8px 8px 8px 12px; border-radius: var(--d-r-box);
+      background: var(--d-stop-wash); color: color-mix(in srgb, var(--d-stop) 62%, black); }
+    .alert + .alert { margin-top: -8px; }
+    .alert > svg { flex: none; color: var(--d-stop); }
+    .alert .txt { flex: 1 1 16rem; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; }
+    .alert b { font-weight: 600; color: color-mix(in srgb, var(--d-stop) 46%, black); }
+    .alert .ui-status { font-size: inherit; }
+    .alert .acts { margin-left: auto; display: flex; gap: 6px; }
+    .alert .ui-btn { border-color: color-mix(in srgb, var(--d-stop) 30%, transparent); }
+
+    .work { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 316px; border-top: 1px solid var(--d-line); }
+    .list { min-width: 0; }
+
+    .tabs { display: flex; gap: 2px; padding: 0 12px; border-bottom: 1px solid var(--d-line); overflow-x: auto; scrollbar-width: none; }
+    .tabs a { display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 8px; white-space: nowrap; font-weight: 500; color: var(--d-ink-3);
+      box-shadow: inset 0 -2px 0 transparent; transition: color 120ms ease; }
+    .tabs a b { font-weight: 500; color: var(--d-ink-4); }
+    .tabs a[aria-current] { color: var(--d-ink); box-shadow: inset 0 -2px 0 var(--d-ink); }
+    .tabs a[aria-current] b { color: var(--d-ink-3); }
+    .tabs a.bad b { color: var(--d-stop); font-weight: 600; }
+    .tabs a:focus-visible { outline-offset: -2px; }
+
+    .scroll { overflow-x: auto; }
+    table { width: 100%; min-width: 46rem; border-collapse: collapse; }
+    th { height: 32px; padding: 0 10px; text-align: left; font-size: 0.75rem; font-weight: 500; color: var(--d-ink-3); white-space: nowrap; border-bottom: 1px solid var(--d-line); }
+    td { height: 40px; padding: 0 10px; white-space: nowrap; border-bottom: 1px solid var(--d-line); }
+    th:first-child, td:first-child { padding-left: 20px; }
+    th:last-child, td:last-child { padding-right: 20px; }
+    .r { text-align: right; }
+    tbody tr { transition: background-color 80ms ease; }
+    td.no { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: -0.01em; }
+    td.who { font-weight: 500; }
+    td.where { max-width: 250px; overflow: hidden; text-overflow: ellipsis; color: var(--d-ink-2); }
+    td.where b { font-weight: 500; color: var(--d-ink); }
+    td.soft { color: var(--d-ink-2); }
+    td.nil { color: var(--d-ink-4); }
+    tr.past td { color: var(--d-ink-3); }
+    tr.past td.who, tr.past td.where b { font-weight: 400; color: var(--d-ink-2); }
+    .ui-status { font-size: inherit; }
+    .fail { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; color: var(--d-stop); }
+    .fail small { margin-left: 2px; font-size: 0.75rem; font-weight: 400; color: var(--d-ink-3); }
+    .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 16px; padding: 10px 20px 12px; font-size: 0.75rem; color: var(--d-ink-3); }
+    .empty { padding: 28px 20px; color: var(--d-ink-3); }
+
+    .side { background: var(--d-dock); border-left: 1px solid var(--d-line); }
+    .side section { padding: 14px 16px 16px; border-bottom: 1px solid var(--d-line); }
+    .side section:last-child { border-bottom: 0; }
+    .side h2 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px; font-size: 0.8125rem; font-weight: 600; }
+    .side h2 a { font-size: 0.75rem; font-weight: 400; color: var(--d-link); }
+    .side h2 span { font-weight: 400; color: var(--d-ink-3); }
+    .none { color: var(--d-ink-3); }
+    .more { display: inline-block; margin-top: 8px; font-size: 0.75rem; color: var(--d-link); }
+
+    .cr + .cr { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--d-line); }
+    .cr .top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+    .cr .top b { font-weight: 600; }
+    .cr .top span { font-size: 0.75rem; color: var(--d-ink-3); }
+    .cr p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--d-ink-2); }
+    .cr p span { color: var(--d-ink-3); }
+    .cash { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+    .cash b { font-weight: 600; }
+    .cash span { color: var(--d-ink-3); }
+
+    /* The signature: a courier's run drawn as stops on a line. */
+    .run { display: flex; align-items: center; height: 22px; margin: 6px 0; padding-right: 7px; }
+    .run i { position: relative; flex: 0 1 36px; min-width: 0; height: 2px; background: var(--d-line-2); }
+    .run i:first-child { flex: 0 0 5px; }
+    .run i::after { content: ""; position: absolute; right: -5px; top: -4px; z-index: 1; width: 10px; height: 10px; border-radius: 50%; background: var(--d-dock); border: 2px solid var(--d-ink-4); }
+    .run i:first-child::after { display: none; }
+    .run i.d, .run i.f, .run i.n { background: var(--d-shell); }
+    .run i.d::after { background: var(--d-shell); border-color: var(--d-shell); }
+    .run i.f::after { background: var(--d-stop); border-color: var(--d-stop); }
+    .run i.n::after { right: -7px; top: -6px; width: 14px; height: 14px; background: var(--d-now); border: 3px solid var(--d-shell); }
+
+    .wait { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 8px; min-height: 34px; padding: 4px 0; }
+    .wait + .wait { border-top: 1px solid var(--d-line); }
+    .wait > a { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .wait b { font-weight: 500; }
+    .wait span { color: var(--d-ink-3); }
+    .pick { flex: none; width: 6.5rem; height: 26px; padding: 0 1.6rem 0 8px; font-size: 0.75rem; }
+    @media (pointer: coarse) { .pick { width: 9rem; height: var(--d-ctl-h-sm); } }
+
+    dl { display: grid; grid-template-columns: 1fr auto; row-gap: 6px; }
+    dt { color: var(--d-ink-2); }
+    dd { text-align: right; font-weight: 500; }
+    dl .sum { padding-top: 7px; border-top: 1px solid var(--d-line-2); font-weight: 600; color: var(--d-ink); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .tabs a:hover { color: var(--d-ink); }
+      tbody tr:hover { background: var(--d-dock); }
+      td a:hover, .wait > a:hover b, .side h2 a:hover, .more:hover { text-decoration: underline; }
+    }
+
+    /* Narrow office screens: the dock moves under the list and lays its three blocks side by side. */
+    @media (max-width: 1099px) {
+      .work { grid-template-columns: minmax(0, 1fr); }
+      .side { border-left: 0; border-top: 1px solid var(--d-line); }
+    }
+    @media (min-width: 720px) and (max-width: 1099px) {
+      .side { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .side section { border-bottom: 0; }
+      .side section + section { border-left: 1px solid var(--d-line); }
+    }
+  }
+}

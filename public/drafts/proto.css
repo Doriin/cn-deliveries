@@ -1,0 +1,95 @@
+/* Mechanics shared by the interactive drafts (11-13): how things move and where they sit.
+   Looks (colour, type, radius, depth) and motion character (the --t-* and --e-* values) belong to each draft. */
+:root {
+  --t-press: 120ms; --t-fast: 160ms; --t-med: 240ms; --t-slow: 420ms;
+  --e-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --e-inout: cubic-bezier(0.77, 0, 0.175, 1);
+  --e-move: var(--e-out);      /* indicators, thumbs */
+  --e-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+  --press: 0.97;
+}
+[hidden] { display: none !important; }
+.app, .phone { position: relative; }
+
+/* ----- buttons: label, spinner and tick share one box so the width never jumps ----- */
+.btn { position: relative; }
+.btn .lbl { display: inline-flex; align-items: center; gap: inherit; transition: opacity var(--t-fast) ease, transform var(--t-fast) var(--e-out), filter var(--t-fast) ease; }
+.btn .spin, .btn .tick { position: absolute; inset: 0; margin: auto; opacity: 0; pointer-events: none; }
+.btn .spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; }
+.btn .tick { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; }
+.btn.is-loading, .btn.is-done { pointer-events: none; }
+.btn.is-loading .lbl, .btn.is-done .lbl { opacity: 0; transform: scale(0.94); filter: blur(2px); }
+.btn.is-loading .spin { opacity: 1; transition: opacity 120ms ease 150ms; animation: spin 600ms linear infinite; }
+.btn.is-loading .lbl { transition-delay: 150ms; }
+.btn.is-done .tick { opacity: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 320ms var(--e-out) 60ms, opacity 100ms; }
+.btn:active:not(:disabled) { transform: scale(var(--press)); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ----- tabs and segmented controls: one indicator that travels ----- */
+[data-tabs], [data-seg] { position: relative; }
+.ind, .thumb { position: absolute; left: 0; top: 0; width: var(--w, 0); transform: translateX(var(--x, 0)); pointer-events: none; }
+.thumb { top: var(--y, 0); height: var(--h, 0); }
+.ready > .ind, .ready > .thumb { transition: transform var(--t-med) var(--e-move), width var(--t-med) var(--e-move); }
+[data-tab], [data-seg] [role=radio] { position: relative; z-index: 1; }
+
+/* ----- small numbers swap, big numbers tick ----- */
+[data-count], [data-ion-done], [data-done-count] { display: inline-block; transition: transform 130ms var(--e-out), opacity 130ms ease; }
+.is-out { transform: translateY(-45%); opacity: 0; }
+.is-in { transform: translateY(45%); opacity: 0; transition: none !important; }
+
+/* ----- list: selection, a row that just changed, a task that was done ----- */
+[data-row].flash { animation: flash 1600ms ease-out; }
+@keyframes flash { 0%, 30% { background: var(--flash, #e7f6ec); } 100% { background: transparent; } }
+[data-task] { transition: opacity 260ms ease, transform 320ms var(--e-out); }
+[data-task].gone { opacity: 0; transform: translateX(16px); }
+[data-share] { transition: flex-grow var(--t-slow) var(--e-out); }
+
+/* ----- bulk bar rises while something is ticked ----- */
+[data-bulk] { position: absolute; left: 50%; bottom: 18px; z-index: 6; transform: translate(-50%, 14px); opacity: 0; pointer-events: none; transition: transform var(--t-fast) var(--e-out), opacity var(--t-fast) ease; }
+[data-bulk].show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; transition-duration: var(--t-med); }
+
+/* ----- detail drawer inside the office frame ----- */
+[data-scrim], [data-sheet-scrim] { position: absolute; inset: 0; z-index: 7; background: var(--scrim, rgb(15 20 30 / 0.28)); opacity: 0; pointer-events: none; transition: opacity var(--t-med) ease; }
+[data-scrim].open, [data-sheet-scrim].open { opacity: 1; pointer-events: auto; }
+[data-drawer] { position: absolute; top: 0; right: 0; bottom: 0; z-index: 8; width: min(400px, 92%); transform: translateX(104%); transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1); display: flex; flex-direction: column; }
+[data-drawer].open { transform: none; transition: transform var(--t-sheet, 500ms) var(--e-sheet); }
+
+/* ----- phone: bottom sheet, success state, next-stop swap ----- */
+[data-sheet] { position: absolute; left: 0; right: 0; bottom: 0; z-index: 9; transform: translateY(104%); transition: transform 350ms cubic-bezier(0.32, 0.72, 0, 1); }
+[data-sheet].open { transform: none; transition: transform var(--t-sheet, 500ms) var(--e-sheet); }
+[data-sheet] .ok { display: none; }
+[data-sheet].success .form { display: none; }
+[data-sheet].success .ok { display: grid; place-items: center; animation: pop 320ms var(--e-out); }
+[data-sheet] .ok svg path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+[data-sheet].success .ok svg path { animation: draw 420ms var(--e-out) 120ms forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { from { opacity: 0; transform: scale(0.94); } }
+[data-next] { transition: opacity 200ms ease, transform 260ms var(--e-out), filter 200ms ease; }
+[data-next].leave { opacity: 0; transform: translateX(-18px); filter: blur(3px); }
+[data-next].enter { opacity: 0; transform: translateX(18px); filter: blur(3px); transition: none; }
+
+/* ----- a courier's run: a stop that was just completed ----- */
+.run i.just::after { animation: stop 620ms var(--e-out); }
+@keyframes stop { 0% { transform: scale(1.7); } 100% { transform: scale(1); } }
+
+/* ----- toasts ----- */
+[data-toasts] { position: fixed; right: 24px; bottom: 24px; z-index: 30; display: flex; flex-direction: column-reverse; gap: 8px; pointer-events: none; }
+.toast { display: flex; align-items: center; gap: 10px; max-width: 380px; opacity: 0; transform: translateY(100%); transition: opacity 400ms ease, transform 400ms ease; }
+.toast.in { opacity: 1; transform: none; }
+.toast.out { opacity: 0; transform: translateY(100%); transition-duration: 200ms; }
+
+/* ----- tooltip ----- */
+.tip { position: absolute; z-index: 40; transform: translate(-50%, -100%) scale(0.97); transform-origin: 50% 100%; opacity: 0; pointer-events: none; white-space: nowrap; transition: opacity 125ms var(--e-out), transform 125ms var(--e-out); }
+.tip.show { opacity: 1; transform: translate(-50%, -100%); }
+.tip.instant { transition-duration: 0ms; }
+
+/* filtering the list cross-fades instead of jumping */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 160ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: 1ms !important; animation-delay: 0ms !important; }
+  .btn:active:not(:disabled) { transform: none; }
+  [data-drawer], [data-sheet], .toast, [data-next], .ind, .thumb, [data-bulk] { transition-duration: 1ms !important; }
+}
+@media (hover: none) { .tip { display: none; } }

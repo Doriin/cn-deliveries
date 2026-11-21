@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CN Deliveries · Design drafts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+<style>
+  body { padding: 0; background: var(--label); font-size: 14px; }
+  .bar { display: flex; align-items: center; gap: 14px; height: 52px; padding: 0 24px; background: var(--van); color: #fff; position: sticky; top: 0; z-index: 5; }
+  .bar .sp { margin-left: auto; opacity: 0.8; font-size: 13px; }
+  .bar a.btn { height: 30px; }
+  main { max-width: 1480px; margin: 0 auto; padding: 28px 24px 64px; }
+  h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+  .lede { margin-top: 6px; color: var(--ink-2); max-width: 78ch; font-size: 15px; }
+  section { margin-top: 36px; }
+  h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: baseline; gap: 10px; }
+  h2 small { font-size: 13px; font-weight: 400; color: var(--ink-3); }
+  .note { margin-top: 4px; color: var(--ink-2); max-width: 86ch; }
+  .grid { margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 22px 20px; }
+  .d { display: block; color: inherit; }
+  .shot { position: relative; aspect-ratio: 1640 / 930; overflow: hidden; border-radius: var(--r-box); background: var(--dock); box-shadow: 0 0 0 1px var(--line-strong); transition: box-shadow 160ms, transform 160ms cubic-bezier(.23,1,.32,1); }
+  .shot iframe { position: absolute; left: 0; top: 0; width: 1640px; height: 930px; border: 0; transform-origin: 0 0; pointer-events: none; }
+  .d:hover .shot { box-shadow: 0 0 0 1px var(--link), 0 10px 28px -12px rgb(15 27 45 / 0.35); }
+  .d:active .shot { transform: scale(0.99); }
+  .d:focus-visible { outline: 2px solid var(--link); outline-offset: 4px; border-radius: var(--r-box); }
+  .cap { display: flex; align-items: baseline; gap: 8px; margin-top: 10px; }
+  .cap b { font-size: 15px; font-weight: 600; }
+  .cap .tag { margin-left: auto; font-size: 12px; white-space: nowrap; color: var(--ink-3); }
+  .cap .tag.yes { color: var(--done); font-weight: 500; }
+  .cap .tag.no { color: var(--stop); }
+  .cap .tag.new { color: var(--link); font-weight: 500; }
+  .d p { color: var(--ink-2); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="brand">
+    <svg width="24" height="24" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#fff"/><g stroke="#fff" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#0e3b8e"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#3f6fc4"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#7da3e3"/><path d="M19.23 6.87 22.27 8.63 12.77 14.13V19.4L9.73 17.64V12.37Z" fill="#ffb020" stroke-width="0"/></g></svg>
+    CN <span>Deliveries</span>
+  </div>
+  <span class="sp">Design drafts</span>
+  <a class="btn" href="/">Open the real app</a>
+</div>
+
+<main>
+  <h1>Design drafts</h1>
+  <p class="lede">Every draft made so far, newest first. Each one shows the office day view and a courier phone screen with the same sample day of 12 parcels. Click a preview to open it full size. Drafts 11 to 13 are interactive; the rest are still pictures.</p>
+  <div id="rounds"></div>
+</main>
+
+<script>
+  const rounds = [
+    { title: "Round 5", sub: "interactive, modern styles", note: "Clickable prototypes: tabs, selection, the detail drawer, buttons that load and confirm, and a delivery on the phone that updates the office screen. Each one is a different screen, not a recolour: different layout, components and way of showing couriers and money.", items: [
+      { f: "11-tactil.html", n: "11 · Tactil", d: "One raised sheet, buttons with real depth, couriers on an hour-by-hour timeline above a dense table.", tag: "Interactive", cls: "new" },
+      { f: "12-aer.html", n: "12 · Aer", d: "No table and no side menu: a grouped list under floating frosted controls, black pill buttons with spring motion.", tag: "Interactive", cls: "new" },
+      { f: "13-expres.html", n: "13 · Expres", d: "Courier first: pick a courier and see their day stop by stop. Shapes show status; one loud orange action.", tag: "Interactive", cls: "new" } ] },
+    { title: "Round 4", sub: "independent light themes", note: "Three different colour schemes, typefaces and shells.", items: [
+      { f: "8-kraft.html", n: "8 · Kraft", d: "Label white, kraft board, blue stamp-ink buttons. Day grouped by courier." },
+      { f: "9-semnal.html", n: "9 · Semnal", d: "Signal yellow and black. Large stage counts filter the table." },
+      { f: "10-verde.html", n: "10 · Verde", d: "Green and white, larger text, to-do list first." } ] },
+    { title: "Round 3", sub: "same theme as draft 4, different way of working", note: "You pointed out these share one theme. They differ only in how the work is organised.", items: [
+      { f: "5-curieri.html", n: "5 · Pe curieri", d: "Side menu, grouped by courier, parcel opens in a side pane." },
+      { f: "6-foaie.html", n: "6 · Foaie", d: "Full-width sheet, change any cell in place." },
+      { f: "7-de-facut.html", n: "7 · De făcut", d: "What needs you now, each row with its own button." } ] },
+    { title: "Round 2", sub: "after installing the design skills", note: "", items: [
+      { f: "4-dispecerat.html", n: "4 · Dispecerat", d: "Carrier-portal look: blue bar, dense table, no cards.", tag: "You said: much better", cls: "yes" } ] },
+    { title: "Round 1", sub: "first concepts", note: "", items: [
+      { f: "1-borderou.html", n: "1 · Borderou", d: "Waybill and ledger look.", tag: "You said: not professional", cls: "no" },
+      { f: "2-tablou.html", n: "2 · Tablou", d: "Dispatch board with parcel tags.", tag: "You said: not professional", cls: "no" },
+      { f: "3-linii.html", n: "3 · Linii", d: "One transit-style line per courier.", tag: "You said: not professional", cls: "no" } ] },
+  ];
+  const host = document.getElementById("rounds");
+  host.innerHTML = rounds.filter((r) => r.items.length).map((r) => `
+    <section>
+      <h2>${r.title}<small>${r.sub}</small></h2>
+      ${r.note ? `<p class="note">${r.note}</p>` : ""}
+      <div class="grid">${r.items.map((i) => `
+        <a class="d" href="${i.f}" target="_blank" rel="noopener">
+          <div class="shot"><iframe src="${i.f}" loading="lazy" tabindex="-1" aria-hidden="true" title=""></iframe></div>
+          <div class="cap"><b>${i.n}</b>${i.tag ? `<span class="tag ${i.cls || ""}">${i.tag}</span>` : ""}</div>
+          <p>${i.d}</p>
+        </a>`).join("")}
+      </div>
+    </section>`).join("");
+  // Each preview is the real page, drawn at full size and scaled down to fit its frame.
+  const fit = () => document.querySelectorAll(".shot").forEach((s) => (s.firstElementChild.style.transform = `scale(${s.clientWidth / 1640})`));
+  new ResizeObserver(fit).observe(host); fit();
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+/* The seven switchable designs: colours, type, corner shapes and control sizes.
+   Each block also remaps the Tailwind tokens the shared pages are written with (brand, ink, slate, floor,
+   radius, fonts), so every existing page follows the chosen design. The design is set on <html data-design>. */
+
+:root {
+  --d-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --d-press: 0.97;
+  --d-ctl-h: 2rem; --d-ctl-h-sm: 1.625rem; --d-ctl-px: 0.75rem; --d-ctl-fs: 0.8125rem; --d-ctl-weight: 500;
+  --d-r-pill: 999px;
+  --d-display: var(--font-sans);
+  --d-card-shadow: 0 0 0 1px var(--d-line);
+  --d-pop-shadow: 0 0 0 1px var(--d-line-2), 0 8px 24px -8px rgb(15 27 45 / 0.22);
+  --logo-tile: var(--d-shell); --logo-top: #fff; --logo-left: #d3e3fb; --logo-right: #93b8f3; --logo-tape: var(--d-now);
+}
+@media (pointer: coarse) {
+  :root:root { --d-ctl-h: 2.75rem; --d-ctl-h-sm: 2.25rem; --d-ctl-fs: 1rem; --d-ctl-px: 1rem; }
+}
+
+/* Insula — iOS 26: grouped grey, white inset lists, system blue, capsule controls, real springs */
+[data-design="insula"] {
+  --d-page: #f2f2f7; --d-surface: #ffffff; --d-dock: #e9e9ef;
+  --d-ink: #000000; --d-ink-2: #3c3c43; --d-ink-3: #6c6c70; --d-ink-4: #aeaeb2;
+  --d-line: rgb(60 60 67 / 0.16); --d-line-2: rgb(60 60 67 / 0.29);
+  --d-accent: #007aff; --d-accent-hover: #1a87ff; --d-accent-press: #0062d6; --d-on-accent: #ffffff;
+  --d-link: #007aff; --d-pick: #e6f0ff; --d-shell: rgb(255 255 255 / 0.7); --d-on-shell: #000000;
+  --d-stop: #e5281d; --d-stop-wash: #ffe9e7; --d-ok: #248a3d; --d-ok-wash: #e3f7e8; --d-now: #ff9500;
+  --d-pay-wash: #fff3dc; --d-pay-ink: #7a4b00; --d-road: #007aff;
+  --d-r-ctl: 999px; --d-r-ctl-lg: 999px; --d-r-box: 22px;
+  --d-ctl-h: 2.25rem; --d-ctl-h-sm: 1.875rem; --d-ctl-px: 1rem; --d-ctl-fs: 0.9375rem; --d-ctl-weight: 600; --d-press: 0.95;
+  /* spring, bounce 0.25 */
+  --d-ease: linear(0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017 19.4%, 1.077, 1.121 24.5%, 1.149 27.3%, 1.159 29.1%, 1.157 31.4%, 1.123 37.1%, 1.017 52.3%, 0.991 59.6%, 0.983 66.7%, 1.001 87.5%, 1);
+  --d-spring-soft: linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.5%, 1);
+  --d-card-shadow: none;
+  --d-pop-shadow: 0 0 0 0.5px rgb(0 0 0 / 0.06), 0 10px 40px -8px rgb(0 0 0 / 0.22);
+  --d-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Variable", system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono Variable", monospace;
+  --logo-tile: #007aff; --logo-top: #ffffff; --logo-left: #d4e7ff; --logo-right: #94c4ff; --logo-tape: transparent;
+  --color-floor: #f2f2f7;
+  --color-brand-50: #eef5ff; --color-brand-100: #dcebff; --color-brand-200: #b8d7ff; --color-brand-300: #85bbff; --color-brand-400: #4a9bff;
+  --color-brand-500: #1a87ff; --color-brand-600: #007aff; --color-brand-700: #0062d6; --color-brand-800: #004fae; --color-brand-900: #003c85;
+  --color-ink-700: #3c3c43; --color-ink-800: #1c1c1e; --color-ink-900: #0d0d0f; --color-ink-950: #000000;
+  --color-accent-100: #fff3dc; --color-accent-400: #ffb340; --color-accent-500: #ff9500; --color-accent-600: #e08200;
+  --color-slate-50: #f9f9fb; --color-slate-100: #f2f2f7; --color-slate-200: #e5e5ea; --color-slate-300: #d1d1d6; --color-slate-400: #aeaeb2;
+  --color-slate-500: #8e8e93; --color-slate-600: #6c6c70; --color-slate-700: #48484a; --color-slate-800: #2c2c2e; --color-slate-900: #1c1c1e; --color-slate-950: #000000;
+  --radius-md: 10px; --radius-lg: 12px; --radius-xl: 16px; --radius-2xl: 22px; --radius-3xl: 28px;
+}
+
+/* Radar — live operations: cool white, teal signal, the day drawn around the depot */
+[data-design="radar"] {
+  --d-page: #f3f7f7; --d-surface: #ffffff; --d-dock: #eaf1f1;
+  --d-ink: #0c1f22; --d-ink-2: #3d5357; --d-ink-3: #5a6f73; --d-ink-4: #9aabae;
+  --d-line: rgb(12 31 34 / 0.09); --d-line-2: rgb(12 31 34 / 0.17);
+  --d-accent: #0a8f8a; --d-accent-hover: #0b9e98; --d-accent-press: #087a76; --d-on-accent: #ffffff;
+  --d-link: #087a76; --d-pick: #e1f3f2; --d-shell: rgb(255 255 255 / 0.86); --d-on-shell: #0c1f22;
+  --d-stop: #e5484d; --d-stop-wash: #fdecec; --d-ok: #1a9a55; --d-ok-wash: #e4f6ec; --d-now: #f5a524;
+  --d-pay-wash: #fff4dc; --d-pay-ink: #6b4800; --d-road: #0a8f8a;
+  --d-r-ctl: 10px; --d-r-ctl-lg: 12px; --d-r-box: 18px;
+  --d-ctl-h: 2.25rem; --d-ctl-px: 0.9rem; --d-ctl-fs: 0.875rem; --d-ctl-weight: 650; --d-press: 0.97;
+  --d-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --d-card-shadow: 0 0 0 1px var(--d-line), 0 1px 2px rgb(12 31 34 / 0.04);
+  --d-pop-shadow: 0 0 0 1px var(--d-line), 0 18px 40px -16px rgb(12 50 54 / 0.3);
+  --d-display: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --logo-tile: #0a8f8a; --logo-top: #ffffff; --logo-left: #c9ecea; --logo-right: #86d0cc; --logo-tape: transparent;
+  --color-floor: #f3f7f7;
+  --color-brand-50: #effaf9; --color-brand-100: #d7f2f0; --color-brand-200: #afe4e1; --color-brand-300: #7dcfcb; --color-brand-400: #3fb2ad;
+  --color-brand-500: #0b9e98; --color-brand-600: #0a8f8a; --color-brand-700: #087a76; --color-brand-800: #0a615e; --color-brand-900: #0b4f4d;
+  --color-ink-700: #3d5357; --color-ink-800: #1d3337; --color-ink-900: #13282c; --color-ink-950: #0c1f22;
+  --color-accent-100: #fff4dc; --color-accent-400: #f8bb4c; --color-accent-500: #f5a524; --color-accent-600: #d98b0b;
+  --color-slate-50: #f8fbfb; --color-slate-100: #f0f5f5; --color-slate-200: #e1eaea; --color-slate-300: #c9d6d7; --color-slate-400: #9aabae;
+  --color-slate-500: #758a8d; --color-slate-600: #5a6f73; --color-slate-700: #3d5357; --color-slate-800: #24393c; --color-slate-900: #13282c; --color-slate-950: #0c1f22;
+  --radius-md: 8px; --radius-lg: 10px; --radius-xl: 14px; --radius-2xl: 18px; --radius-3xl: 24px;
+}
+
+/* Triaj — a keyboard-first tool: white, neutral greys, hairlines, black actions, colour only in status */
+[data-design="triaj"] {
+  --d-page: #ffffff; --d-surface: #ffffff; --d-dock: #fafafa;
+  --d-ink: #171717; --d-ink-2: #404040; --d-ink-3: #6f6f6f; --d-ink-4: #a3a3a3;
+  --d-line: rgb(0 0 0 / 0.08); --d-line-2: rgb(0 0 0 / 0.14);
+  --d-accent: #171717; --d-accent-hover: #333333; --d-accent-press: #000000; --d-on-accent: #ffffff;
+  --d-link: #171717; --d-pick: #f4f4f5; --d-shell: #fafafa; --d-on-shell: #171717;
+  --d-stop: #e5484d; --d-stop-wash: #feeceb; --d-ok: #18794e; --d-ok-wash: #e9f8ef; --d-now: #f59e0b;
+  --d-pay-wash: #fff7e6; --d-pay-ink: #7a4d00; --d-road: #2f6fed;
+  --d-r-ctl: 6px; --d-r-ctl-lg: 8px; --d-r-box: 10px;
+  --d-ctl-h: 2rem; --d-ctl-h-sm: 1.75rem; --d-ctl-px: 0.75rem; --d-ctl-fs: 0.8125rem; --d-ctl-weight: 500; --d-press: 0.98;
+  --d-ease: cubic-bezier(0.2, 0, 0, 1);
+  --d-card-shadow: 0 0 0 1px var(--d-line), 0 1px 2px rgb(0 0 0 / 0.03);
+  --d-pop-shadow: 0 0 0 1px var(--d-line-2), 0 12px 32px -12px rgb(0 0 0 / 0.18);
+  --d-display: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+  --logo-tile: #171717; --logo-top: #ffffff; --logo-left: #d4d4d4; --logo-right: #8a8a8a; --logo-tape: transparent;
+  --color-floor: #ffffff;
+  --color-brand-50: #fafafa; --color-brand-100: #f4f4f5; --color-brand-200: #e4e4e7; --color-brand-300: #c4c4c8; --color-brand-400: #8a8a8f;
+  --color-brand-500: #333333; --color-brand-600: #171717; --color-brand-700: #0a0a0a; --color-brand-800: #000000; --color-brand-900: #000000;
+  --color-ink-700: #404040; --color-ink-800: #262626; --color-ink-900: #1c1c1c; --color-ink-950: #171717;
+  --color-accent-100: #fff7e6; --color-accent-400: #fbbf24; --color-accent-500: #f59e0b; --color-accent-600: #d97706;
+  --color-slate-50: #fafafa; --color-slate-100: #f5f5f5; --color-slate-200: #ebebeb; --color-slate-300: #d4d4d4; --color-slate-400: #a3a3a3;
+  --color-slate-500: #8a8a8a; --color-slate-600: #6f6f6f; --color-slate-700: #404040; --color-slate-800: #262626; --color-slate-900: #171717; --color-slate-950: #0a0a0a;
+  --radius-md: 6px; --radius-lg: 8px; --radius-xl: 10px; --radius-2xl: 12px; --radius-3xl: 16px;
+}
+
+/* Val — Material 3 Expressive: a green tonal scheme, Roboto Flex, big shapes, springy spatial motion */
+[data-design="val"] {
+  --d-page: #f8faf0; --d-surface: #ffffff; --d-dock: #eceee4; --d-tonal: #e6e9df; --d-tonal-low: #f2f5ea;
+  --d-ink: #191d16; --d-ink-2: #43483e; --d-ink-3: #5c6157; --d-ink-4: #8f9487;
+  --d-line: rgb(25 29 22 / 0.1); --d-line-2: #c4c8bb;
+  --d-accent: #386a20; --d-accent-hover: #42762a; --d-accent-press: #2d5718; --d-on-accent: #ffffff;
+  --d-link: #386a20; --d-pick: #d9e7cb; --d-on-pick: #131f0d; --d-shell: #f2f5ea; --d-on-shell: #191d16;
+  --d-primary-c: #b7f397; --d-on-primary-c: #072100; --d-tertiary: #19686a; --d-tertiary-c: #bcebec; --d-on-tertiary-c: #002021;
+  --d-stop: #ba1a1a; --d-stop-wash: #ffdad6; --d-ok: #386a20; --d-ok-wash: #d8f5c6; --d-now: #19686a;
+  --d-pay-wash: #bcebec; --d-pay-ink: #002021; --d-road: #19686a;
+  --d-r-ctl: 999px; --d-r-ctl-lg: 999px; --d-r-box: 28px;
+  --d-ctl-h: 2.5rem; --d-ctl-h-sm: 2rem; --d-ctl-px: 1.25rem; --d-ctl-fs: 0.875rem; --d-ctl-weight: 600; --d-press: 0.95;
+  /* M3 Expressive spatial spring (damping 0.8): a small overshoot */
+  --d-ease: linear(0, 0.034 2.1%, 0.13 4.4%, 0.476 10.8%, 0.737 16.3%, 0.906 21.9%, 0.974 25.6%, 1.019 30.2%, 1.039 35.3%, 1.04 40.2%, 1.025 48.6%, 1.006 61.7%, 0.998 77%, 1);
+  --d-ease-fx: cubic-bezier(0.31, 0.94, 0.34, 1);
+  --d-card-shadow: none;
+  --d-pop-shadow: 0 2px 6px rgb(0 0 0 / 0.12), 0 8px 24px -6px rgb(0 0 0 / 0.16);
+  --d-display: "Roboto Flex Variable", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Roboto Flex Variable", "Roboto", ui-sans-serif, system-ui, sans-serif; --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --logo-tile: #386a20; --logo-top: #ffffff; --logo-left: #b7f397; --logo-right: #8fcf6f; --logo-tape: transparent;
+  --color-floor: #f8faf0;
+  --color-brand-50: #f2f8ec; --color-brand-100: #d8f5c6; --color-brand-200: #b7f397; --color-brand-300: #9cd67d; --color-brand-400: #6ea94f;
+  --color-brand-500: #42762a; --color-brand-600: #386a20; --color-brand-700: #2d5718; --color-brand-800: #1f3f0f; --color-brand-900: #102b04;
+  --color-ink-700: #43483e; --color-ink-800: #2e322a; --color-ink-900: #22261f; --color-ink-950: #191d16;
+  --color-accent-100: #bcebec; --color-accent-400: #4fa3a5; --color-accent-500: #19686a; --color-accent-600: #004f51;
+  --color-slate-50: #f8faf0; --color-slate-100: #f2f5ea; --color-slate-200: #e6e9df; --color-slate-300: #c4c8bb; --color-slate-400: #8f9487;
+  --color-slate-500: #74796d; --color-slate-600: #5c6157; --color-slate-700: #43483e; --color-slate-800: #2e322a; --color-slate-900: #22261f; --color-slate-950: #191d16;
+  --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-2xl: 28px; --radius-3xl: 32px;
+}
+
+/* 4 · Dispecerat — carrier portal: blue bar, white work surface, amber for the one main action */
+[data-design="dispecerat"] {
+  --d-page: #ffffff; --d-surface: #ffffff; --d-dock: #f4f6f9;
+  --d-ink: #0f1b2d; --d-ink-2: #414c5e; --d-ink-3: #667183; --d-ink-4: #99a2b0;
+  --d-line: rgb(15 27 45 / 0.10); --d-line-2: rgb(15 27 45 / 0.18);
+  --d-accent: #ffb020; --d-accent-hover: #f7a614; --d-accent-press: #f29d00; --d-on-accent: #1c1400;
+  --d-link: #1552c6; --d-pick: #e9f0fd; --d-shell: #0e3b8e; --d-on-shell: #ffffff;
+  --d-stop: #c5281c; --d-stop-wash: #fdeeec; --d-ok: #18794a; --d-ok-wash: #e8f5ee; --d-now: #ffb020;
+  --d-pay-wash: #fff5dc; --d-pay-ink: #5c4300; --d-road: #1552c6;
+  --d-r-ctl: 4px; --d-r-ctl-lg: 6px; --d-r-box: 6px;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-floor: #ffffff;
+  --color-brand-50: #eef3fd; --color-brand-100: #dbe6fb; --color-brand-200: #b9cdf6; --color-brand-300: #8cabef; --color-brand-400: #5a84e2;
+  --color-brand-500: #2c63d3; --color-brand-600: #1552c6; --color-brand-700: #1145a8; --color-brand-800: #0e3b8e; --color-brand-900: #0a2f73;
+  --color-ink-700: #414c5e; --color-ink-800: #1c2940; --color-ink-900: #142033; --color-ink-950: #0f1b2d;
+  --color-accent-100: #fff5dc; --color-accent-400: #ffc24d; --color-accent-500: #ffb020; --color-accent-600: #f29d00;
+  --radius-md: 4px; --radius-lg: 4px; --radius-xl: 6px; --radius-2xl: 6px; --radius-3xl: 10px;
+}
+
+/* 8 · Kraft — packaging: label white, kraft board, blue stamp ink */
+[data-design="kraft"] {
+  --d-page: #ffffff; --d-surface: #ffffff; --d-dock: #f6f0e7;
+  --d-ink: #2a1f18; --d-ink-2: #57483c; --d-ink-3: #746355; --d-ink-4: #a89a8c;
+  --d-line: rgb(42 31 24 / 0.12); --d-line-2: rgb(42 31 24 / 0.22);
+  --d-accent: #1e4ecb; --d-accent-hover: #1a46b8; --d-accent-press: #173fa8; --d-on-accent: #ffffff;
+  --d-link: #1e4ecb; --d-pick: #e8eefc; --d-shell: #f6f0e7; --d-on-shell: #2a1f18;
+  --d-stop: #b4281c; --d-stop-wash: #fbebe8; --d-ok: #2c7a4b; --d-ok-wash: #e6f3ea; --d-now: #1e4ecb;
+  --d-pay-wash: #fbf0d6; --d-pay-ink: #6a4b00; --d-road: #1e4ecb;
+  --d-r-ctl: 6px; --d-r-ctl-lg: 8px; --d-r-box: 8px;
+  --d-ctl-h: 2.125rem; --d-ctl-fs: 0.90625rem; --d-ctl-weight: 600;
+  --font-sans: "Source Sans 3 Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "Source Code Pro Variable", ui-monospace, monospace;
+  --logo-tile: #8b5a2b; --logo-left: #f1e3cf; --logo-right: #dcc3a1; --logo-tape: #1e4ecb;
+  --color-floor: #ffffff;
+  --color-brand-50: #eef2fd; --color-brand-100: #dde6fb; --color-brand-200: #bccdf7; --color-brand-300: #90abef; --color-brand-400: #5d82e3;
+  --color-brand-500: #3463d6; --color-brand-600: #1e4ecb; --color-brand-700: #173fa8; --color-brand-800: #153589; --color-brand-900: #122b6c;
+  --color-ink-700: #57483c; --color-ink-800: #3a2c22; --color-ink-900: #2f231b; --color-ink-950: #2a1f18;
+  --color-accent-100: #fbf0d6; --color-accent-400: #ecb75a; --color-accent-500: #e9a23b; --color-accent-600: #c9851f;
+  --color-slate-50: #faf7f2; --color-slate-100: #f6f0e7; --color-slate-200: #ebe1d2; --color-slate-300: #d9ccb9; --color-slate-400: #a89a8c;
+  --color-slate-500: #746355; --color-slate-600: #57483c; --color-slate-700: #45382e; --color-slate-800: #352a22; --color-slate-900: #2a1f18; --color-slate-950: #1d1611;
+  --radius-md: 6px; --radius-lg: 6px; --radius-xl: 8px; --radius-2xl: 8px; --radius-3xl: 12px;
+}
+
+/* 9 · Semnal — road signage: signal yellow, sign black, red only for a stop */
+[data-design="semnal"] {
+  --d-page: #ffffff; --d-surface: #ffffff; --d-dock: #f5f5f1;
+  --d-ink: #111111; --d-ink-2: #3a3a3a; --d-ink-3: #666666; --d-ink-4: #a3a3a3;
+  --d-line: rgb(0 0 0 / 0.13); --d-line-2: rgb(0 0 0 / 0.26);
+  --d-accent: #111111; --d-accent-hover: #2b2b2b; --d-accent-press: #000000; --d-on-accent: #ffffff;
+  --d-link: #111111; --d-pick: #fff6cc; --d-shell: #ffcd00; --d-on-shell: #111111;
+  --d-stop: #d0211a; --d-stop-wash: #fdecea; --d-ok: #17794a; --d-ok-wash: #e7f4ec; --d-now: #ffcd00;
+  --d-pay-wash: #fff6cc; --d-pay-ink: #111111; --d-road: #111111;
+  --d-r-ctl: 3px; --d-r-ctl-lg: 4px; --d-r-box: 4px;
+  --d-ctl-h: 2.25rem; --d-ctl-fs: 0.90625rem; --d-ctl-weight: 700;
+  --d-display: "Sofia Sans Condensed Variable", "Sofia Sans Variable", sans-serif;
+  --font-sans: "Sofia Sans Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "Sofia Sans Condensed Variable", ui-monospace, monospace;
+  --logo-tile: #111111; --logo-top: #ffcd00; --logo-left: #ffffff; --logo-right: #c9c9c9; --logo-tape: transparent;
+  --color-floor: #ffffff;
+  --color-brand-50: #fff9db; --color-brand-100: #fff0ad; --color-brand-200: #ffe680; --color-brand-300: #ffd93b; --color-brand-400: #ffcd00;
+  --color-brand-500: #111111; --color-brand-600: #111111; --color-brand-700: #000000; --color-brand-800: #000000; --color-brand-900: #000000;
+  --color-ink-700: #3a3a3a; --color-ink-800: #262626; --color-ink-900: #171717; --color-ink-950: #111111;
+  --color-accent-100: #fff6cc; --color-accent-400: #ffd93b; --color-accent-500: #ffcd00; --color-accent-600: #e0b300;
+  --color-slate-50: #fafaf8; --color-slate-100: #f5f5f1; --color-slate-200: #e7e7e2; --color-slate-300: #d2d2cc; --color-slate-400: #a3a3a3;
+  --color-slate-500: #666666; --color-slate-600: #4d4d4d; --color-slate-700: #3a3a3a; --color-slate-800: #262626; --color-slate-900: #171717; --color-slate-950: #0a0a0a;
+  --radius-md: 3px; --radius-lg: 3px; --radius-xl: 4px; --radius-2xl: 4px; --radius-3xl: 6px;
+}
+
+/* 10 · Verde — a green light: leaf for actions, mint for quiet surfaces, larger and roomier */
+[data-design="verde"] {
+  --d-page: #ffffff; --d-surface: #ffffff; --d-dock: #edf5f0;
+  --d-ink: #14201a; --d-ink-2: #42524a; --d-ink-3: #63736a; --d-ink-4: #9aa8a0;
+  --d-line: rgb(20 32 26 / 0.10); --d-line-2: rgb(20 32 26 / 0.20);
+  --d-accent: #0d6b43; --d-accent-hover: #0b5f3c; --d-accent-press: #0a5435; --d-on-accent: #ffffff;
+  --d-link: #0d6b43; --d-pick: #dcebe2; --d-shell: #ffffff; --d-on-shell: #14201a;
+  --d-stop: #c2271b; --d-stop-wash: #fdeeeb; --d-ok: #1b7f4d; --d-ok-wash: #e1f1e7; --d-now: #f5a524;
+  --d-pay-wash: #fff3d1; --d-pay-ink: #6b4a00; --d-road: #2262c6;
+  --d-r-ctl: 10px; --d-r-ctl-lg: 12px; --d-r-box: 14px;
+  --d-ctl-h: 2.5rem; --d-ctl-h-sm: 2.125rem; --d-ctl-px: 1rem; --d-ctl-fs: 0.9375rem; --d-ctl-weight: 600;
+  --font-sans: "Wix Madefor Text Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "Wix Madefor Text Variable", ui-sans-serif, sans-serif;
+  --logo-tile: #0d6b43; --logo-left: #d5ecdf; --logo-right: #a3d3b9; --logo-tape: transparent;
+  --color-floor: #ffffff;
+  --color-brand-50: #edf5f0; --color-brand-100: #dcebe2; --color-brand-200: #b9d8c6; --color-brand-300: #8cc0a3; --color-brand-400: #4f9e77;
+  --color-brand-500: #1e8257; --color-brand-600: #0d6b43; --color-brand-700: #0a5435; --color-brand-800: #0a442c; --color-brand-900: #083724;
+  --color-ink-700: #42524a; --color-ink-800: #24332b; --color-ink-900: #1a2820; --color-ink-950: #14201a;
+  --radius-md: 8px; --radius-lg: 10px; --radius-xl: 12px; --radius-2xl: 14px; --radius-3xl: 20px;
+}
+
+/* 11 · Tactil — one raised sheet on a quiet desk, controls with real depth, one cobalt accent */
+[data-design="tactil"] {
+  --d-page: #f3f4f6; --d-surface: #ffffff; --d-dock: #eceef2;
+  --d-ink: #16191e; --d-ink-2: #4a515e; --d-ink-3: #6b7280; --d-ink-4: #a4aab5;
+  --d-line: rgb(22 25 30 / 0.08); --d-line-2: rgb(22 25 30 / 0.15);
+  --d-accent: #2f5bea; --d-accent-hover: #4572f5; --d-accent-press: #2449c7; --d-on-accent: #ffffff;
+  --d-link: #2f5bea; --d-pick: #ecf0fe; --d-shell: #f3f4f6; --d-on-shell: #16191e;
+  --d-stop: #d23b28; --d-stop-wash: #fdeeeb; --d-ok: #1c8a52; --d-ok-wash: #e6f5ec; --d-now: #f5a524;
+  --d-pay-wash: #fff4d6; --d-pay-ink: #6b4a00; --d-road: #2f5bea;
+  --d-r-ctl: 8px; --d-r-ctl-lg: 12px; --d-r-box: 14px;
+  --d-card-shadow: 0 0 0 1px rgb(22 25 30 / 0.06), 0 1px 2px rgb(22 25 30 / 0.05), 0 10px 28px -14px rgb(22 25 30 / 0.16);
+  --d-pop-shadow: 0 0 0 1px rgb(22 25 30 / 0.08), 0 4px 10px -2px rgb(22 25 30 / 0.10), 0 18px 44px -12px rgb(22 25 30 / 0.28);
+  --font-sans: "Geologica Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --logo-tile: #2f5bea; --logo-left: #d6e0fc; --logo-right: #9db3f6; --logo-tape: transparent;
+  --color-floor: #f3f4f6;
+  --color-brand-50: #ecf0fe; --color-brand-100: #dbe3fd; --color-brand-200: #b9c8fb; --color-brand-300: #8ea5f7; --color-brand-400: #5f80f1;
+  --color-brand-500: #4572f5; --color-brand-600: #2f5bea; --color-brand-700: #2449c7; --color-brand-800: #1f3ca1; --color-brand-900: #1a327f;
+  --color-ink-700: #4a515e; --color-ink-800: #262b33; --color-ink-900: #1c2026; --color-ink-950: #16191e;
+  --radius-md: 6px; --radius-lg: 8px; --radius-xl: 10px; --radius-2xl: 14px; --radius-3xl: 18px;
+}
+
+/* 12 · Aer — content on a pale sky, controls on frosted glass, ink-black pills, soft springs */
+[data-design="aer"] {
+  --d-page: #edf1f6; --d-surface: #ffffff; --d-dock: #e4e9f0;
+  --d-ink: #14171c; --d-ink-2: #49505c; --d-ink-3: #6a7280; --d-ink-4: #a2a9b5;
+  --d-line: rgb(20 23 28 / 0.08); --d-line-2: rgb(20 23 28 / 0.14);
+  --d-accent: #14171c; --d-accent-hover: #2a2f38; --d-accent-press: #000000; --d-on-accent: #ffffff;
+  --d-link: #14171c; --d-pick: #f0f3f8; --d-shell: rgb(255 255 255 / 0.72); --d-on-shell: #14171c;
+  --d-stop: #d92d20; --d-stop-wash: #fdecea; --d-ok: #1e9a5a; --d-ok-wash: #e3f5ea; --d-now: #f5a524;
+  --d-pay-wash: #fff4d6; --d-pay-ink: #6b4a00; --d-road: #2d6be4;
+  --d-r-ctl: 999px; --d-r-ctl-lg: 999px; --d-r-box: 18px;
+  --d-ctl-h: 2.375rem; --d-ctl-h-sm: 1.875rem; --d-ctl-px: 1rem; --d-ctl-fs: 0.90625rem; --d-ctl-weight: 600; --d-press: 0.96;
+  --d-ease: linear(0, 0.006 1.3%, 0.026 2.8%, 0.057 4.3%, 0.096 5.8%, 0.191 8.8%, 0.413 15%, 0.514 18%, 0.613 21.3%, 0.698 24.5%, 0.765 27.5%, 0.825 30.8%, 0.873 34%, 0.914 37.5%, 0.946 41.3%, 0.971 45.5%, 0.989 50.2%, 1 55.8%, 1.006 67.8%, 1);
+  --d-pop-shadow: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 0 0 1px rgb(20 23 28 / 0.05), 0 12px 32px -12px rgb(30 45 70 / 0.28);
+  --font-sans: "Onest Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "Onest Variable", ui-sans-serif, sans-serif;
+  --logo-tile: #14171c; --logo-left: #c9cfd9; --logo-right: #8d96a5; --logo-tape: transparent;
+  --color-floor: #edf1f6;
+  --color-brand-50: #f0f3f8; --color-brand-100: #e4e9f0; --color-brand-200: #cfd6e0; --color-brand-300: #a2a9b5; --color-brand-400: #6a7280;
+  --color-brand-500: #2a2f38; --color-brand-600: #14171c; --color-brand-700: #0c0e12; --color-brand-800: #000000; --color-brand-900: #000000;
+  --color-ink-700: #49505c; --color-ink-800: #262a31; --color-ink-900: #1b1e24; --color-ink-950: #14171c;
+  --radius-md: 10px; --radius-lg: 12px; --radius-xl: 14px; --radius-2xl: 18px; --radius-3xl: 26px;
+}
+
+/* 13 · Expres — flat tonal regions, no shadows; one loud orange action that changes shape */
+[data-design="expres"] {
+  --d-page: #fbfcfd; --d-surface: #fbfcfd; --d-dock: #f0f4f9; --d-tone-2: #e2e9f1;
+  --d-ink: #111c32; --d-ink-2: #4d586c; --d-ink-3: #66718a; --d-ink-4: #9aa5b8;
+  --d-line: #d1d8e1; --d-line-2: #b9c3d0;
+  --d-accent: #f3821d; --d-accent-hover: #f78d2c; --d-accent-press: #de7110; --d-on-accent: #111c32;
+  --d-link: #111c32; --d-pick: #e2e9f1; --d-shell: #e2e9f1; --d-on-shell: #111c32;
+  --d-stop: #c51e21; --d-stop-wash: #fde8e6; --d-ok: #1b7f4d; --d-ok-wash: #e0f3e8; --d-now: #f3821d;
+  --d-pay-wash: #ffebd4; --d-pay-ink: #6b3d0c; --d-road: #f3821d;
+  --d-r-ctl: 8px; --d-r-ctl-lg: 16px; --d-r-box: 14px;
+  --d-ctl-h: 2.25rem; --d-ctl-px: 0.875rem; --d-ctl-fs: 0.90625rem; --d-ctl-weight: 600;
+  --d-card-shadow: none;
+  --d-ease: linear(0, 0.005 1.3%, 0.024 2.8%, 0.054 4.3%, 0.091 5.8%, 0.181 8.8%, 0.391 15%, 0.494 18.3%, 0.587 21.5%, 0.669 24.8%, 0.738 28%, 0.796 31.3%, 0.847 34.8%, 0.89 38.5%, 0.926 42.8%, 0.953 47.3%, 0.973 52.3%, 0.988 58.3%, 0.996 64.5%, 1 72.5%, 1);
+  --d-spring-x: linear(0, 0.008 1.3%, 0.029 2.5%, 0.07 4%, 0.124 5.5%, 0.176 6.8%, 0.245 8.3%, 0.533 14%, 0.651 16.5%, 0.758 19%, 0.85 21.5%, 0.919 23.8%, 0.981 26.3%, 1.027 28.7%, 1.063 31.5%, 1.078 33.3%, 1.089 35.3%, 1.094 37.3%, 1.094 39.5%, 1.081 44.5%, 1.019 58.8%, 0.998 67%, 0.991 77.8%, 1);
+  --font-sans: "Golos Text Variable", ui-sans-serif, system-ui, sans-serif; --font-mono: "Golos Text Variable", ui-sans-serif, sans-serif;
+  --logo-tile: #111c32; --logo-top: #f3821d; --logo-left: #ffffff; --logo-right: #c8d2df; --logo-tape: transparent;
+  --color-floor: #fbfcfd;
+  --color-brand-50: #f0f4f9; --color-brand-100: #e2e9f1; --color-brand-200: #d1d8e1; --color-brand-300: #9aa5b8; --color-brand-400: #66718a;
+  --color-brand-500: #2b3a57; --color-brand-600: #111c32; --color-brand-700: #0b1426; --color-brand-800: #070d1a; --color-brand-900: #04080f;
+  --color-ink-700: #4d586c; --color-ink-800: #1f2b45; --color-ink-900: #16223a; --color-ink-950: #111c32;
+  --color-accent-100: #ffebd4; --color-accent-400: #f9a352; --color-accent-500: #f3821d; --color-accent-600: #de7110;
+  --radius-md: 8px; --radius-lg: 8px; --radius-xl: 12px; --radius-2xl: 14px; --radius-3xl: 24px;
+}
+
+/* Shadows are written into the utility classes, so each design restates what "a card" casts. */
+[data-design] .shadow-card { --tw-shadow: 0 0 #0000; }
+[data-design="tactil"] .shadow-card { --tw-shadow: 0 1px 2px rgb(22 25 30 / 0.05), 0 10px 28px -14px rgb(22 25 30 / 0.16); }
+[data-design="expres"] .ring-slate-900\/5 { --tw-ring-color: transparent; }
+[data-design="expres"] .shadow-card { background-color: var(--d-dock); }

@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 4 · Dispecerat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Colours come from the logo mark: the blue tile, the white box, the amber tape. */
+  :root {
+    --van: #0e3b8e;            /* shell: top bar */
+    --van-deep: #0a2f73;
+    --tape: #ffb020;           /* the one primary action */
+    --tape-press: #f29d00;
+    --label: #ffffff;          /* work surface */
+    --dock: #f4f6f9;           /* second neutral layer: toolbars, side panel, table head */
+    --ink: #0f1b2d;
+    --ink-2: #414c5e;
+    --ink-3: #667183;
+    --ink-4: #99a2b0;
+    --line: rgb(15 27 45 / 0.10);
+    --line-strong: rgb(15 27 45 / 0.18);
+    --link: #1552c6;
+    --pick: #e9f0fd;           /* selected row, focus wash */
+    --stop: #c5281c;           /* failed, needs attention */
+    --stop-wash: #fdeeec;
+    --done: #18794a;
+    --r-ctl: 4px; --r-box: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: #cfe0ff; }
+  body { background: #e4e7ec; color: var(--ink); font: 400 13px/1.45 "IBM Plex Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; padding: 28px; }
+  svg { display: block; flex: none; }
+  .i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: -0.01em; }
+  .intro { max-width: 1600px; margin: 0 auto 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; color: var(--ink-2); font-size: 14px; }
+  .intro b { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .stage { max-width: 1600px; margin: 0 auto; display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+
+  /* ---------- controls ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: var(--r-ctl); border: 1px solid var(--line-strong); background: var(--label); color: var(--ink); font: 500 13px/1 "IBM Plex Sans"; white-space: nowrap; cursor: pointer; transition: background-color 120ms, border-color 120ms, transform 120ms cubic-bezier(.23,1,.32,1); }
+  .btn:hover { background: var(--dock); border-color: rgb(15 27 45 / 0.28); }
+  .btn:active { transform: scale(0.97); }
+  .btn:focus-visible, .field:focus-visible, .tab:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+  .btn.go { background: var(--tape); border-color: transparent; color: #1c1400; font-weight: 600; }
+  .btn.go:hover { background: var(--tape-press); }
+  .btn.sm { height: 26px; padding: 0 8px; font-size: 12px; }
+  .field { height: 32px; border-radius: var(--r-ctl); border: 1px solid var(--line-strong); background: var(--label); padding: 0 28px 0 10px; font: 400 13px "IBM Plex Sans"; color: var(--ink); caret-color: var(--link); appearance: none;
+           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23667183' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; }
+  input[type=checkbox] { width: 14px; height: 14px; accent-color: var(--link); margin: 0; vertical-align: -2px; }
+
+  /* ---------- office: shell ---------- */
+  .app { flex: 1 1 1040px; min-width: 0; background: var(--label); border: 1px solid var(--line-strong); border-radius: var(--r-box); overflow: hidden; }
+  .bar { display: flex; align-items: stretch; height: 52px; padding: 0 16px 0 20px; background: var(--van); color: #fff; }
+  .brand { display: flex; align-items: center; gap: 9px; margin-right: 28px; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; }
+  .brand span { font-weight: 400; opacity: 0.85; }
+  .nav { display: flex; }
+  .nav a { display: flex; align-items: center; padding: 0 12px; white-space: nowrap; color: #fff; opacity: 0.74; text-decoration: none; font-size: 13.5px; font-weight: 500; box-shadow: inset 0 -3px 0 transparent; transition: opacity 120ms; }
+  .nav a:hover { opacity: 1; }
+  .nav a.on { opacity: 1; box-shadow: inset 0 -3px 0 var(--tape); }
+  .nav a em { font-style: normal; margin-left: 6px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #fff; color: var(--stop); font-size: 11.5px; font-weight: 600; display: grid; place-items: center; }
+  .bar .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .search { display: flex; align-items: center; gap: 8px; width: 280px; height: 32px; padding: 0 8px 0 10px; border-radius: var(--r-ctl); background: rgb(255 255 255 / 0.12); color: rgb(255 255 255 / 0.78); font-size: 13px; }
+  .search kbd { margin-left: auto; font: 500 11px "IBM Plex Mono"; border: 1px solid rgb(255 255 255 / 0.3); border-radius: 3px; padding: 0 5px; }
+  .me { width: 30px; height: 30px; border-radius: 15px; background: var(--van-deep); display: grid; place-items: center; font-size: 12px; font-weight: 600; }
+
+  .head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 14px; }
+  .head h1 { font-size: 20px; line-height: 1.2; font-weight: 600; letter-spacing: -0.015em; }
+  .head h1 span { font-weight: 400; color: var(--ink-3); }
+  .head .sync { margin-left: auto; color: var(--ink-3); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+  .head .sync i { width: 6px; height: 6px; border-radius: 3px; background: var(--done); }
+
+  .alert { display: flex; align-items: center; gap: 10px; margin: 0 20px 14px; padding: 8px 8px 8px 12px; border-radius: var(--r-box); background: var(--stop-wash); color: #7d160e; }
+  .alert svg { color: var(--stop); }
+  .alert b { font-weight: 600; color: #5e0f09; }
+  .alert .acts { margin-left: auto; display: flex; gap: 6px; }
+  .alert .btn { border-color: rgb(197 40 28 / 0.3); }
+
+  .work { display: grid; grid-template-columns: minmax(0, 1fr) 316px; border-top: 1px solid var(--line); }
+
+  /* ---------- office: list ---------- */
+  .tabs { display: flex; gap: 2px; padding: 0 12px; border-bottom: 1px solid var(--line); }
+  .tab { display: flex; align-items: center; gap: 6px; height: 40px; padding: 0 8px; color: var(--ink-3); font-weight: 500; text-decoration: none; box-shadow: inset 0 -2px 0 transparent; }
+  .tab:hover { color: var(--ink); }
+  .tab b { font-weight: 500; color: var(--ink-4); }
+  .tab.on { color: var(--ink); box-shadow: inset 0 -2px 0 var(--ink); }
+  .tab.on b { color: var(--ink-3); }
+  .tab.bad b { color: var(--stop); font-weight: 600; }
+  .tools { display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: var(--dock); border-bottom: 1px solid var(--line); }
+  .tools .field { width: 150px; }
+  .tools .count { margin-left: auto; color: var(--ink-3); font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { height: 32px; padding: 0 10px; text-align: left; font-size: 12px; font-weight: 500; color: var(--ink-3); border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th.sort { color: var(--ink); }
+  th.sort::after { content: " ↓"; color: var(--ink-3); }
+  td { height: 40px; padding: 0 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th:first-child, td:first-child { padding-left: 20px; width: 34px; }
+  th:last-child, td:last-child { padding-right: 20px; }
+  .r { text-align: right; }
+  tbody tr { transition: background-color 80ms; cursor: pointer; }
+  tbody tr:hover { background: var(--dock); }
+  tr.sel, tr.sel:hover { background: var(--pick); }
+  td.who { font-weight: 500; }
+  td.where { color: var(--ink-2); max-width: 250px; overflow: hidden; text-overflow: ellipsis; }
+  td.where b { font-weight: 500; color: var(--ink); }
+  td.soft { color: var(--ink-2); }
+  td.nil { color: var(--ink-4); }
+  tr.past td { color: var(--ink-3); }
+  tr.past td.who, tr.past td.where b { color: var(--ink-2); font-weight: 400; }
+  /* Status is text with a small mark. Colour appears only when it means something. */
+  .st { display: inline-flex; align-items: center; gap: 7px; }
+  .st i { width: 8px; height: 8px; border-radius: 4px; border: 1.5px solid var(--ink-4); }
+  .st.road i { background: var(--link); border-color: var(--link); }
+  .st.pick i { border-color: var(--link); }
+  .st.fail { color: var(--stop); font-weight: 500; }
+  .st.fail small { font-size: 12px; font-weight: 400; color: var(--ink-3); margin-left: 2px; }
+  .st.ok { color: var(--ink-3); }
+  .st svg { width: 13px; height: 13px; stroke-width: 2.4; }
+  .st.ok svg { color: var(--done); }
+  .foot { display: flex; justify-content: space-between; padding: 10px 20px 12px; color: var(--ink-3); font-size: 12px; }
+
+  /* ---------- office: couriers panel ---------- */
+  .side { background: var(--dock); border-left: 1px solid var(--line); }
+  .side section { padding: 14px 16px 16px; border-bottom: 1px solid var(--line); }
+  .side h2 { font-size: 13px; font-weight: 600; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: baseline; }
+  .side h2 a { font-weight: 400; color: var(--link); text-decoration: none; font-size: 12px; }
+  .cr + .cr { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .cr .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .cr .top b { font-weight: 600; }
+  .cr .top span { color: var(--ink-3); font-size: 12px; }
+  /* The signature: a courier's run drawn as stops on a line. */
+  .run { display: flex; align-items: center; height: 22px; margin: 6px 0 6px; }
+  .run i { position: relative; flex: 0 1 36px; height: 2px; background: var(--line-strong); }
+  .run i:first-child { flex: 0 0 5px; }
+  .run i::after { content: ""; position: absolute; right: -5px; top: -4px; width: 10px; height: 10px; border-radius: 5px; background: var(--dock); border: 2px solid var(--ink-4); z-index: 1; }
+  .run i.d { background: var(--van); }
+  .run i.d::after { background: var(--van); border-color: var(--van); }
+  .run i.f { background: var(--van); }
+  .run i.f::after { background: var(--stop); border-color: var(--stop); }
+  .run i.n { background: var(--van); }
+  .run i.n::after { width: 14px; height: 14px; border-radius: 50%; right: -7px; top: -6px; background: var(--tape); border: 3px solid var(--van); }
+  .run i:first-child::after { display: none; }
+  .cr p { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cr p span { color: var(--ink-3); }
+  .cash { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+  .cash b { font-weight: 600; }
+  .cash span { color: var(--ink-3); }
+  .wait { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 34px; }
+  .wait + .wait { border-top: 1px solid var(--line); }
+  .wait div { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wait span { color: var(--ink-3); }
+  dl { display: grid; grid-template-columns: 1fr auto; row-gap: 6px; }
+  dt { color: var(--ink-2); }
+  dd { text-align: right; font-weight: 500; }
+  dl .sum { padding-top: 7px; border-top: 1px solid var(--line-strong); font-weight: 600; color: var(--ink); }
+
+  /* ---------- courier phone ---------- */
+  .phone { flex: 0 0 390px; height: 812px; background: var(--label); border: 10px solid #0d1420; border-radius: 42px; overflow: hidden; display: flex; flex-direction: column; font-size: 15px; }
+  .ptop { background: var(--van); color: #fff; padding: 14px 16px 12px; }
+  .ptop .row { display: flex; align-items: center; justify-content: space-between; }
+  .ptop h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+  .ptop .cnt { font-size: 14px; opacity: 0.85; }
+  .ptop .run { margin: 10px 2px 0; }
+  .ptop .run i { flex: 1; background: rgb(255 255 255 / 0.3); }
+  .ptop .run i::after { background: var(--van); border-color: rgb(255 255 255 / 0.55); }
+  .ptop .run i.d, .ptop .run i.f, .ptop .run i.n { background: #fff; }
+  .ptop .run i.d::after { background: #fff; border-color: #fff; }
+  .ptop .run i.f::after { background: #ff8f85; border-color: #ff8f85; }
+  .ptop .run i.n::after { background: var(--tape); border-color: #fff; }
+  .next { padding: 16px 16px 14px; border-bottom: 8px solid var(--dock); }
+  .next .meta { display: flex; justify-content: space-between; align-items: center; color: var(--ink-3); font-size: 13px; margin-bottom: 6px; }
+  .next h2 { font-size: 23px; line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+  .next .city { margin-top: 3px; font-size: 16px; font-weight: 500; }
+  .next .person { margin-top: 2px; color: var(--ink-2); }
+  .facts { margin: 12px 0; border-top: 1px solid var(--line); }
+  .facts div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .facts span { color: var(--ink-3); }
+  .facts .pay { margin: 0 -16px; padding: 10px 16px; background: #fff5dc; border-bottom-color: rgb(255 176 32 / 0.5); }
+  .facts .pay span { color: #5c4300; font-weight: 500; }
+  .facts .pay b { font-size: 18px; font-weight: 600; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .phone .btn { height: 46px; font-size: 15px; border-radius: 6px; }
+  .phone .btn.go { height: 52px; font-size: 16px; margin-top: 8px; width: 100%; }
+  .cant { display: block; text-align: center; padding: 12px 0 0; color: var(--link); font-weight: 500; }
+  .list { flex: 1; overflow: hidden; }
+  .li { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 7px 12px 7px 16px; border-bottom: 1px solid var(--line); }
+  .li div { flex: 1; min-width: 0; }
+  .li b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .li span { display: block; color: var(--ink-3); font-size: 13px; }
+  .li.bad b, .li.bad svg:first-child { color: var(--stop); }
+  .li svg:first-child { width: 18px; height: 18px; color: var(--ink-3); }
+  .li svg:last-child { color: var(--ink-4); }
+  .tabbar { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line-strong); padding: 6px 0 14px; background: var(--label); }
+  .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--ink-3); font-size: 11.5px; font-weight: 500; text-decoration: none; }
+  .tabbar a.on { color: var(--van); }
+  .tabbar svg { width: 22px; height: 22px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="alert" viewBox="0 0 24 24"><path d="M12 3 2.5 19.5h19L12 3Z"/><path d="M12 10v4M12 17h.01"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="nav" viewBox="0 0 24 24"><path d="M3 11 21 3l-8 18-2-8-8-2Z"/></symbol>
+  <symbol id="list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></symbol>
+  <symbol id="scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/></symbol>
+  <symbol id="wallet" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h11v4"/><path d="M4 7v10a2 2 0 0 0 2 2h14V9H6a2 2 0 0 1-2-2Z"/><path d="M16 14h.01"/></symbol>
+  <symbol id="box" viewBox="0 0 24 24"><path d="M12 3 3.5 7.5v9L12 21l8.500-4.500v-9L12 3Z"/><path d="M3.500 7.500 12 12l8.500-4.500M12 12v9"/></symbol>
+  <symbol id="print" viewBox="0 0 24 24"><path d="M7 8V4h10v4M7 17H5a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2M7 14h10v6H7z"/></symbol>
+</svg>
+
+<div class="intro"><b>Varianta 4 · Dispecerat</b> Aspect de portal de curierat: bară de brand sus, tabel dens, fără carduri și fără umbre. Culorile vin din sigla voastră: albastru, alb și chihlimbarul benzii adezive, folosit doar pentru acțiunea principală. Singurul element propriu: traseul curierului desenat ca șir de opriri.</div>
+
+<div class="stage">
+  <div class="app">
+    <div class="bar">
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#fff"/><g stroke="#fff" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.500 10.500Z" fill="#0e3b8e"/><path d="M6.500 10.500 16 16V27L6.500 21.500Z" fill="#3f6fc4"/><path d="M25.500 10.500V21.500L16 27V16Z" fill="#7da3e3"/><path d="M19.230 6.870 22.270 8.630 12.770 14.130V19.400L9.730 17.640V12.370Z" fill="#ffb020" stroke-width="0"/></g></svg>
+        CN <span>Deliveries</span>
+      </div>
+      <nav class="nav">
+        <a class="on" href="#">Azi</a>
+        <a href="#">Expedieri</a>
+        <a href="#">Scanare</a>
+        <a href="#">Foi de parcurs</a>
+        <a href="#">Ramburs</a>
+        <a href="#">Clienți</a>
+        <a href="#">Setări</a>
+      </nav>
+      <div class="right">
+        <div class="search"><svg class="i"><use href="#search"/></svg>Caută nr., nume, telefon<kbd>/</kbd></div>
+        <button class="btn go"><svg class="i"><use href="#plus"/></svg>Expediere nouă</button>
+        <div class="me">AD</div>
+      </div>
+    </div>
+
+    <div class="head">
+      <h1>Azi <span>· marți, 17 noiembrie</span></h1>
+      <div class="sync"><i></i>Actualizat acum 12 secunde</div>
+    </div>
+
+    <div class="alert">
+      <svg class="i"><use href="#alert"/></svg>
+      <div><b>Igor Munteanu, Durlești</b> nu răspunde. Prima încercare din 3, ramburs 915,00 MDL.</div>
+      <div class="acts"><button class="btn sm"><svg class="i" style="width:13px;height:13px"><use href="#phone"/></svg>+373 79 111 000</button><button class="btn sm">Reprogramează</button></div>
+    </div>
+
+    <div class="work">
+      <div>
+        <div class="tabs">
+          <a class="tab on" href="#">Toate <b class="num">12</b></a>
+          <a class="tab bad" href="#">Probleme <b class="num">1</b></a>
+          <a class="tab" href="#">De ridicat <b class="num">1</b></a>
+          <a class="tab" href="#">În depozit <b class="num">2</b></a>
+          <a class="tab" href="#">În livrare <b class="num">2</b></a>
+          <a class="tab" href="#">Livrate <b class="num">6</b></a>
+        </div>
+        <div class="tools">
+          <select class="field"><option>Toți curierii</option></select>
+          <select class="field"><option>Toți clienții</option></select>
+          <button class="btn"><svg class="i"><use href="#print"/></svg>Etichete</button>
+          <span class="count">1 selectată</span>
+          <select class="field" style="width:170px"><option>Schimbă starea…</option></select>
+        </div>
+        <table>
+          <thead><tr><th><input type="checkbox" aria-label="Selectează tot"></th><th>Nr.</th><th>Destinatar</th><th>Adresă</th><th>Curier</th><th class="r">Ramburs</th><th class="sort">Stare</th><th class="r">Ora</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td class="mono">0005</td><td class="who">Igor Munteanu</td><td class="where"><b>Durlești</b>, str. Codrilor 5</td><td class="soft">Ion</td><td class="r num">915,00</td><td><span class="st fail"><svg class="i"><use href="#alert"/></svg>Nu răspunde <small>1 din 3</small></span></td><td class="r num soft">15:32</td></tr>
+            <tr class="sel"><td><input type="checkbox" checked></td><td class="mono">0007</td><td class="who">Natalia Rusu</td><td class="where"><b>Ciocana</b>, bd. Mircea cel Bătrân 30</td><td class="soft">Ion</td><td class="r num">250,00</td><td><span class="st road"><i></i>În livrare</span></td><td class="r num soft">14:48</td></tr>
+            <tr><td><input type="checkbox"></td><td class="mono">0011</td><td class="who">Tipografia Nord</td><td class="where"><b>Râșcani</b>, str. Kiev 8/1</td><td class="soft">Vasile</td><td class="r nil">—</td><td><span class="st road"><i></i>În livrare</span></td><td class="r num soft">15:05</td></tr>
+            <tr><td><input type="checkbox"></td><td class="mono">0009</td><td class="who">Olga Moraru</td><td class="where"><b>Stăuceni</b>, str. Unirii 7</td><td class="soft">Ion</td><td class="r nil">—</td><td><span class="st pick"><i></i>De ridicat</span></td><td class="r num soft">15:30</td></tr>
+            <tr><td><input type="checkbox"></td><td class="mono">0006</td><td class="who">Agenția Beta</td><td class="where"><b>Bălți</b>, str. Independenței 1</td><td class="nil">Fără curier</td><td class="r nil">—</td><td><span class="st"><i></i>În depozit</span></td><td class="r num soft">09:15</td></tr>
+            <tr><td><input type="checkbox"></td><td class="mono">0012</td><td class="who">Doina Lungu</td><td class="where"><b>Ialoveni</b>, str. Alexandru cel Bun 3</td><td class="nil">Fără curier</td><td class="r num">390,00</td><td><span class="st"><i></i>În depozit</span></td><td class="r num soft">10:40</td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="mono">0008</td><td class="who">Victor Ceban</td><td class="where"><b>Botanica</b>, bd. Dacia 44, ap. 9</td><td>Ion</td><td class="r num">640,00</td><td><span class="st ok"><svg class="i"><use href="#check"/></svg>Livrat</span></td><td class="r num">15:25</td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="mono">0004</td><td class="who">Elena Ciobanu</td><td class="where"><b>Botanica</b>, str. Dacia 23, ap. 14</td><td>Ion</td><td class="r num">480,00</td><td><span class="st ok"><svg class="i"><use href="#check"/></svg>Livrat</span></td><td class="r num">14:50</td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="mono">0002</td><td class="who">Andrei Rusu</td><td class="where"><b>Centru</b>, bd. Ștefan cel Mare 100</td><td>Vasile</td><td class="r num">1.250,50</td><td><span class="st ok"><svg class="i"><use href="#check"/></svg>Livrat</span></td><td class="r num">14:34</td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="mono">0003</td><td class="who">Ana Botnaru</td><td class="where"><b>Buiucani</b>, str. Alba Iulia 75</td><td>Ion</td><td class="r nil">—</td><td><span class="st ok"><svg class="i"><use href="#check"/></svg>Livrat</span></td><td class="r num">13:40</td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="mono">0010</td><td class="who">Cafeneaua Tucano</td><td class="where"><b>Centru</b>, str. Pușkin 22</td><td>Vasile</td><td class="r nil">—</td><td><span class="st ok"><svg class="i"><use href="#check"/></svg>Livrat</span></td><td class="r num">13:02</td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="mono">0001</td><td class="who">Maria Popescu</td><td class="where"><b>Stăuceni</b>, str. Livezilor 12</td><td>Ion</td><td class="r num">350,00</td><td><span class="st ok"><svg class="i"><use href="#check"/></svg>Livrat</span></td><td class="r num">12:10</td></tr>
+          </tbody>
+        </table>
+        <div class="foot"><span>12 expedieri</span><span class="num">Ramburs total 4.275,50 MDL</span></div>
+      </div>
+
+      <aside class="side">
+        <section>
+          <h2>Curieri <a href="#">Foi de parcurs</a></h2>
+          <div class="cr">
+            <div class="top"><b>Ion Curier</b><span class="num">4 din 7</span></div>
+            <div class="run" title="Traseul de azi"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+            <p><span>Acum:</span> Ciocana, bd. Mircea cel Bătrân 30</p>
+            <div class="cash"><div><b class="num">1.470,00 MDL</b> <span>numerar</span></div><button class="btn sm">Primește</button></div>
+          </div>
+          <div class="cr">
+            <div class="top"><b>Vasile Curier</b><span class="num">2 din 3</span></div>
+            <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="n"></i></div>
+            <p><span>Acum:</span> Râșcani, str. Kiev 8/1</p>
+            <div class="cash"><div><span class="num">0,00 MDL numerar</span></div></div>
+          </div>
+        </section>
+        <section>
+          <h2>În depozit, fără curier <span class="num" style="font-weight:400;color:var(--ink-3)">2</span></h2>
+          <div class="wait"><div><b style="font-weight:500">Bălți</b> <span>· Agenția Beta</span></div><select class="field" style="height:26px;width:104px;font-size:12px"><option>Atribuie</option></select></div>
+          <div class="wait"><div><b style="font-weight:500">Ialoveni</b> <span>· Doina Lungu</span></div><select class="field" style="height:26px;width:104px;font-size:12px"><option>Atribuie</option></select></div>
+        </section>
+        <section style="border-bottom:0">
+          <h2>Ramburs azi <a href="#">Detalii</a></h2>
+          <dl class="num">
+            <dt>Încasat</dt><dd>2.720,50</dd>
+            <dt>De încasat pe drum</dt><dd>1.165,00</dd>
+            <dt>În depozit</dt><dd>390,00</dd>
+            <dt class="sum">Total, MDL</dt><dd class="sum">4.275,50</dd>
+          </dl>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="ptop">
+      <div class="row"><h1>Azi</h1><span class="cnt num">4 din 7 livrate</span></div>
+      <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+    </div>
+    <div class="next">
+      <div class="meta"><span>Următoarea livrare</span><span class="mono">CN-261117-0007</span></div>
+      <h2>bd. Mircea cel Bătrân 30</h2>
+      <div class="city">Ciocana</div>
+      <div class="person">Natalia Rusu · +373 60 123 123</div>
+      <div class="facts">
+        <div class="pay"><span>De încasat</span><b class="num">250,00 MDL</b></div>
+        <div><span>Colet</span><b style="font-weight:500">1 buc · 2 kg · Demo Shop SRL</b></div>
+        <div><span>Notă</span><b style="font-weight:500">Sunați cu 10 min înainte</b></div>
+      </div>
+      <div class="two">
+        <button class="btn"><svg class="i"><use href="#phone"/></svg>Sună</button>
+        <button class="btn"><svg class="i"><use href="#nav"/></svg>Hartă</button>
+      </div>
+      <button class="btn go">Livrat</button>
+      <a class="cant" href="#">Nu pot livra</a>
+    </div>
+    <div class="list">
+      <div class="li"><svg class="i"><use href="#box"/></svg><div><b>Demo Shop SRL, str. Ismail 1</b><span>De ridicat · 1 colet pentru Stăuceni</span></div><svg class="i"><use href="#chev"/></svg></div>
+      <div class="li bad"><svg class="i"><use href="#alert"/></svg><div><b>Durlești, str. Codrilor 5</b><span>Nu răspunde · încearcă din nou</span></div><svg class="i"><use href="#chev"/></svg></div>
+      <div class="li"><svg class="i" style="color:var(--done)"><use href="#check"/></svg><div><b style="color:var(--ink-2);font-weight:400">4 livrate azi</b></div><svg class="i"><use href="#chev"/></svg></div>
+    </div>
+    <div class="tabbar">
+      <a class="on" href="#"><svg class="i"><use href="#list"/></svg>Azi</a>
+      <a href="#"><svg class="i"><use href="#scan"/></svg>Scanează</a>
+      <a href="#"><svg class="i"><use href="#wallet"/></svg>Numerar</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

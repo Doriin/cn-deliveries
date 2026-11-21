@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cn
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cn_local_pw}
+      POSTGRES_DB: cn_tms
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on: [db]
+    environment:
+      DATABASE_URL: postgresql://cn:${POSTGRES_PASSWORD:-cn_local_pw}@db:5432/cn_tms
+      SESSION_SECRET: ${SESSION_SECRET}
+    ports:
+      - "127.0.0.1:3000:3000"
+    command: sh -c "npx prisma migrate deploy && node server.js"
+
+  worker:
+    build: .
+    restart: unless-stopped
+    depends_on: [db]
+    environment:
+      DATABASE_URL: postgresql://cn:${POSTGRES_PASSWORD:-cn_local_pw}@db:5432/cn_tms
+      GOOGLE_SERVICE_ACCOUNT_JSON: /app/secrets/google-service-account.json
+      SHEETS_SYNC_MINUTES: ${SHEETS_SYNC_MINUTES:-2}
+    volumes:
+      - ./secrets:/app/secrets:ro
+    command: npx tsx src/worker/index.ts
+
+volumes:
+  pgdata:

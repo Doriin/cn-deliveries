@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 11 · Tactil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proto.css">
+<style>
+  /* Precise and tactile: one raised sheet on a quiet desk, controls you can feel, one cobalt accent. */
+  :root {
+    --desk: #f3f4f6; --sheet: #ffffff; --well: #eceef2;
+    --ink: #16191e; --ink-2: #4a515e; --ink-3: #6b7280; --ink-4: #a4aab5;
+    --hair: rgb(22 25 30 / 0.08); --hair-2: rgb(22 25 30 / 0.15);
+    --cobalt: #2f5bea; --cobalt-hi: #4572f5; --cobalt-lo: #2449c7; --cobalt-wash: #ecf0fe;
+    --ok: #1c8a52; --stop: #d23b28; --stop-wash: #fdeeeb; --now: #f5a524; --flash: #e6f5ec;
+    --lift: 0 0 0 1px rgb(22 25 30 / 0.06), 0 1px 2px rgb(22 25 30 / 0.05), 0 10px 28px -14px rgb(22 25 30 / 0.16);
+    --pop: 0 0 0 1px rgb(22 25 30 / 0.08), 0 4px 10px -2px rgb(22 25 30 / 0.10), 0 18px 44px -12px rgb(22 25 30 / 0.28);
+    --t-press: 90ms; --t-fast: 140ms; --t-med: 200ms; --t-slow: 380ms; --press: 0.98;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: #cfdafc; }
+  body { background: #dfe2e7; color: var(--ink); font: 400 13.5px/1.45 "Geologica", system-ui, sans-serif; -webkit-font-smoothing: antialiased; padding: 28px; }
+  svg { display: block; flex: none; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; }
+  .i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+  .mono { font: 500 12px "JetBrains Mono", ui-monospace, monospace; }
+  .intro { max-width: 1600px; margin: 0 auto 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; color: var(--ink-2); font-size: 14px; }
+  .intro b { font-size: 16px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .intro span { flex: 1 1 600px; max-width: 112ch; }
+  .stage { max-width: 1600px; margin: 0 auto; display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+
+  /* ---------- buttons: a top light, a bottom edge, and they sink when pressed ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 12px; border: 0; border-radius: 8px; background: var(--sheet); font-weight: 500; white-space: nowrap; cursor: pointer; user-select: none;
+         box-shadow: 0 0 0 1px var(--hair-2), 0 1px 1px rgb(22 25 30 / 0.06), inset 0 -1px 0 rgb(22 25 30 / 0.04);
+         transition: transform var(--t-press) var(--e-out), box-shadow var(--t-fast) ease, background-color var(--t-fast) ease, filter var(--t-fast) ease; }
+  .btn:hover { transition-duration: var(--t-press), 0ms, 0ms, 0ms; }
+  .btn:hover { background: #fafafb; box-shadow: 0 0 0 1px rgb(22 25 30 / 0.22), 0 2px 3px rgb(22 25 30 / 0.07), inset 0 -1px 0 rgb(22 25 30 / 0.04); }
+  .btn:active:not(:disabled) { background: var(--well); box-shadow: 0 0 0 1px var(--hair-2), inset 0 1px 2px rgb(22 25 30 / 0.10); }
+  .btn:focus-visible, .field:focus-visible, [data-tab]:focus-visible, .box:focus-visible + i { outline: 2px solid var(--cobalt); outline-offset: 2px; }
+  .btn.go { color: #fff; background: linear-gradient(var(--cobalt-hi), var(--cobalt)); box-shadow: 0 0 0 1px var(--cobalt-lo), 0 1px 2px rgb(36 73 199 / 0.45), inset 0 1px 0 rgb(255 255 255 / 0.24); }
+  .btn.go:hover { filter: brightness(1.06); background: linear-gradient(var(--cobalt-hi), var(--cobalt)); box-shadow: 0 0 0 1px var(--cobalt-lo), 0 3px 8px -1px rgb(36 73 199 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.24); }
+  .btn.go:active:not(:disabled) { background: var(--cobalt-lo); filter: none; box-shadow: 0 0 0 1px var(--cobalt-lo), inset 0 2px 3px rgb(0 0 0 / 0.22); }
+  .btn.sm { height: 26px; padding: 0 9px; font-size: 12.5px; border-radius: 7px; }
+  .btn.ghost { background: transparent; box-shadow: none; color: var(--ink-2); }
+  .btn.ghost:hover { background: rgb(22 25 30 / 0.06); box-shadow: none; }
+  .btn.is-done { color: var(--ok); }
+  .btn.go.is-done { color: #fff; }
+  .field { height: 32px; border: 0; border-radius: 8px; background: var(--sheet); padding: 0 10px; font: inherit; color: var(--ink); caret-color: var(--cobalt); box-shadow: 0 0 0 1px var(--hair-2), inset 0 1px 1px rgb(22 25 30 / 0.04); transition: box-shadow var(--t-fast) ease; }
+  .field:hover { box-shadow: 0 0 0 1px rgb(22 25 30 / 0.24), inset 0 1px 1px rgb(22 25 30 / 0.04); }
+  .field:focus { outline: none; box-shadow: 0 0 0 1px var(--cobalt), 0 0 0 4px rgb(47 91 234 / 0.16); }
+  kbd { font: 500 11px "JetBrains Mono"; padding: 1px 5px; border-radius: 4px; color: var(--ink-3); box-shadow: 0 0 0 1px var(--hair-2), 0 1px 0 var(--hair-2); background: var(--sheet); }
+
+  /* checkbox with a tick that draws */
+  .check { position: relative; display: inline-grid; width: 16px; height: 16px; cursor: pointer; }
+  .check .box { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .check i { border-radius: 5px; background: var(--sheet); box-shadow: 0 0 0 1px rgb(22 25 30 / 0.24), inset 0 1px 1px rgb(22 25 30 / 0.06); transition: background-color var(--t-fast) ease, box-shadow var(--t-fast) ease, transform var(--t-press) var(--e-out); }
+  .check svg { position: absolute; inset: 2px; width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 180ms var(--e-out); pointer-events: none; }
+  .check .box:checked + i, .check .box:indeterminate + i { background: var(--cobalt); box-shadow: 0 0 0 1px var(--cobalt-lo), inset 0 1px 0 rgb(255 255 255 / 0.22); }
+  .check .box:checked ~ svg { stroke-dashoffset: 0; }
+  .check .box:active + i { transform: scale(0.9); }
+
+  /* ---------- shell ---------- */
+  .app { flex: 1 1 1040px; min-width: 0; background: var(--desk); border-radius: 12px; overflow: hidden; display: grid; grid-template-columns: 204px minmax(0, 1fr); box-shadow: 0 0 0 1px var(--hair-2); }
+  .rail { padding: 16px 10px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .brand { display: flex; align-items: center; gap: 9px; padding: 2px 8px 18px; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; }
+  .brand span { font-weight: 400; color: var(--ink-2); }
+  .rail a { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: 8px; font-weight: 500; color: var(--ink-2); transition: background-color var(--t-fast) ease, color var(--t-fast) ease; }
+  .rail a .i { color: var(--ink-3); }
+  .rail a:hover { background: rgb(22 25 30 / 0.05); color: var(--ink); }
+  .rail a.on { background: var(--sheet); color: var(--ink); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(22 25 30 / 0.06); }
+  .rail a.on .i { color: var(--cobalt); }
+  .rail a em { font-style: normal; margin-left: auto; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--stop); color: #fff; font-size: 11.5px; font-weight: 600; display: grid; place-items: center; }
+  .rail .gap { height: 14px; }
+  .rail .user { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px 8px 2px; }
+  .me { width: 28px; height: 28px; border-radius: 14px; background: linear-gradient(#5a6170, #3c424e); color: #fff; display: grid; place-items: center; font-size: 11px; font-weight: 600; box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2); }
+  .rail .user b { display: block; font-weight: 500; }
+  .rail .user span { display: block; font-size: 12px; color: var(--ink-3); }
+
+  .wrap { padding: 10px 10px 10px 0; min-width: 0; }
+  .sheet { background: var(--sheet); border-radius: 14px; box-shadow: var(--lift); overflow: hidden; }
+  .head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; }
+  .head h1 { font-size: 19px; font-weight: 600; letter-spacing: -0.02em; margin-right: auto; white-space: nowrap; }
+  .head h1 span { font-weight: 400; color: var(--ink-3); }
+  .find { position: relative; width: 250px; }
+  .find .i { position: absolute; left: 9px; top: 8px; color: var(--ink-3); pointer-events: none; }
+  .find .field { width: 100%; padding-left: 31px; }
+  .find kbd { position: absolute; right: 7px; top: 7px; transition: opacity var(--t-fast); }
+  .find:focus-within kbd { opacity: 0; }
+
+  /* ---------- couriers by the hour ---------- */
+  .hours { margin: 0 16px 14px; padding: 10px 14px 10px; border-radius: 10px; background: var(--desk); box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 2px rgb(22 25 30 / 0.04); }
+  .hrow { display: grid; grid-template-columns: 132px minmax(0, 1fr) 210px; align-items: center; gap: 12px; height: 32px; }
+  .hrow .who b { font-weight: 600; }
+  .hrow .who span { color: var(--ink-3); margin-left: 6px; }
+  .axis { position: relative; height: 100%; }
+  .axis::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; border-radius: 1px; background: var(--hair-2); }
+  .hrow.scale { height: 20px; color: var(--ink-3); font-size: 11.5px; }
+  .hrow.scale .axis::before { display: none; }
+  .hrow.scale .axis span { position: absolute; top: 2px; transform: translateX(-50%); }
+  .tk { position: absolute; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--cobalt); box-shadow: 0 0 0 2px var(--desk); transition: transform var(--t-fast) var(--e-out); cursor: default; }
+  .tk:hover { transform: scale(1.35); }
+  .tk.f { background: var(--stop); }
+  .tk.new { animation: tk 520ms var(--e-out); }
+  @keyframes tk { from { transform: scale(0.3); opacity: 0; } 60% { transform: scale(1.5); } }
+  .nowline { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; border-radius: 1px; background: var(--now); }
+  .nowline::after { content: "15:40"; position: absolute; left: 50%; top: -15px; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #8a5a00; white-space: nowrap; }
+  .hrow:not(:nth-child(2)) .nowline::after { display: none; }
+  .hrow .cash { display: flex; align-items: center; justify-content: flex-end; gap: 8px; white-space: nowrap; }
+  .hrow .cash b { font-weight: 600; }
+  .hrow .cash span { color: var(--ink-3); }
+  [data-cash-row].settled b { color: var(--ink-3); font-weight: 500; }
+
+  /* ---------- segmented filter ---------- */
+  .bar2 { display: flex; align-items: center; gap: 10px; padding: 0 16px 12px; }
+  .seg { display: inline-flex; padding: 3px; border-radius: 10px; background: var(--well); box-shadow: inset 0 1px 2px rgb(22 25 30 / 0.07); }
+  .seg .ind { top: 3px; height: calc(100% - 6px); border-radius: 7px; background: var(--sheet); box-shadow: 0 0 0 1px var(--hair), 0 1px 2px rgb(22 25 30 / 0.12); }
+  .seg button { height: 26px; padding: 0 10px; border: 0; background: none; border-radius: 7px; color: var(--ink-2); font-weight: 500; cursor: pointer; white-space: nowrap; transition: color var(--t-fast) ease; }
+  .seg button:hover { color: var(--ink); }
+  .seg button.on { color: var(--ink); }
+  .seg button b { font-weight: 500; color: var(--ink-3); margin-left: 4px; }
+  .seg button[data-tab=bad] b { color: var(--stop); font-weight: 600; }
+  .bar2 .sp { margin-left: auto; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { height: 30px; padding: 0 10px; text-align: left; font-size: 12px; font-weight: 500; color: var(--ink-3); border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); background: #fafafb; white-space: nowrap; }
+  td { height: 40px; padding: 0 10px; border-bottom: 1px solid var(--hair); white-space: nowrap; }
+  th:first-child, td:first-child { padding-left: 16px; width: 40px; }
+  th:last-child, td:last-child { padding-right: 16px; }
+  .r { text-align: right; }
+  tr[data-row] { cursor: pointer; }
+  @media (hover: hover) and (pointer: fine) { tr[data-row]:hover { background: #f7f8fa; } }
+  tr[data-row].sel, tr[data-row].sel:hover { background: var(--cobalt-wash); }
+  td.who { font-weight: 500; }
+  td.where { color: var(--ink-2); max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+  td.where b { font-weight: 500; color: var(--ink); }
+  .soft { color: var(--ink-2); } .nil { color: var(--ink-4); }
+  tr.past td { color: var(--ink-3); }
+  tr.past td.who, tr.past td.where b { font-weight: 400; color: var(--ink-2); }
+  .st { display: inline-flex; align-items: center; gap: 7px; }
+  .st i { width: 8px; height: 8px; border-radius: 3px; background: var(--ink-4); }
+  .st.road i { background: var(--cobalt); }
+  .st.pickup i { background: none; box-shadow: inset 0 0 0 2px var(--cobalt); }
+  .st.depot i { background: none; box-shadow: inset 0 0 0 2px var(--ink-4); }
+  .st.bad { color: var(--stop); font-weight: 500; }
+  .st.bad i { background: var(--stop); }
+  .st.bad small { font-size: 12px; font-weight: 400; color: var(--ink-3); }
+  .st.done i { background: var(--ok); border-radius: 50%; }
+  .empty { padding: 34px 16px; text-align: center; color: var(--ink-3); }
+  .sums { display: flex; justify-content: flex-end; gap: 22px; padding: 11px 16px 13px; color: var(--ink-3); font-size: 12.5px; }
+  .sums b { color: var(--ink); font-weight: 600; margin-left: 5px; }
+
+  .bulk { display: flex; align-items: center; gap: 8px; padding: 6px 6px 6px 14px; border-radius: 12px; background: var(--sheet); box-shadow: var(--pop); white-space: nowrap; }
+  .bulk b { font-weight: 600; margin-right: 6px; }
+
+  /* ---------- drawer ---------- */
+  .drawer { background: var(--sheet); box-shadow: var(--pop); border-radius: 14px 0 0 14px; }
+  .drawer header { display: flex; align-items: center; gap: 8px; padding: 14px 10px 12px 18px; border-bottom: 1px solid var(--hair); }
+  .drawer header .sp { margin-left: auto; }
+  .drawer .body { padding: 16px 18px; display: grid; gap: 16px; flex: 1; align-content: start; }
+  .drawer h2 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+  .drawer .addr { color: var(--ink-2); margin-top: 2px; }
+  .drawer dl { display: grid; grid-template-columns: 96px 1fr; row-gap: 8px; padding: 12px 14px; border-radius: 10px; background: var(--desk); box-shadow: inset 0 0 0 1px var(--hair); }
+  .drawer dt { color: var(--ink-3); } .drawer dd { font-weight: 500; }
+  .drawer footer { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 18px 16px; border-top: 1px solid var(--hair); }
+  .drawer footer .go { grid-column: span 2; height: 38px; }
+
+  .toast { padding: 10px 14px 10px 12px; border-radius: 10px; background: var(--sheet); box-shadow: var(--pop); font-weight: 500; }
+  .toast .i { color: var(--ok); stroke-width: 2.4; }
+  .tip { padding: 5px 8px; border-radius: 6px; background: var(--ink); color: #fff; font: 500 12px "Geologica"; box-shadow: 0 4px 12px -2px rgb(22 25 30 / 0.3); }
+
+  /* ---------- phone ---------- */
+  .phone { flex: 0 0 390px; height: 812px; background: var(--desk); border: 10px solid #1b1e24; border-radius: 42px; overflow: hidden; display: flex; flex-direction: column; font-size: 15px; }
+  .ptop { padding: 16px 18px 12px; }
+  .ptop .row { display: flex; align-items: baseline; justify-content: space-between; }
+  .ptop h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.03em; }
+  .ptop .cnt { color: var(--ink-2); font-weight: 500; }
+  .segs { display: flex; gap: 4px; margin-top: 12px; }
+  .segs i { flex: 1; height: 6px; border-radius: 3px; background: var(--hair-2); transition: background-color var(--t-slow) ease, transform var(--t-slow) var(--e-out); }
+  .segs i.d { background: var(--cobalt); }
+  .segs i.f { background: var(--stop); }
+  .segs i.n { background: var(--now); transform: scaleY(1.6); }
+  .card { margin: 4px 12px 0; background: var(--sheet); border-radius: 18px; box-shadow: var(--lift); padding: 16px 16px 14px; }
+  .card .meta { display: flex; justify-content: space-between; align-items: center; color: var(--ink-3); font-size: 13px; margin-bottom: 8px; }
+  .card h2 { font-size: 23px; line-height: 1.15; font-weight: 600; letter-spacing: -0.03em; }
+  .card .city { margin-top: 3px; font-size: 16px; font-weight: 500; }
+  .card .person { margin-top: 1px; color: var(--ink-2); }
+  .payw { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 0; padding: 11px 14px; border-radius: 12px; background: var(--desk); box-shadow: inset 0 0 0 1px var(--hair), inset 0 1px 2px rgb(22 25 30 / 0.05); }
+  .payw span { color: var(--ink-2); font-weight: 500; }
+  .payw b { font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+  .card .note { margin-top: 12px; color: var(--ink-2); font-size: 14px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .phone .btn { height: 46px; font-size: 15px; border-radius: 12px; }
+  .phone .btn .i { width: 18px; height: 18px; }
+  .phone .btn.go { height: 54px; font-size: 16.5px; font-weight: 600; width: 100%; margin-top: 8px; border-radius: 14px; }
+  .phone .btn .spin { width: 20px; height: 20px; } .phone .btn .tick { width: 24px; height: 24px; }
+  .cant { display: block; width: 100%; text-align: center; padding: 12px 0 2px; color: var(--ink-2); font-weight: 500; background: none; border: 0; cursor: pointer; }
+  .after { margin: 12px 12px 0; }
+  .after .li { display: flex; align-items: center; gap: 12px; min-height: 50px; padding: 6px 6px 6px 8px; border-radius: 12px; }
+  .after .li div { flex: 1; min-width: 0; }
+  .after .li b { display: block; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .after .li span { display: block; color: var(--ink-3); font-size: 13px; }
+  .after .li > .i:first-child { width: 18px; height: 18px; color: var(--ink-3); }
+  .after .li > .i:last-child { color: var(--ink-4); }
+  .after .li.bad b, .after .li.bad > .i:first-child { color: var(--stop); }
+  .after .li.done, .after .li.moved { opacity: 0.45; }
+  .tabbar { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 8px 12px 16px; background: var(--sheet); box-shadow: 0 -1px 0 var(--hair); }
+  .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0 4px; border-radius: 12px; color: var(--ink-3); font-size: 11.5px; font-weight: 500; transition: transform var(--t-press) var(--e-out), background-color var(--t-fast); }
+  .tabbar a:active { transform: scale(0.95); background: var(--well); }
+  .tabbar a.on { color: var(--cobalt); }
+  .tabbar svg { width: 22px; height: 22px; }
+
+  .psheet { background: var(--sheet); border-radius: 24px 24px 0 0; box-shadow: var(--pop); padding: 10px 18px 22px; }
+  .psheet .grab { width: 40px; height: 5px; border-radius: 3px; background: var(--hair-2); margin: 0 auto 14px; }
+  .psheet h3 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+  .psheet .amount { margin: 6px 0 16px; font-size: 34px; font-weight: 600; letter-spacing: -0.03em; }
+  .psheet label { display: block; color: var(--ink-2); font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .pseg { display: grid; grid-template-columns: repeat(4, 1fr); padding: 4px; border-radius: 13px; background: var(--well); box-shadow: inset 0 1px 2px rgb(22 25 30 / 0.07); margin-bottom: 16px; }
+  .pseg .thumb { border-radius: 10px; background: var(--sheet); box-shadow: 0 0 0 1px var(--hair), 0 1px 3px rgb(22 25 30 / 0.14); }
+  .pseg button { height: 40px; border: 0; background: none; border-radius: 10px; font-weight: 500; font-size: 14px; color: var(--ink-2); cursor: pointer; }
+  .pseg button[aria-checked=true] { color: var(--ink); }
+  .psheet .ok { padding: 26px 0 30px; gap: 12px; text-align: center; font-size: 20px; font-weight: 600; }
+  .psheet .ok svg { width: 72px; height: 72px; padding: 16px; border-radius: 50%; background: var(--ok); fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.25), 0 6px 16px -4px rgb(28 138 82 / 0.6); }
+</style>
+</head>
+<body>
+<div class="intro"><b>Varianta 11 · Tactil</b><span>Prototip interactiv. O singură foaie ridicată pe un birou liniștit, cu butoane care se apasă cu adevărat. Curierii apar pe ore, deasupra tabelului. Încearcă: filele, bifele din tabel, un clic pe un rând, „Primește”, apoi „Livrat” pe telefon și urmărește cum se schimbă ecranul din birou.</span></div>
+
+<div class="stage">
+  <div class="app">
+    <nav class="rail">
+      <div class="brand">
+        <svg width="24" height="24" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#2f5bea"/><g stroke="#2f5bea" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#fff"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#d6e0fc"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#9db3f6"/></g></svg>
+        CN <span>Deliveries</span>
+      </div>
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#home"/></svg>Azi</a>
+      <a href="#"><svg class="i"><use href="icons.svg#box"/></svg>Expedieri<em>1</em></a>
+      <a href="#"><svg class="i"><use href="icons.svg#scan"/></svg>Scanare</a>
+      <a href="#"><svg class="i"><use href="icons.svg#route"/></svg>Foi de parcurs</a>
+      <a href="#"><svg class="i"><use href="icons.svg#cash"/></svg>Ramburs</a>
+      <a href="#"><svg class="i"><use href="icons.svg#users"/></svg>Clienți</a>
+      <div class="gap"></div>
+      <a href="#"><svg class="i"><use href="icons.svg#gear"/></svg>Setări</a>
+      <div class="user"><div class="me">AD</div><div><b>Administrator</b><span>Dispecer</span></div></div>
+    </nav>
+
+    <div class="wrap">
+      <div class="sheet">
+        <div class="head">
+          <h1>Azi <span>· marți, 17 noiembrie</span></h1>
+          <label class="find"><svg class="i"><use href="icons.svg#search"/></svg><input class="field" data-search placeholder="Caută nr., nume, telefon" aria-label="Caută"><kbd>/</kbd></label>
+          <button class="btn"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</button>
+          <button class="btn go"><svg class="i"><use href="icons.svg#plus"/></svg>Expediere nouă</button>
+        </div>
+
+        <div class="hours">
+          <div class="hrow scale"><span></span><div class="axis"><span style="left:0">09</span><span style="left:11.1%">10</span><span style="left:22.2%">11</span><span style="left:33.3%">12</span><span style="left:44.4%">13</span><span style="left:55.5%">14</span><span style="left:66.6%">15</span><span style="left:77.7%">16</span><span style="left:88.8%">17</span><span style="left:100%">18</span></div><span></span></div>
+          <div class="hrow" data-cash-row>
+            <div class="who"><b>Ion</b><span class="num"><span data-ion-done>4</span> din 7</span></div>
+            <div class="axis" id="ionAxis">
+              <i class="tk" style="left:35.2%" data-tip="12:10 · Maria Popescu, Stăuceni · 350,00 MDL"></i>
+              <i class="tk" style="left:51.9%" data-tip="13:40 · Ana Botnaru, Buiucani"></i>
+              <i class="tk" style="left:64.8%" data-tip="14:50 · Elena Ciobanu, Botanica · 480,00 MDL"></i>
+              <i class="tk" style="left:70.4%" data-tip="15:25 · Victor Ceban, Botanica · 640,00 MDL"></i>
+              <i class="tk f" style="left:72.6%" data-tip="15:32 · Igor Munteanu, Durlești · nu răspunde"></i>
+              <i class="nowline" style="left:74.1%"></i>
+            </div>
+            <div class="cash"><span><b class="num" data-sum="cashIon">1.470,00</b> MDL numerar</span><button class="btn sm" data-async="cash" data-toast="Ai primit numerarul de la Ion"><span class="lbl">Primește</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button></div>
+          </div>
+          <div class="hrow">
+            <div class="who"><b>Vasile</b><span class="num">2 din 3</span></div>
+            <div class="axis">
+              <i class="tk" style="left:44.8%" data-tip="13:02 · Cafeneaua Tucano, Centru"></i>
+              <i class="tk" style="left:61.9%" data-tip="14:34 · Andrei Rusu, Centru · 1.250,50 MDL"></i>
+              <i class="nowline" style="left:74.1%"></i>
+            </div>
+            <div class="cash"><span class="num">0,00 MDL numerar</span></div>
+          </div>
+        </div>
+
+        <div class="bar2">
+          <div class="seg" data-tabs role="tablist" aria-label="Filtrează după stare">
+            <span class="ind"></span>
+            <button class="on" role="tab" aria-selected="true" data-tab="all">Toate<b class="num" data-count="all"></b></button>
+            <button role="tab" data-tab="bad">Probleme<b class="num" data-count="bad"></b></button>
+            <button role="tab" data-tab="pickup">De ridicat<b class="num" data-count="pickup"></b></button>
+            <button role="tab" data-tab="depot">În depozit<b class="num" data-count="depot"></b></button>
+            <button role="tab" data-tab="road">În livrare<b class="num" data-count="road"></b></button>
+            <button role="tab" data-tab="done">Livrate<b class="num" data-count="done"></b></button>
+          </div>
+          <button class="btn ghost sp"><svg class="i"><use href="icons.svg#print"/></svg>Etichete</button>
+        </div>
+
+        <table>
+          <thead><tr><th><label class="check"><input class="box" type="checkbox" data-select-all aria-label="Selectează tot"><i></i><svg viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></label></th><th>Nr.</th><th>Destinatar</th><th>Adresă</th><th>Curier</th><th class="r">Ramburs</th><th>Stare</th><th class="r">Ora</th></tr></thead>
+          <tbody data-rows></tbody>
+        </table>
+        <div class="empty" data-empty hidden>Niciun colet în această etapă.</div>
+        <div class="sums num"><span>Ramburs încasat<b data-sum="collected"></b></span><span>De încasat<b data-sum="road"></b></span><span>În depozit<b data-sum="depot"></b></span><span>Total, MDL<b data-sum="total"></b></span></div>
+      </div>
+    </div>
+
+    <div class="bulk" data-bulk><b><span data-bulk-count>0</span> selectate</b><button class="btn sm">Schimbă starea</button><button class="btn sm">Atribuie curier</button><button class="btn sm"><svg class="i" style="width:13px;height:13px"><use href="icons.svg#print"/></svg>Etichete</button><button class="btn sm ghost" data-bulk-clear aria-label="Anulează selecția"><svg class="i"><use href="icons.svg#x"/></svg></button></div>
+
+    <div data-scrim></div>
+    <aside class="drawer" data-drawer aria-label="Detalii colet">
+      <header><span class="mono" data-f="n"></span><span data-f="status" class="sp"></span><button class="btn ghost sm" data-close aria-label="Închide"><svg class="i"><use href="icons.svg#x"/></svg></button></header>
+      <div class="body">
+        <div><h2 data-f="who"></h2><div class="addr" data-f="addr"></div></div>
+        <dl><dt>Telefon</dt><dd class="num" data-f="tel"></dd><dt>Ramburs</dt><dd class="num" data-f="cod"></dd><dt>Colet</dt><dd data-f="kg"></dd><dt>Client</dt><dd data-f="client"></dd><dt>Curier</dt><dd data-f="courier"></dd></dl>
+      </div>
+      <footer><button class="btn go"><svg class="i"><use href="icons.svg#phone"/></svg>Sună destinatarul</button><button class="btn">Reprogramează</button><button class="btn">Schimbă curierul</button></footer>
+    </aside>
+  </div>
+
+  <div class="phone">
+    <div class="ptop">
+      <div class="row"><h1>Azi</h1><span class="cnt num"><span data-ion-done>4</span> din 7 livrate</span></div>
+      <div class="segs" data-run="ion"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+    </div>
+    <div class="card" data-next>
+      <div class="meta"><span data-p="label"></span><span class="mono" data-p="n"></span></div>
+      <h2 data-p="title"></h2>
+      <div class="city" data-p="city"></div>
+      <div class="person" data-p="person"></div>
+      <div class="payw" data-pay><span>De încasat</span><b class="num" data-p="cod"></b></div>
+      <p class="note" data-p="note"></p>
+      <div class="two">
+        <button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button>
+        <button class="btn"><svg class="i"><use href="icons.svg#nav"/></svg>Hartă</button>
+      </div>
+      <button class="btn go" data-deliver><span class="lbl" data-p="go"></span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+      <button class="cant">Nu pot livra</button>
+    </div>
+    <div class="after">
+      <div class="li" data-stop="0009"><svg class="i"><use href="icons.svg#box"/></svg><div><b>Demo Shop SRL, str. Ismail 1</b><span>De ridicat · 1 colet pentru Stăuceni</span></div><svg class="i"><use href="icons.svg#chev"/></svg></div>
+      <div class="li bad" data-stop="0005"><svg class="i"><use href="icons.svg#alert"/></svg><div><b>Durlești, str. Codrilor 5</b><span>Nu răspunde · de reîncercat</span></div><svg class="i"><use href="icons.svg#chev"/></svg></div>
+    </div>
+    <div class="tabbar">
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#list"/></svg>Azi</a>
+      <a href="#"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</a>
+      <a href="#"><svg class="i"><use href="icons.svg#wallet"/></svg>Numerar</a>
+    </div>
+
+    <div data-sheet-scrim></div>
+    <div class="psheet" data-sheet>
+      <div class="grab"></div>
+      <div class="form">
+        <h3>Încasează rambursul</h3>
+        <div class="amount num" data-sheet-cod></div>
+        <label>Cum a plătit?</label>
+        <div class="pseg" data-seg role="radiogroup" aria-label="Metoda de plată"><span class="thumb"></span><button role="radio" aria-checked="true">Cu bon</button><button role="radio" aria-checked="false">Fără bon</button><button role="radio" aria-checked="false">Card</button><button role="radio" aria-checked="false">Transfer</button></div>
+        <button class="btn go" data-confirm><span class="lbl">Confirmă livrarea</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+        <button class="cant" data-sheet-close>Renunță</button>
+      </div>
+      <div class="ok"><svg viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg>Livrat</div>
+    </div>
+  </div>
+</div>
+<div data-toasts></div>
+
+<script src="proto.js"></script>
+<script>
+  const status = (p) => `<span class="st ${p.stage}"><i></i>${CN.STAGE[p.stage]}${p.stage === "bad" ? " <small>1 din 3</small>" : ""}</span>`;
+  CN.on.complete = (p, s) => {
+    if (s.kind === "pickup") return;
+    const t = document.createElement("i");
+    t.className = "tk new"; t.style.left = "73.6%"; t.dataset.tip = `acum · ${p.who}, ${p.city}`;
+    document.getElementById("ionAxis").insertBefore(t, document.querySelector("#ionAxis .nowline"));
+  };
+  CN.mount({
+    status,
+    row: (p) => `<tr data-row="${p.n}" class="${p.stage === "done" ? "past" : ""}">
+      <td><label class="check"><input class="box" type="checkbox" aria-label="Selectează ${p.n}"><i></i><svg viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></label></td>
+      <td class="mono soft">${p.n}</td><td class="who">${p.who}</td><td class="where"><b>${p.city}</b>, ${p.addr}</td>
+      <td class="${p.courier ? "soft" : "nil"}">${p.courier ?? "Fără curier"}</td>
+      <td class="r num ${p.cod ? "" : "nil"}">${p.cod ? CN.fmt(p.cod) : "—"}</td>
+      <td data-status>${status(p)}</td><td class="r num soft" data-time>${p.time}</td></tr>`,
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 9 · Semnal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Condensed:wght@600;700;800&family=Sofia+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Road signage: signal yellow, sign black, white board, red only for a stop. */
+  :root {
+    --signal: #ffcd00; --signal-press: #f0bf00; --signal-wash: #fff6cc;
+    --sign: #111111; --sign-2: #3a3a3a; --sign-3: #666666; --sign-4: #a3a3a3;
+    --board: #ffffff; --verge: #f5f5f1;
+    --line: rgb(0 0 0 / 0.13); --line-2: rgb(0 0 0 / 0.26);
+    --stop: #d0211a; --stop-wash: #fdecea; --ok: #17794a;
+    --r: 3px;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: #ffe680; }
+  body { background: #dcdcd6; color: var(--sign); font: 400 14.5px/1.4 "Sofia Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; padding: 28px; }
+  svg { display: block; flex: none; }
+  a { color: inherit; text-decoration: none; }
+  .i { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+  .c { font-family: "Sofia Sans Condensed", sans-serif; }
+  .code { font: 700 15px/1 "Sofia Sans Condensed"; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+  .intro { max-width: 1600px; margin: 0 auto 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; color: var(--sign-2); font-size: 15px; }
+  .intro b { font: 800 19px/1 "Sofia Sans Condensed"; color: var(--sign); white-space: nowrap; }
+  .intro span { flex: 1 1 600px; max-width: 110ch; }
+  .stage { max-width: 1600px; margin: 0 auto; display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: var(--r); border: 1.5px solid var(--sign); background: var(--board); color: var(--sign); font: 700 14.5px/1 "Sofia Sans"; white-space: nowrap; cursor: pointer; transition: background-color 120ms, transform 120ms cubic-bezier(.23,1,.32,1); }
+  .btn:hover { background: var(--verge); }
+  .btn:active { transform: scale(0.97); }
+  .btn:focus-visible { outline: 3px solid var(--signal); outline-offset: 1px; }
+  .btn.go { background: var(--sign); color: #fff; }
+  .btn.go:hover { background: #2b2b2b; }
+  .btn.sm { height: 28px; padding: 0 9px; font-size: 13.5px; }
+  .sel { height: 36px; border-radius: var(--r); border: 1.5px solid var(--line-2); background-color: var(--board); color: var(--sign); padding: 0 28px 0 10px; font: 500 14.5px "Sofia Sans"; appearance: none;
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; }
+  .sel.sm { height: 28px; font-size: 13.5px; }
+  input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--sign); margin: 0; vertical-align: -2px; }
+
+  .app { flex: 1 1 1040px; min-width: 0; background: var(--board); border: 1px solid var(--line-2); border-radius: 4px; overflow: hidden; }
+  .bar { display: flex; align-items: stretch; height: 58px; padding: 0 16px 0 20px; background: var(--signal); }
+  .brand { display: flex; align-items: center; gap: 10px; margin-right: 18px; font: 800 22px/1 "Sofia Sans Condensed"; letter-spacing: 0.005em; white-space: nowrap; }
+  .nav { display: flex; }
+  .nav a { display: flex; align-items: center; padding: 0 11px; font-weight: 600; white-space: nowrap; box-shadow: inset 0 -4px 0 transparent; transition: background-color 120ms; }
+  .nav a:hover { background: rgb(0 0 0 / 0.07); }
+  .nav a.on { font-weight: 700; box-shadow: inset 0 -4px 0 var(--sign); }
+  .nav a em { font-style: normal; margin-left: 7px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--stop); color: #fff; font-size: 12.5px; font-weight: 700; display: grid; place-items: center; }
+  .bar .right { flex: 1; min-width: 0; margin-left: 12px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+  .search { display: flex; align-items: center; gap: 8px; flex: 0 1 250px; min-width: 0; overflow: hidden; white-space: nowrap; height: 36px; padding: 0 10px; border-radius: var(--r); background: var(--board); color: var(--sign-3); }
+  .me { width: 34px; height: 34px; border-radius: 17px; background: var(--sign); color: var(--signal); display: grid; place-items: center; font: 700 14px "Sofia Sans Condensed"; }
+
+  .head { display: flex; align-items: flex-end; gap: 16px; padding: 22px 20px 0; }
+  .head h1 { font: 800 38px/0.95 "Sofia Sans Condensed"; letter-spacing: -0.005em; }
+  .head p { color: var(--sign-3); padding-bottom: 3px; margin-right: auto; }
+  .head p i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 6px; }
+
+  /* stage tabs: the count is the label people look for */
+  .tabs { display: flex; gap: 4px; padding: 16px 20px 0; border-bottom: 2px solid var(--sign); }
+  .tabs a { min-width: 104px; padding: 8px 14px 9px 12px; border-radius: var(--r) var(--r) 0 0; transition: background-color 120ms; }
+  .tabs a:hover { background: var(--verge); }
+  .tabs a b { display: block; font: 800 26px/1 "Sofia Sans Condensed"; font-variant-numeric: tabular-nums; }
+  .tabs a span { display: block; font-weight: 600; color: var(--sign-2); margin-top: 3px; white-space: nowrap; }
+  .tabs a.on { background: var(--sign); color: #fff; }
+  .tabs a.on span { color: #fff; }
+  .tabs a.bad b, .tabs a.bad span { color: var(--stop); }
+
+  .work { display: grid; grid-template-columns: minmax(0, 1fr) 316px; }
+  .tools { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .tools .sel { width: 158px; }
+  .tools span { margin-left: auto; color: var(--sign-3); }
+  table { width: 100%; border-collapse: collapse; }
+  th { height: 34px; padding: 0 10px; text-align: left; font-size: 13px; font-weight: 700; color: var(--sign-3); border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+  td { height: 44px; padding: 0 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th:first-child, td:first-child { padding-left: 20px; width: 38px; }
+  th:last-child, td:last-child { padding-right: 20px; }
+  .r { text-align: right; }
+  tbody tr { cursor: pointer; transition: background-color 80ms; }
+  tbody tr:hover { background: var(--verge); }
+  tr.pick, tr.pick:hover { background: var(--signal-wash); }
+  td.who { font-weight: 700; }
+  td.where { color: var(--sign-2); max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
+  td.where b { font-weight: 700; color: var(--sign); }
+  .soft { color: var(--sign-2); } .nil { color: var(--sign-4); }
+  tr.past td { color: var(--sign-3); }
+  tr.past td.who, tr.past td.where b { font-weight: 500; color: var(--sign-2); }
+  .st { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; }
+  .st i { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--sign-4); }
+  .st.road i { background: var(--sign); border-color: var(--sign); }
+  .st.pickup i { border-color: var(--sign); }
+  .st.depot { font-weight: 500; color: var(--sign-2); }
+  .st.fail { color: var(--stop); font-weight: 700; }
+  .st.fail small { font-size: 13px; font-weight: 500; color: var(--sign-3); }
+  .st.fail svg { width: 15px; height: 15px; }
+  .st.ok { font-weight: 500; color: var(--sign-3); }
+  .st.ok svg { width: 15px; height: 15px; color: var(--ok); stroke-width: 2.8; }
+  .foot { display: flex; justify-content: space-between; padding: 11px 20px 14px; color: var(--sign-3); }
+  .foot b { color: var(--sign); font-weight: 700; }
+
+  .side { background: var(--verge); border-left: 1px solid var(--line); }
+  .side section { padding: 16px 18px 18px; border-bottom: 1px solid var(--line); }
+  .side section:last-child { border-bottom: 0; }
+  .side h2 { font: 800 20px/1 "Sofia Sans Condensed"; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: baseline; }
+  .side h2 a { font: 600 13.5px "Sofia Sans"; text-decoration: underline; text-underline-offset: 3px; }
+  .side h2 span { font: 500 14px "Sofia Sans"; color: var(--sign-3); }
+  .cr + .cr { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .cr .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .cr .top b { font-weight: 700; font-size: 15.5px; }
+  .cr .top span { font: 700 17px "Sofia Sans Condensed"; font-variant-numeric: tabular-nums; }
+  .run { display: flex; align-items: center; height: 24px; margin: 5px 0 5px; }
+  .run i { position: relative; flex: 0 1 36px; height: 3px; background: var(--line-2); }
+  .run i:first-child { flex: 0 0 6px; }
+  .run i::after { content: ""; position: absolute; right: -6px; top: -4.5px; width: 12px; height: 12px; border-radius: 50%; background: var(--run-bg, var(--verge)); border: 2.5px solid var(--sign-4); z-index: 1; }
+  .run i:first-child::after { display: none; }
+  .run i.d, .run i.f, .run i.n { background: var(--sign); }
+  .run i.d::after { background: var(--sign); border-color: var(--sign); }
+  .run i.f::after { background: var(--stop); border-color: var(--stop); }
+  .run i.n::after { width: 16px; height: 16px; right: -8px; top: -6.5px; background: var(--signal); border: 3px solid var(--sign); }
+  .cr p { color: var(--sign-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cash { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+  .cash b { font-weight: 700; } .cash span { color: var(--sign-3); }
+  .wait { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 40px; }
+  .wait + .wait { border-top: 1px solid var(--line); }
+  .wait span { color: var(--sign-3); }
+  dl { display: grid; grid-template-columns: 1fr auto; row-gap: 7px; }
+  dt { color: var(--sign-2); } dd { text-align: right; font-weight: 600; }
+  dl .sum { padding-top: 9px; border-top: 2px solid var(--sign); font-weight: 700; color: var(--sign); }
+  dl dd.sum { font: 800 20px/1.1 "Sofia Sans Condensed"; }
+
+  /* phone */
+  .phone { flex: 0 0 390px; height: 812px; background: var(--board); border: 10px solid #111; border-radius: 42px; overflow: hidden; display: flex; flex-direction: column; font-size: 16px; }
+  .ptop { background: var(--signal); padding: 14px 16px 12px; --run-bg: var(--signal); }
+  .ptop .row { display: flex; align-items: flex-end; justify-content: space-between; }
+  .ptop h1 { font: 800 28px/1 "Sofia Sans Condensed"; }
+  .ptop .cnt { font-weight: 700; }
+  .ptop .run { margin: 10px 3px 0; }
+  .ptop .run i { flex: 1; background: rgb(0 0 0 / 0.25); } .ptop .run i:first-child { flex: 0 0 6px; }
+  .ptop .run i::after { border-color: rgb(0 0 0 / 0.45); }
+  .ptop .run i.d, .ptop .run i.f, .ptop .run i.n { background: var(--sign); }
+  .ptop .run i.n::after { background: var(--board); }
+  .next { padding: 16px 16px 14px; border-bottom: 8px solid var(--verge); }
+  .next .meta { display: flex; justify-content: space-between; align-items: center; color: var(--sign-3); font-size: 14px; margin-bottom: 6px; }
+  .next h2 { font: 800 31px/1.02 "Sofia Sans Condensed"; }
+  .next .city { margin-top: 4px; font-size: 18px; font-weight: 700; }
+  .next .person { margin-top: 1px; color: var(--sign-2); }
+  .facts { margin: 12px 0; border-top: 1px solid var(--line); }
+  .facts div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .facts span { color: var(--sign-3); }
+  .facts b { font-weight: 600; }
+  .facts .pay { margin: 0 -16px; padding: 10px 16px; background: var(--signal-wash); border-bottom: 2px solid var(--signal); align-items: center; }
+  .facts .pay span { color: var(--sign); font-weight: 700; }
+  .facts .pay b { font: 800 25px/1 "Sofia Sans Condensed"; font-variant-numeric: tabular-nums; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .phone .btn { height: 48px; font-size: 16px; }
+  .phone .btn .i { width: 18px; height: 18px; }
+  .phone .btn.go { height: 56px; font-size: 18px; margin-top: 8px; width: 100%; }
+  .cant { display: block; text-align: center; padding: 12px 0 0; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+  .li { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 7px 12px 7px 16px; border-bottom: 1px solid var(--line); }
+  .li div { flex: 1; min-width: 0; }
+  .li b { display: block; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .li span { display: block; color: var(--sign-3); font-size: 14px; }
+  .li.bad b, .li.bad svg:first-child { color: var(--stop); }
+  .li svg:first-child { width: 19px; height: 19px; }
+  .li svg:last-child { color: var(--sign-4); }
+  .tabbar { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 2px solid var(--sign); padding: 0 0 12px; }
+  .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 3px; padding-top: 8px; color: var(--sign-3); font-size: 12.5px; font-weight: 700; box-shadow: inset 0 4px 0 transparent; }
+  .tabbar a.on { color: var(--sign); box-shadow: inset 0 4px 0 var(--signal); }
+  .tabbar svg { width: 23px; height: 23px; }
+</style>
+</head>
+<body>
+<div class="intro"><b>Varianta 9 · Semnal</b><span>Galben de semnalizare și negru, ca la marii curieri: se recunoaște de la distanță, pe ecran, pe etichetă și pe mașină. Cifrele mari din file arată câte colete sunt în fiecare etapă și tot ele filtrează tabelul. Roșul apare doar la probleme.</span></div>
+
+<div class="stage">
+  <div class="app">
+    <div class="bar">
+      <div class="brand">
+        <svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="4" fill="#111"/><g stroke="#111" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#ffcd00"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#fff"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#c9c9c9"/></g></svg>
+        CN DELIVERIES
+      </div>
+      <nav class="nav">
+        <a class="on" href="#">Azi</a><a href="#">Expedieri<em>1</em></a><a href="#">Scanare</a><a href="#">Foi de parcurs</a><a href="#">Ramburs</a><a href="#">Clienți</a><a href="#">Setări</a>
+      </nav>
+      <div class="right">
+        <div class="search"><svg class="i"><use href="icons.svg#search"/></svg>Caută nr., nume, telefon</div>
+        <button class="btn go"><svg class="i"><use href="icons.svg#plus"/></svg>Expediere nouă</button>
+        <div class="me">AD</div>
+      </div>
+    </div>
+
+    <div class="head">
+      <h1>Marți, 17 noiembrie</h1>
+      <p><i></i>actualizat acum 12 secunde</p>
+      <button class="btn"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează colete</button>
+    </div>
+
+    <div class="tabs">
+      <a class="on" href="#"><b>12</b><span>Toate</span></a>
+      <a class="bad" href="#"><b>1</b><span>Probleme</span></a>
+      <a href="#"><b>1</b><span>De ridicat</span></a>
+      <a href="#"><b>2</b><span>În depozit</span></a>
+      <a href="#"><b>2</b><span>În livrare</span></a>
+      <a href="#"><b>6</b><span>Livrate</span></a>
+    </div>
+
+    <div class="work">
+      <div style="min-width:0;overflow:hidden">
+        <div class="tools">
+          <select class="sel"><option>Toți curierii</option></select>
+          <select class="sel"><option>Toți clienții</option></select>
+          <button class="btn"><svg class="i"><use href="icons.svg#print"/></svg>Etichete</button>
+          <span>1 selectată</span>
+          <select class="sel" style="width:176px"><option>Schimbă starea…</option></select>
+        </div>
+        <table>
+          <thead><tr><th><input type="checkbox" aria-label="Selectează tot"></th><th>Nr.</th><th>Destinatar</th><th>Adresă</th><th>Curier</th><th class="r">Ramburs</th><th>Stare</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td class="code">0005</td><td class="who">Igor Munteanu</td><td class="where"><b>Durlești</b>, str. Codrilor 5</td><td class="soft">Ion</td><td class="r num">915,00</td><td><span class="st fail"><svg class="i"><use href="icons.svg#alert"/></svg>Nu răspunde <small>1 din 3</small></span></td></tr>
+            <tr class="pick"><td><input type="checkbox" checked></td><td class="code">0007</td><td class="who">Natalia Rusu</td><td class="where"><b>Ciocana</b>, bd. Mircea cel Bătrân 30</td><td class="soft">Ion</td><td class="r num">250,00</td><td><span class="st road"><i></i>În livrare</span></td></tr>
+            <tr><td><input type="checkbox"></td><td class="code">0011</td><td class="who">Tipografia Nord</td><td class="where"><b>Râșcani</b>, str. Kiev 8/1</td><td class="soft">Vasile</td><td class="r nil">—</td><td><span class="st road"><i></i>În livrare</span></td></tr>
+            <tr><td><input type="checkbox"></td><td class="code">0009</td><td class="who">Olga Moraru</td><td class="where"><b>Stăuceni</b>, str. Unirii 7</td><td class="soft">Ion</td><td class="r nil">—</td><td><span class="st pickup"><i></i>De ridicat</span></td></tr>
+            <tr><td><input type="checkbox"></td><td class="code">0006</td><td class="who">Agenția Beta</td><td class="where"><b>Bălți</b>, str. Independenței 1</td><td class="nil">Fără curier</td><td class="r nil">—</td><td><span class="st depot"><i></i>În depozit</span></td></tr>
+            <tr><td><input type="checkbox"></td><td class="code">0012</td><td class="who">Doina Lungu</td><td class="where"><b>Ialoveni</b>, str. Alexandru cel Bun 3</td><td class="nil">Fără curier</td><td class="r num">390,00</td><td><span class="st depot"><i></i>În depozit</span></td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="code">0008</td><td class="who">Victor Ceban</td><td class="where"><b>Botanica</b>, bd. Dacia 44, ap. 9</td><td>Ion</td><td class="r num">640,00</td><td><span class="st ok"><svg class="i"><use href="icons.svg#check"/></svg>Livrat 15:25</span></td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="code">0004</td><td class="who">Elena Ciobanu</td><td class="where"><b>Botanica</b>, str. Dacia 23, ap. 14</td><td>Ion</td><td class="r num">480,00</td><td><span class="st ok"><svg class="i"><use href="icons.svg#check"/></svg>Livrat 14:50</span></td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="code">0002</td><td class="who">Andrei Rusu</td><td class="where"><b>Centru</b>, bd. Ștefan cel Mare 100</td><td>Vasile</td><td class="r num">1.250,50</td><td><span class="st ok"><svg class="i"><use href="icons.svg#check"/></svg>Livrat 14:34</span></td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="code">0003</td><td class="who">Ana Botnaru</td><td class="where"><b>Buiucani</b>, str. Alba Iulia 75</td><td>Ion</td><td class="r nil">—</td><td><span class="st ok"><svg class="i"><use href="icons.svg#check"/></svg>Livrat 13:40</span></td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="code">0010</td><td class="who">Cafeneaua Tucano</td><td class="where"><b>Centru</b>, str. Pușkin 22</td><td>Vasile</td><td class="r nil">—</td><td><span class="st ok"><svg class="i"><use href="icons.svg#check"/></svg>Livrat 13:02</span></td></tr>
+            <tr class="past"><td><input type="checkbox"></td><td class="code">0001</td><td class="who">Maria Popescu</td><td class="where"><b>Stăuceni</b>, str. Livezilor 12</td><td>Ion</td><td class="r num">350,00</td><td><span class="st ok"><svg class="i"><use href="icons.svg#check"/></svg>Livrat 12:10</span></td></tr>
+          </tbody>
+        </table>
+        <div class="foot"><span>12 expedieri</span><span class="num">Ramburs total <b>4.275,50 MDL</b></span></div>
+      </div>
+
+      <aside class="side">
+        <section>
+          <h2>Curieri <a href="#">Foi de parcurs</a></h2>
+          <div class="cr">
+            <div class="top"><b>Ion Curier</b><span>4 / 7</span></div>
+            <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+            <p>Acum: Ciocana, bd. Mircea cel Bătrân 30</p>
+            <div class="cash"><div><b class="num">1.470,00 MDL</b> <span>numerar</span></div><button class="btn sm">Primește</button></div>
+          </div>
+          <div class="cr">
+            <div class="top"><b>Vasile Curier</b><span>2 / 3</span></div>
+            <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="n"></i></div>
+            <p>Acum: Râșcani, str. Kiev 8/1</p>
+          </div>
+        </section>
+        <section>
+          <h2>Fără curier <span class="num">2 în depozit</span></h2>
+          <div class="wait"><div><b style="font-weight:700">Bălți</b> <span>· Agenția Beta</span></div><select class="sel sm" style="width:104px"><option>Atribuie</option></select></div>
+          <div class="wait"><div><b style="font-weight:700">Ialoveni</b> <span>· Doina Lungu</span></div><select class="sel sm" style="width:104px"><option>Atribuie</option></select></div>
+        </section>
+        <section>
+          <h2>Ramburs azi <a href="#">Detalii</a></h2>
+          <dl class="num">
+            <dt>Încasat</dt><dd>2.720,50</dd>
+            <dt>De încasat pe drum</dt><dd>1.165,00</dd>
+            <dt>În depozit</dt><dd>390,00</dd>
+            <dt class="sum">Total, MDL</dt><dd class="sum">4.275,50</dd>
+          </dl>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="ptop">
+      <div class="row"><h1>Azi</h1><span class="cnt num">4 din 7 livrate</span></div>
+      <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+    </div>
+    <div class="next">
+      <div class="meta"><span>Următoarea livrare</span><span class="code" style="font-size:14px">CN-261117-0007</span></div>
+      <h2>bd. Mircea cel Bătrân 30</h2>
+      <div class="city">Ciocana</div>
+      <div class="person">Natalia Rusu · +373 60 123 123</div>
+      <div class="facts">
+        <div class="pay"><span>De încasat</span><b>250,00 MDL</b></div>
+        <div><span>Colet</span><b>1 buc · 2 kg · Demo Shop SRL</b></div>
+        <div><span>Notă</span><b>Sunați cu 10 min înainte</b></div>
+      </div>
+      <div class="two">
+        <button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button>
+        <button class="btn"><svg class="i"><use href="icons.svg#nav"/></svg>Hartă</button>
+      </div>
+      <button class="btn go">Livrat</button>
+      <a class="cant" href="#">Nu pot livra</a>
+    </div>
+    <div class="li"><svg class="i"><use href="icons.svg#box"/></svg><div><b>Demo Shop SRL, str. Ismail 1</b><span>De ridicat · 1 colet pentru Stăuceni</span></div><svg class="i"><use href="icons.svg#chev"/></svg></div>
+    <div class="li bad"><svg class="i"><use href="icons.svg#alert"/></svg><div><b>Durlești, str. Codrilor 5</b><span>Nu răspunde · încearcă din nou</span></div><svg class="i"><use href="icons.svg#chev"/></svg></div>
+    <div class="tabbar">
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#list"/></svg>Azi</a>
+      <a href="#"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</a>
+      <a href="#"><svg class="i"><use href="icons.svg#wallet"/></svg>Numerar</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

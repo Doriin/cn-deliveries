@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 13 · Expres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proto.css">
+<style>
+  /* Flat tonal regions, no shadows and no cards. Emphasis comes from size and shape:
+     one loud orange action per view, and every stop wears a shape that says its state. */
+  :root {
+    --bg: #fbfcfd; --tone-1: #f0f4f9; --tone-2: #e2e9f1; --line: #d1d8e1;
+    --ink: #111c32; --ink-2: #4d586c; --ink-3: #66718a;
+    --go: #f3821d; --go-press: #de7110; --go-tone: #ffebd4;
+    --bad: #c51e21; --bad-tone: #fde8e6; --ok: #1b7f4d; --ok-tone: #e0f3e8; --flash: #e0f3e8;
+    /* springs after Material 3 Expressive: standard on the desk, livelier under the thumb */
+    --spring: linear(0, 0.005 1.3%, 0.024 2.8%, 0.054 4.3%, 0.091 5.8%, 0.181 8.8%, 0.391 15%, 0.494 18.3%, 0.587 21.5%, 0.669 24.8%, 0.738 28%, 0.796 31.3%, 0.847 34.8%, 0.89 38.5%, 0.926 42.8%, 0.953 47.3%, 0.973 52.3%, 0.988 58.3%, 0.996 64.5%, 1 72.5%, 1);
+    --spring-x: linear(0, 0.008 1.3%, 0.029 2.5%, 0.07 4%, 0.124 5.5%, 0.176 6.8%, 0.245 8.3%, 0.533 14%, 0.651 16.5%, 0.758 19%, 0.85 21.5%, 0.919 23.8%, 0.981 26.3%, 1.027 28.7%, 1.063 31.5%, 1.078 33.3%, 1.089 35.3%, 1.094 37.3%, 1.094 39.5%, 1.081 44.5%, 1.019 58.8%, 0.998 67%, 0.991 77.8%, 1);
+    --spring-sheet: linear(0, 0.005 1.3%, 0.025 2.8%, 0.055 4.3%, 0.1 6%, 0.196 9%, 0.429 15.5%, 0.54 18.8%, 0.639 22%, 0.719 25%, 0.787 28%, 0.848 31.3%, 0.897 34.5%, 0.934 37.8%, 0.964 41.3%, 0.987 45.3%, 1.003 49.8%, 1.012 54.8%, 1.015 64%, 1);
+    --t-press: 100ms; --t-fast: 120ms; --t-med: 360ms; --t-sheet: 440ms; --e-move: var(--spring-x); --e-sheet: var(--spring-sheet); --press: 0.97;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: #ffd9b0; }
+  body { background: #d5dbe3; color: var(--ink); font: 400 14.5px/1.45 "Golos Text", system-ui, sans-serif; -webkit-font-smoothing: antialiased; padding: 28px; }
+  svg { display: block; flex: none; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; }
+  .i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+  .intro { max-width: 1600px; margin: 0 auto 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; color: var(--ink-2); }
+  .intro b { font-size: 16px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .intro span { flex: 1 1 600px; max-width: 112ch; }
+  .stage { max-width: 1600px; margin: 0 auto; display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+
+  /* ---------- buttons ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 36px; padding: 0 14px; border: 0; border-radius: 8px; background: var(--tone-2); font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none;
+         transition: transform var(--t-press) ease-out, background-color var(--t-fast) ease, border-radius 220ms var(--spring); }
+  .btn:hover { transition-duration: var(--t-press), 0ms, 220ms; background: #d6dfe9; }
+  .btn:active:not(:disabled) { background: #c9d3df; }
+  .btn:focus-visible, .pick:focus-visible, .line:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* the loud one: bigger, rounder, and it changes shape under the finger */
+  .btn.loud { height: 46px; padding: 0 20px; border-radius: 16px; background: var(--go); color: var(--ink); font-weight: 700; font-size: 15.5px; }
+  .btn.loud:hover { background: #f78d2c; }
+  .btn.loud:active:not(:disabled) { background: var(--go-press); border-radius: 8px; }
+  .btn.is-done:not(.loud) { color: var(--ok); }
+  .btn.line-only { background: transparent; box-shadow: inset 0 0 0 1.5px var(--line); }
+  .btn.line-only:hover { background: var(--tone-1); }
+
+  /* ---------- shell: rail, couriers, the chosen courier's day ---------- */
+  .app { flex: 1 1 1040px; min-width: 0; min-height: 860px; background: var(--bg); border-radius: 6px; overflow: hidden; display: grid; grid-template-columns: 88px 316px minmax(0, 1fr); box-shadow: 0 0 0 1px var(--line); }
+  .rail { background: var(--tone-2); padding: 14px 0 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .rail .fab { width: 56px; height: 56px; padding: 0; margin: 10px 0 16px; border-radius: 18px; }
+  .rail .fab .i { width: 24px; height: 24px; stroke-width: 2.4; }
+  .rail a { width: 76px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 0 6px; font-size: 12px; font-weight: 600; color: var(--ink-2); position: relative; }
+  .rail a .pill { width: 56px; height: 32px; border-radius: 16px; display: grid; place-items: center; transition: background-color var(--t-fast) ease, transform var(--t-med) var(--spring-x); }
+  .rail a:hover .pill { background: rgb(17 28 50 / 0.08); }
+  .rail a:active .pill { transform: scaleX(0.9); }
+  .rail a.on { color: var(--ink); }
+  .rail a.on .pill { background: var(--bg); }
+  .rail a .i { width: 22px; height: 22px; }
+  .rail a em { position: absolute; top: 2px; right: 14px; font-style: normal; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--bad); color: #fff; font-size: 11.5px; font-weight: 700; display: grid; place-items: center; }
+  .rail .end { margin-top: auto; display: grid; gap: 10px; justify-items: center; }
+  .me { width: 40px; height: 40px; border-radius: 14px; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+
+  .list { background: var(--tone-1); padding: 24px 14px 18px; display: flex; flex-direction: column; }
+  .list h1 { font-size: 24px; line-height: 1.12; font-weight: 800; letter-spacing: -0.025em; padding: 0 10px; }
+  .list .day { padding: 4px 10px 0; color: var(--ink-2); }
+  .warn { display: flex; align-items: center; gap: 10px; width: 100%; margin: 18px 0 6px; padding: 12px 14px; border: 0; border-radius: 14px; background: var(--bad-tone); color: #7c1214; font-weight: 600; text-align: left; cursor: pointer; transition: transform var(--t-press) ease-out, background-color var(--t-fast); }
+  .warn:hover { background: #fbdad7; }
+  .warn:active { transform: scale(0.98); }
+  .warn .i { color: var(--bad); }
+  .warn .i:last-child { margin-left: auto; color: #7c1214; }
+  .list h2 { font-size: 13.5px; font-weight: 600; color: var(--ink-3); padding: 14px 10px 6px; }
+  .pick { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 72px; padding: 10px 14px 10px 10px; border: 0; border-radius: 18px; background: transparent; text-align: left; cursor: pointer; transition: background-color var(--t-fast) ease, transform var(--t-press) ease-out; }
+  .pick:hover { background: rgb(17 28 50 / 0.05); }
+  .pick:active { transform: scale(0.98); }
+  .pick.on { background: var(--bg); }
+  .pick .av { width: 46px; height: 46px; display: grid; place-items: center; font-weight: 800; font-size: 15px; background: var(--ink); color: #fff; border-radius: 16px; transition: border-radius var(--t-med) var(--spring-x), background-color var(--t-fast); }
+  .pick.on .av { border-radius: 50%; background: var(--go); color: var(--ink); }
+  .pick .av.none { background: transparent; color: var(--ink-2); box-shadow: inset 0 0 0 2px var(--line); }
+  .pick .t { flex: 1; min-width: 0; }
+  .pick .t b { display: block; font-size: 16px; font-weight: 700; }
+  .pick .t span { display: block; color: var(--ink-2); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pick .f { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+  .pick .f small { font-size: 14px; font-weight: 600; color: var(--ink-3); }
+  .tot { margin-top: auto; padding: 16px 10px 0; }
+  .tot div { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; color: var(--ink-2); }
+  .tot div b { font-size: 20px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+  .meter { height: 8px; margin: 8px 0 6px; border-radius: 4px; background: var(--tone-2); overflow: hidden; }
+  .meter i { display: block; height: 100%; border-radius: 4px; background: var(--ok); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); transition: transform 600ms var(--spring-sheet); }
+
+  .day-of { padding: 26px 30px 28px; min-width: 0; }
+  .dh { display: flex; align-items: flex-end; gap: 12px; }
+  .dh h2 { font-size: 34px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em; }
+  .dh p { margin-top: 6px; color: var(--ink-2); font-size: 16px; }
+  .dh p b { color: var(--ink); font-weight: 600; }
+  .dh .sp { margin-left: auto; display: flex; gap: 8px; }
+  .cashrow { display: flex; align-items: center; gap: 16px; margin: 20px -30px 0; padding: 14px 30px; background: var(--go-tone); transition: background-color 400ms ease; }
+  .cashrow .n { font-size: 26px; font-weight: 800; letter-spacing: -0.025em; }
+  .cashrow span { color: #6b3d0c; font-weight: 500; }
+  .cashrow .btn { margin-left: auto; }
+  .cashrow.settled { background: var(--tone-1); }
+  .cashrow.settled span { color: var(--ink-2); }
+
+  /* stops: the shape tells the state before you read a word */
+  .stops { margin-top: 10px; }
+  .stop + .stop { box-shadow: inset 0 1px 0 var(--line); }
+  .line { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 64px; padding: 10px 4px; border: 0; background: none; text-align: left; cursor: pointer; }
+  @media (hover: hover) and (pointer: fine) { .line:hover .t b { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; } }
+  .shape { width: 34px; height: 34px; flex: none; display: grid; place-items: center; font-weight: 800; font-size: 14px; border-radius: 50%; color: var(--ink-2); box-shadow: inset 0 0 0 2px var(--line); transition: border-radius var(--t-med) var(--spring-x), background-color 300ms ease, transform var(--t-med) var(--spring-x), box-shadow 300ms ease; }
+  .shape .i { width: 18px; height: 18px; stroke-width: 2.8; }
+  [data-stage=done] .shape { background: var(--ok-tone); color: var(--ok); box-shadow: none; }
+  [data-stage=road] .shape { background: var(--go); color: var(--ink); box-shadow: none; border-radius: 11px; transform: scale(1.14); }
+  [data-stage=pickup] .shape { border-radius: 11px; box-shadow: inset 0 0 0 2px var(--ink-2); }
+  [data-stage=bad] .shape { background: var(--bad); color: #fff; box-shadow: none; border-radius: 8px; transform: rotate(45deg); }
+  [data-stage=bad] .shape span { transform: rotate(-45deg); }
+  [data-stage=depot] .shape { box-shadow: none; border: 2px dashed var(--ink-3); }
+  .line .t { flex: 1; min-width: 0; }
+  .line .t b { font-size: 16px; font-weight: 700; }
+  .line .t span { color: var(--ink-2); }
+  .line .t small { display: block; font-size: 13.5px; color: var(--ink-3); }
+  [data-stage=bad] .line .t small { color: var(--bad); font-weight: 600; }
+  [data-stage=done] .line .t b { font-weight: 600; color: var(--ink-2); }
+  .line .a { text-align: right; flex: none; }
+  .line .a b { display: block; font-size: 16px; font-weight: 700; }
+  .line .a b.nil { color: var(--ink-3); font-weight: 400; }
+  .line .a small { font-size: 13px; color: var(--ink-3); }
+  .line .chev { color: var(--ink-3); transition: transform var(--t-med) var(--spring-x); }
+  .stop.open .chev { transform: rotate(90deg); }
+  .more { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 320ms var(--spring-sheet); }
+  .stop.open .more { grid-template-rows: 1fr; }
+  .more > div { overflow: hidden; }
+  .more .in { margin: 0 0 14px 50px; padding: 14px 16px; border-radius: 14px; background: var(--tone-1); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 28px; }
+  .more dl { display: flex; flex-wrap: wrap; gap: 6px 28px; flex: 1 1 320px; }
+  .more dl div { min-width: 120px; }
+  .more dt { font-size: 13px; color: var(--ink-3); } .more dd { font-weight: 600; }
+  .more .acts { display: flex; gap: 8px; }
+
+  .toast { padding: 12px 18px 12px 14px; border-radius: 14px; background: var(--ink); color: #fff; font-weight: 600; }
+  .toast .i { color: #6fe0a4; stroke-width: 2.8; }
+
+  /* ---------- phone ---------- */
+  .phone { flex: 0 0 390px; height: 812px; background: var(--bg); border: 10px solid #0d1526; border-radius: 44px; overflow: hidden; display: flex; flex-direction: column; font-size: 16px; }
+  .ptop { background: var(--tone-2); padding: 20px 22px 18px; }
+  .ptop .big { display: flex; align-items: baseline; gap: 8px; }
+  .ptop .big b { font-size: 56px; line-height: 0.95; font-weight: 800; letter-spacing: -0.05em; }
+  .ptop .big span { font-size: 17px; font-weight: 600; color: var(--ink-2); }
+  .wave { position: relative; height: 14px; margin-top: 14px; }
+  .wave::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 4px; border-radius: 2px; background: rgb(17 28 50 / 0.16); }
+  .wave .on { position: absolute; left: 0; top: 0; height: 14px; width: calc(var(--p) * 100%); overflow: hidden; transition: width 700ms var(--spring-sheet); }
+  .wave svg { width: 346px; height: 14px; fill: none; stroke: var(--go); stroke-width: 4; stroke-linecap: round; background: var(--tone-2); }
+  .cur { padding: 20px 22px 0; }
+  .cur .meta { display: flex; justify-content: space-between; color: var(--ink-3); font-size: 13.5px; font-weight: 600; }
+  .cur h2 { margin-top: 8px; font-size: 29px; line-height: 1.06; font-weight: 800; letter-spacing: -0.035em; text-wrap: balance; }
+  .cur .city { margin-top: 6px; font-size: 18px; font-weight: 700; }
+  .cur .person { color: var(--ink-2); }
+  .cur .pay { display: flex; justify-content: space-between; align-items: center; margin: 16px -22px 0; padding: 12px 22px; background: var(--go-tone); }
+  .cur .pay span { color: #6b3d0c; font-weight: 600; }
+  .cur .pay b { font-size: 24px; font-weight: 800; letter-spacing: -0.025em; }
+  .cur .note { margin-top: 12px; color: var(--ink-2); font-size: 15px; }
+  .quick { display: flex; gap: 8px; padding: 14px 22px 0; }
+  .quick .btn { flex: 1; height: 48px; border-radius: 14px; font-size: 15.5px; }
+  .quick .btn:active { border-radius: 8px; }
+  .foot { margin-top: auto; padding: 0 16px 10px; }
+  .foot .loud { width: 100%; height: 66px; border-radius: 24px; font-size: 20px; }
+  .foot .loud:active:not(:disabled) { border-radius: 12px; }
+  .foot .loud .spin { width: 22px; height: 22px; border-width: 2.5px; } .foot .loud .tick { width: 28px; height: 28px; stroke-width: 3; }
+  .foot .no { display: block; width: 100%; padding: 12px 0 2px; border: 0; background: none; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+  .pnav { display: grid; grid-template-columns: repeat(3, 1fr); padding: 8px 8px 14px; background: var(--tone-1); }
+  .pnav a { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+  .pnav a .pill { width: 64px; height: 32px; border-radius: 16px; display: grid; place-items: center; transition: background-color var(--t-fast), transform var(--t-med) var(--spring-x); }
+  .pnav a:active .pill { transform: scaleX(0.88); }
+  .pnav a.on { color: var(--ink); }
+  .pnav a.on .pill { background: var(--go-tone); }
+  .pnav .i { width: 23px; height: 23px; }
+
+  .psheet { background: var(--bg); border-radius: 28px 28px 0 0; padding: 10px 22px 22px; }
+  .psheet .grab { width: 36px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 18px; }
+  .psheet h3 { font-size: 16px; font-weight: 600; color: var(--ink-2); }
+  .psheet .amount { margin: 2px 0 18px; font-size: 46px; line-height: 1; font-weight: 800; letter-spacing: -0.045em; }
+  .pseg { display: grid; grid-template-columns: repeat(4, 1fr); padding: 4px; border-radius: 16px; background: var(--tone-2); margin-bottom: 16px; }
+  .pseg .thumb { border-radius: 12px; background: var(--bg); }
+  .pseg button { height: 46px; border: 0; background: none; border-radius: 12px; font-weight: 600; font-size: 14.5px; color: var(--ink-2); cursor: pointer; }
+  .pseg button[aria-checked=true] { color: var(--ink); }
+  .psheet .loud { width: 100%; height: 62px; border-radius: 22px; font-size: 19px; }
+  .psheet .loud:active:not(:disabled) { border-radius: 12px; }
+  .psheet .loud .spin { width: 22px; height: 22px; } .psheet .loud .tick { width: 28px; height: 28px; }
+  .psheet .x { display: block; width: 100%; padding: 14px 0 0; border: 0; background: none; color: var(--ink-2); font-weight: 600; cursor: pointer; }
+  .psheet .ok { padding: 28px 0 34px; gap: 14px; text-align: center; font-size: 28px; font-weight: 800; letter-spacing: -0.03em; }
+  .psheet .ok svg { width: 88px; height: 88px; padding: 22px; border-radius: 30px; background: var(--ok); fill: none; stroke: #fff; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  [data-sheet].success .ok { animation: pop 420ms var(--spring-x); }
+</style>
+</head>
+<body>
+<div class="intro"><b>Varianta 13 · Expres</b><span>Prototip interactiv. Aici pornești de la curier, nu de la tabel: alegi un curier și îi vezi ziua, oprire cu oprire. Forma din fața fiecărei opriri spune starea: cerc bifat pentru livrat, pătrat portocaliu pentru oprirea curentă, romb roșu pentru problemă. Un singur buton portocaliu pe ecran, care își schimbă forma la apăsare. Încearcă: alege alt curier, deschide o oprire, „Primește numerarul”, apoi „Livrat” pe telefon.</span></div>
+
+<div class="stage">
+  <div class="app">
+    <nav class="rail">
+      <svg width="40" height="40" viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="#111c32"/><g stroke="#111c32" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#f3821d"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#fff"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#c8d2df"/></g></svg>
+      <button class="btn loud fab" aria-label="Expediere nouă" title="Expediere nouă"><svg class="i"><use href="icons.svg#plus"/></svg></button>
+      <a class="on" href="#"><span class="pill"><svg class="i"><use href="icons.svg#route"/></svg></span>Azi</a>
+      <a href="#"><span class="pill"><svg class="i"><use href="icons.svg#box"/></svg></span>Expedieri<em>1</em></a>
+      <a href="#"><span class="pill"><svg class="i"><use href="icons.svg#scan"/></svg></span>Scanare</a>
+      <a href="#"><span class="pill"><svg class="i"><use href="icons.svg#cash"/></svg></span>Ramburs</a>
+      <a href="#"><span class="pill"><svg class="i"><use href="icons.svg#users"/></svg></span>Clienți</a>
+      <div class="end"><a href="#"><span class="pill"><svg class="i"><use href="icons.svg#gear"/></svg></span>Setări</a><div class="me">AD</div></div>
+    </nav>
+
+    <div class="list">
+      <h1>Marți,<br>17 noiembrie</h1>
+      <p class="day num"><span data-done-count>6</span> din 12 colete livrate</p>
+      <button class="warn" data-jump="0005" data-task="0005"><svg class="i"><use href="icons.svg#alert"/></svg>Igor Munteanu nu răspunde<svg class="i"><use href="icons.svg#chev"/></svg></button>
+      <h2>Curieri</h2>
+      <button class="pick on" data-pick="Ion" aria-pressed="true"><span class="av">IC</span><span class="t"><b>Ion Curier</b><span data-now-ion>Ciocana, bd. Mircea cel Bătrân 30</span></span><span class="f num"><span data-ion-done>4</span><small>/7</small></span></button>
+      <button class="pick" data-pick="Vasile" aria-pressed="false"><span class="av">VC</span><span class="t"><b>Vasile Curier</b><span>Râșcani, str. Kiev 8/1</span></span><span class="f num">2<small>/3</small></span></button>
+      <button class="pick" data-pick="none" aria-pressed="false"><span class="av none">?</span><span class="t"><b>Fără curier</b><span>așteaptă în depozit</span></span><span class="f num"><span data-count="depot">2</span></span></button>
+      <div class="tot">
+        <div><span>Ramburs încasat</span><b class="num" data-sum="collected"></b></div>
+        <div class="meter" data-meter><i></i></div>
+        <div><span>din total, MDL</span><span class="num" data-sum="total"></span></div>
+      </div>
+    </div>
+
+    <div class="day-of">
+      <div class="dh" data-for="Ion">
+        <div><h2>Ion Curier</h2><p><b class="num"><span data-ion-done>4</span> din 7</b> livrate · <span data-ion-left>3</span> rămase</p></div>
+        <div class="sp"><button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button><button class="btn"><svg class="i"><use href="icons.svg#print"/></svg>Foaie de parcurs</button></div>
+      </div>
+      <div class="dh" data-for="Vasile" hidden>
+        <div><h2>Vasile Curier</h2><p><b class="num">2 din 3</b> livrate · 1 rămasă</p></div>
+        <div class="sp"><button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button><button class="btn"><svg class="i"><use href="icons.svg#print"/></svg>Foaie de parcurs</button></div>
+      </div>
+      <div class="dh" data-for="none" hidden>
+        <div><h2>Fără curier</h2><p><b class="num">2 colete</b> așteaptă în depozit</p></div>
+      </div>
+
+      <div class="cashrow" data-for="Ion" data-cash-row>
+        <div><div class="n num"><span data-sum="cashIon"></span> MDL</div><span>numerar la Ion, nepredat la oficiu</span></div>
+        <button class="btn loud" data-async="cash" data-toast="Ai primit numerarul de la Ion"><span class="lbl">Primește numerarul</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+      </div>
+
+      <div class="stops" data-rows></div>
+    </div>
+  </div>
+
+  <div class="phone" data-phone>
+    <div class="ptop">
+      <div class="big"><b class="num" data-ion-done>4</b><span>din 7 livrate</span></div>
+      <div class="wave" id="wave" style="--p:0.571"><div class="on"><svg viewBox="0 0 346 14"><path id="wavePath"/></svg></div></div>
+    </div>
+    <div class="cur" data-next>
+      <div class="meta"><span data-p="label"></span><span class="num" data-p="n"></span></div>
+      <h2 data-p="title"></h2>
+      <div class="city" data-p="city"></div>
+      <div class="person" data-p="person"></div>
+      <div class="pay" data-pay><span>De încasat</span><b class="num" data-p="cod"></b></div>
+      <p class="note" data-p="note"></p>
+    </div>
+    <div class="quick">
+      <button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button>
+      <button class="btn"><svg class="i"><use href="icons.svg#nav"/></svg>Hartă</button>
+    </div>
+    <div class="foot">
+      <button class="btn loud" data-deliver><span class="lbl" data-p="go"></span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+      <button class="no">Nu pot livra</button>
+    </div>
+    <div class="pnav">
+      <a class="on" href="#"><span class="pill"><svg class="i"><use href="icons.svg#route"/></svg></span>Traseu</a>
+      <a href="#"><span class="pill"><svg class="i"><use href="icons.svg#scan"/></svg></span>Scanează</a>
+      <a href="#"><span class="pill"><svg class="i"><use href="icons.svg#wallet"/></svg></span>Numerar</a>
+    </div>
+
+    <div data-sheet-scrim style="--scrim: rgb(17 28 50 / 0.4)"></div>
+    <div class="psheet" data-sheet>
+      <div class="grab"></div>
+      <div class="form">
+        <h3>De încasat</h3>
+        <div class="amount num" data-sheet-cod></div>
+        <div class="pseg" data-seg role="radiogroup" aria-label="Metoda de plată"><span class="thumb"></span><button role="radio" aria-checked="true">Cu bon</button><button role="radio" aria-checked="false">Fără bon</button><button role="radio" aria-checked="false">Card</button><button role="radio" aria-checked="false">Transfer</button></div>
+        <button class="btn loud" data-confirm><span class="lbl">Confirmă livrarea</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+        <button class="x" data-sheet-close>Renunță</button>
+      </div>
+      <div class="ok"><svg viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg>Livrat</div>
+    </div>
+  </div>
+</div>
+<div data-toasts></div>
+
+<script src="proto.js"></script>
+<script>
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const order = { Ion: ["0001", "0003", "0004", "0008", "0005", "0007", "0009"], Vasile: ["0010", "0002", "0011"], none: ["0006", "0012"] };
+  const place = (n) => { for (const k in order) { const i = order[k].indexOf(n); if (i >= 0) return i + 1; } };
+  const shape = (p) => p.stage === "done" ? `<svg class="i"><use href="icons.svg#check"/></svg>` : p.stage === "bad" ? "<span>!</span>" : `<span>${place(p.n)}</span>`;
+  const sub = (p) => ({ done: `Livrat ${p.time === "acum" ? "acum" : "la " + p.time}`, road: "În livrare acum", pickup: "De ridicat de la Demo Shop SRL, str. Ismail 1", bad: "Nu răspunde · încercarea 1 din 3", depot: `În depozit de la ${p.time}` })[p.stage] + ` · ${p.who}`;
+
+  CN.mount({
+    status: sub,
+    row: (p) => `<div class="stop" data-row="${p.n}" data-stage="${p.stage}" data-courier="${p.courier ?? "none"}" style="view-transition-name:s${p.n}">
+      <button class="line" aria-expanded="false">
+        <span class="shape" data-shape>${shape(p)}</span>
+        <span class="t"><b>${p.city}</b> <span>${p.addr}</span><small data-status>${sub(p)}</small></span>
+        <span class="a"><b class="num ${p.cod ? "" : "nil"}">${p.cod ? CN.fmt(p.cod) : "fără ramburs"}</b><small class="num">CN-${p.n}</small></span>
+        <svg class="i chev"><use href="icons.svg#chev"/></svg>
+      </button>
+      <div class="more"><div><div class="in">
+        <dl><div><dt>Destinatar</dt><dd>${p.who}</dd></div><div><dt>Telefon</dt><dd class="num">${p.tel}</dd></div><div><dt>Colet</dt><dd>1 buc · ${p.kg} kg</dd></div><div><dt>Client</dt><dd>${p.client}</dd></div></dl>
+        <div class="acts">${p.courier ? `<button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună destinatarul</button><button class="btn line-only">Reprogramează</button>` : `<button class="btn" data-async="assign" data-toast="${p.city} i-a fost dat lui Ion"><span class="lbl">Dă-i lui Ion</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button><button class="btn" data-async="assign" data-toast="${p.city} i-a fost dat lui Vasile"><span class="lbl">Dă-i lui Vasile</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>`}</div>
+      </div></div></div></div>`,
+  });
+
+  // Each courier's stops in the order they are driven.
+  const host = $("[data-rows]");
+  Object.values(order).flat().forEach((n) => host.append($(`[data-row="${n}"]`)));
+
+  // What is on screen is always drawn from these two values, so it is safe to draw twice.
+  let who = "Ion", opened = null;
+  function render() {
+    $$("[data-pick]").forEach((b) => { b.classList.toggle("on", b.dataset.pick === who); b.setAttribute("aria-pressed", b.dataset.pick === who); });
+    $$("[data-for]").forEach((el) => (el.hidden = el.dataset.for !== who));
+    $$("[data-row]").forEach((r) => { r.hidden = r.dataset.courier !== who; if (opened) toggle(r, r.dataset.row === opened); });
+  }
+  function show(name, open) { who = name; opened = open ?? null; CN.vt(render); }
+  function toggle(row, on = !row.classList.contains("open")) {
+    row.classList.toggle("open", on);
+    $(".line", row).setAttribute("aria-expanded", on);
+  }
+  document.addEventListener("click", (e) => {
+    const pick = e.target.closest("[data-pick]"); if (pick) return show(pick.dataset.pick);
+    const jump = e.target.closest("[data-jump]"); if (jump) return show("Ion", jump.dataset.jump);
+    const line = e.target.closest(".line"); if (line) { opened = null; toggle(line.closest(".stop")); }
+  });
+  render();
+
+  // the wavy part of the progress line is what has been delivered
+  let d = "M2 7"; for (let x = 2; x < 344; x += 12) d += ` q3 -6 6 0 t6 0`;
+  $("#wavePath").setAttribute("d", d);
+
+  CN.on.complete = (p, s, state) => {
+    const row = $(`[data-row="${p.n}"]`);
+    row.dataset.stage = p.stage;
+    $("[data-shape]", row).innerHTML = shape(p);
+    $("#wave").style.setProperty("--p", state.ionDone / 7);
+    const next = $(`[data-row="${["0009", "0005"][s.kind === "pickup" ? 1 : 0]}"]`);
+    if (s.kind !== "pickup" && next) { next.dataset.stage = "road"; $("[data-status]", next).textContent = "Curierul merge să ridice coletul · " + CN.parcels.find((x) => x.n === "0009").who; }
+  };
+</script>
+</body>
+</html>

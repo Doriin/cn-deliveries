@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 3 · Linii</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sofia+Sans+Condensed:wght@500;600;700;800&family=Sofia+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#101820; --soft:#5f6b78; --rule:#dfe3e8; --ion:#0b5fd8; --vas:#e8590c; --red:#d92d20; --ok:#12824c; }
+  * { box-sizing:border-box; margin:0; }
+  body { background:#d3d7dc; color:var(--ink); font:400 15px/1.4 "Sofia Sans", system-ui, sans-serif; padding:28px; }
+  .intro { max-width:1560px; margin:0 auto 18px; display:flex; gap:18px; align-items:baseline; flex-wrap:wrap; }
+  .intro h1 { font:800 24px/1 "Sofia Sans Condensed"; }
+  .intro p { color:#3a444f; max-width:72ch; }
+  .stage { max-width:1560px; margin:0 auto; display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap; }
+  .c { font-family:"Sofia Sans Condensed", sans-serif; }
+
+  /* ---------- office ---------- */
+  .app { flex:1 1 980px; min-width:0; background:#fff; }
+  .top { display:flex; align-items:center; gap:22px; padding:0 26px; height:64px; background:var(--ink); color:#fff; }
+  .word { font:800 22px/1 "Sofia Sans Condensed"; letter-spacing:.01em; }
+  .top nav { display:flex; gap:4px; align-self:stretch; }
+  .top nav a { display:flex; align-items:center; padding:0 14px; color:#fff; opacity:.6; text-decoration:none; font-weight:600; border-bottom:4px solid transparent; border-top:4px solid transparent; }
+  .top nav a.on { opacity:1; border-bottom-color:#ffd21f; }
+  .find { margin-left:auto; width:280px; background:rgb(255 255 255 / .12); padding:9px 14px; border-radius:6px; color:rgb(255 255 255 / .7); }
+  .btn { font:700 15px "Sofia Sans"; padding:10px 18px; border:0; background:#ffd21f; color:var(--ink); border-radius:6px; cursor:pointer; white-space:nowrap; transition:transform .12s; }
+  .btn:active { transform:scale(.97); }
+  .btn.dark { background:var(--ink); color:#fff; }
+  .btn.line { background:#fff; color:var(--ink); box-shadow:inset 0 0 0 2px var(--ink); }
+  .btn.sm { padding:6px 12px; font-size:14px; }
+
+  .head { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding:26px 26px 6px; }
+  .head h2 { font:800 40px/1 "Sofia Sans Condensed"; letter-spacing:-.01em; }
+  .head p { color:var(--soft); margin-top:6px; font-size:16px; }
+  .figs { display:flex; gap:30px; text-align:right; }
+  .figs small { display:block; color:var(--soft); font-size:14px; }
+  .figs b { font:800 28px/1.1 "Sofia Sans Condensed"; font-variant-numeric:tabular-nums; }
+
+  /* The map: the depot on the left, one line per courier, one stop per parcel. */
+  .map { display:grid; grid-template-columns:150px minmax(0,1fr); padding:22px 26px 10px; }
+  .depot { grid-row:span 2; align-self:stretch; display:flex; padding:6px 0 10px; }
+  .depot div { width:122px; border:5px solid var(--ink); border-radius:22px; padding:14px 10px; text-align:center; background:#fff; position:relative; z-index:2; display:flex; flex-direction:column; justify-content:center; }
+  .depot b { display:block; font:800 38px/1 "Sofia Sans Condensed"; }
+  .depot span { font:700 16px/1.1 "Sofia Sans Condensed"; }
+  .depot small { display:block; color:var(--soft); font-size:13px; margin-top:2px; }
+  .line { position:relative; padding:14px 0 18px; }
+  .line + .line { border-top:1px solid var(--rule); }
+  .lh { display:flex; align-items:center; gap:10px; margin-bottom:14px; padding-left:8px; }
+  .lh i { width:30px; height:30px; border-radius:99px; display:grid; place-items:center; color:#fff; font:800 17px/1 "Sofia Sans Condensed"; font-style:normal; background:var(--col); }
+  .lh b { font:800 21px/1 "Sofia Sans Condensed"; }
+  .lh span { color:var(--soft); }
+  .lh .cash { margin-left:auto; display:flex; gap:12px; align-items:center; font-weight:700; }
+  .stops { list-style:none; padding:0; display:flex; position:relative; }
+  .stops::before { content:""; position:absolute; left:-34px; top:9px; width:34px; height:10px; background:var(--col); }
+  .stops li { flex:1; min-width:0; position:relative; padding-top:46px; text-align:center; }
+  .stops li::before { content:""; position:absolute; left:0; right:0; top:9px; height:10px; background:var(--col); opacity:.22; }
+  .stops li.done::before, .stops li.now::before { opacity:1; }
+  .stops li.now::before { background:linear-gradient(90deg, var(--col) 50%, color-mix(in srgb, var(--col) 22%, white) 50%); }
+  .stops li.fail::before { opacity:1; }
+  .stops li:last-child::before { right:50%; }
+  .stops li::after { content:""; position:absolute; left:50%; top:0; width:28px; height:28px; margin-left:-14px; border-radius:99px; background:#fff; border:6px solid var(--col); }
+  .stops li.done::after { background:var(--col); }
+  .stops li.todo::after { border-color:color-mix(in srgb, var(--col) 35%, white); }
+  .stops li.now::after { width:36px; height:36px; margin-left:-18px; top:-4px; border-width:8px; box-shadow:0 0 0 6px color-mix(in srgb, var(--col) 22%, white); }
+  .stops li.fail::after { background:var(--red); border-color:var(--red); }
+  .stops li.end::after { border-radius:6px; width:14px; margin-left:-7px; background:var(--col); border-color:var(--col); }
+  .stops b { display:block; font:700 17px/1.1 "Sofia Sans Condensed"; }
+  .stops span { display:block; font:500 14px/1.25 "Sofia Sans Condensed"; color:var(--soft); }
+  .stops em { display:block; font:700 14px/1.3 "Sofia Sans Condensed"; font-style:normal; font-variant-numeric:tabular-nums; }
+  .stops .done b, .stops .done em { color:var(--soft); font-weight:600; }
+  .stops .fail b, .stops .fail em { color:var(--red); }
+  .stops .now b { font-size:19px; }
+
+  .under { display:grid; grid-template-columns:1fr 1fr; border-top:4px solid var(--ink); margin-top:10px; }
+  .under section { padding:18px 26px 24px; }
+  .under section + section { border-left:1px solid var(--rule); }
+  .under h3 { font:800 20px/1 "Sofia Sans Condensed"; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .under h3 i { font-style:normal; background:var(--ink); color:#fff; min-width:26px; height:26px; border-radius:99px; display:grid; place-items:center; font-size:15px; padding:0 7px; }
+  .under h3 i.r { background:var(--red); }
+  .item { display:flex; align-items:center; gap:12px; padding:11px 0; border-top:1px solid var(--rule); }
+  .item div { flex:1; min-width:0; }
+  .item b { font-weight:700; }
+  .item span { display:block; color:var(--soft); }
+  .item .why { color:var(--red); font-weight:600; }
+  .pick { display:flex; gap:6px; }
+  .pick button { width:34px; height:34px; border-radius:99px; border:0; color:#fff; font:800 17px "Sofia Sans Condensed"; cursor:pointer; }
+
+  /* ---------- phone ---------- */
+  .phone { flex:0 0 390px; height:800px; background:#fff; border:10px solid #101820; border-radius:40px; overflow:hidden; display:flex; flex-direction:column; --col:var(--ion); }
+  .sign { background:var(--col); color:#fff; padding:16px 18px 14px; display:flex; align-items:center; gap:12px; }
+  .sign i { width:44px; height:44px; border-radius:99px; background:#fff; color:var(--col); display:grid; place-items:center; font:800 24px/1 "Sofia Sans Condensed"; font-style:normal; }
+  .sign b { display:block; font:800 24px/1 "Sofia Sans Condensed"; }
+  .sign span { opacity:.85; font-weight:500; }
+  .sign .n { margin-left:auto; font:800 30px/1 "Sofia Sans Condensed"; }
+  .sign .n small { font-size:17px; opacity:.8; }
+  .trip { flex:1; overflow:hidden; position:relative; padding:14px 16px 0 56px; }
+  .trip::before { content:""; position:absolute; left:27px; top:0; bottom:0; width:10px; background:color-mix(in srgb, var(--col) 22%, white); }
+  .trip::after { content:""; position:absolute; left:27px; top:0; height:182px; width:10px; background:var(--col); }
+  .s { position:relative; padding:5px 0 9px; color:var(--soft); display:flex; justify-content:space-between; gap:10px; font-weight:500; }
+  .s::before { content:""; position:absolute; left:-36px; top:5px; width:24px; height:24px; border-radius:99px; background:var(--col); border:5px solid var(--col); z-index:2; }
+  .s.fail { color:var(--red); font-weight:700; }
+  .s.fail::before { background:var(--red); border-color:var(--red); }
+  .s.todo { color:var(--ink); font-weight:600; padding:9px 0; }
+  .s.todo::before { background:#fff; border-color:color-mix(in srgb, var(--col) 40%, white); top:9px; }
+  .s.todo span { color:var(--soft); font-weight:500; }
+  .nowc { position:relative; margin:8px 0 12px; border:4px solid var(--ink); border-radius:16px; padding:14px 16px 16px; background:#fff; }
+  .nowc::before { content:""; position:absolute; left:-44px; top:18px; width:32px; height:32px; border-radius:99px; background:#fff; border:8px solid var(--col); z-index:2; }
+  .nowc small { font:700 15px "Sofia Sans Condensed"; color:var(--col); }
+  .nowc h3 { font:800 31px/1.02 "Sofia Sans Condensed"; margin:2px 0 4px; }
+  .nowc p { font-size:17px; font-weight:600; }
+  .nowc p span { color:var(--soft); font-weight:500; }
+  .nowc .money { margin:12px 0; background:#ffd21f; border-radius:8px; padding:9px 12px; display:flex; justify-content:space-between; align-items:baseline; font-weight:700; }
+  .nowc .money b { font:800 26px/1 "Sofia Sans Condensed"; }
+  .nowc .row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .nowc .btn { padding:13px; font-size:16px; text-align:center; }
+  .nowc .go { grid-column:span 2; background:var(--ok); color:#fff; padding:16px; font-size:18px; }
+  .nowc .cant { grid-column:span 2; text-align:center; font-weight:700; padding-top:6px; text-decoration:underline; text-underline-offset:4px; }
+  .tabs { display:grid; grid-template-columns:repeat(3,1fr); border-top:4px solid var(--ink); }
+  .tabs b { text-align:center; padding:14px 0 16px; font:700 16px "Sofia Sans Condensed"; color:var(--soft); }
+  .tabs b.on { color:var(--ink); box-shadow:inset 0 5px 0 #ffd21f; }
+</style>
+</head>
+<body>
+  <div class="intro">
+    <h1>Varianta 3 · Linii</h1>
+    <p>Fiecare curier e o linie, fiecare colet e o stație, ca pe harta de troleibuz. Vezi dintr-o privire unde e fiecare curier, ce a livrat și ce urmează. Coletele fără curier așteaptă la depozit și le pui pe o linie cu un clic.</p>
+  </div>
+
+  <div class="stage">
+    <div class="app">
+      <div class="top">
+        <div class="word">CN DELIVERIES</div>
+        <nav><a class="on" href="#">Azi</a><a href="#">Expedieri</a><a href="#">Scanare</a><a href="#">Ramburs</a><a href="#">Clienți</a><a href="#">Setări</a></nav>
+        <div class="find">Caută nr., nume, telefon</div>
+        <button class="btn">+ Expediere nouă</button>
+      </div>
+
+      <div class="head">
+        <div>
+          <h2>Marți, 17 noiembrie</h2>
+          <p>12 colete azi. 6 livrate, 3 pe linii, 2 la depozit, 1 cere atenție.</p>
+        </div>
+        <div class="figs">
+          <div><small>Ramburs încasat</small><b>2.720,50 MDL</b></div>
+          <div><small>De încasat pe drum</small><b>1.165 MDL</b></div>
+        </div>
+      </div>
+
+      <div class="map">
+        <div class="depot"><div><b>2</b><span>Depozit</span><small>fără curier</small></div></div>
+
+        <div class="line" style="--col:var(--ion)">
+          <div class="lh"><i>I</i><b>Ion Curier</b><span>4 din 7 livrate</span>
+            <div class="cash">Numerar 1.470 MDL <button class="btn dark sm">Primește numerarul</button></div></div>
+          <ol class="stops">
+            <li class="done"><b>Stăuceni</b><span>Maria Popescu</span><em>350 · 12:10</em></li>
+            <li class="done"><b>Buiucani</b><span>Ana Botnaru</span><em>13:40</em></li>
+            <li class="done"><b>Botanica</b><span>Elena Ciobanu</span><em>480 · 14:50</em></li>
+            <li class="done"><b>Botanica</b><span>Victor Ceban</span><em>640 · 15:25</em></li>
+            <li class="fail"><b>Durlești</b><span>Igor Munteanu</span><em>nu răspunde</em></li>
+            <li class="now"><b>Ciocana</b><span>Natalia Rusu</span><em>250 MDL</em></li>
+            <li class="todo"><b>Demo Shop</b><span>de ridicat</span><em>str. Ismail 1</em></li>
+          </ol>
+        </div>
+
+        <div class="line" style="--col:var(--vas)">
+          <div class="lh"><i>V</i><b>Vasile Curier</b><span>2 din 3 livrate</span>
+            <div class="cash">Numerar 0 MDL</div></div>
+          <ol class="stops">
+            <li class="done"><b>Centru</b><span>Cafeneaua Tucano</span><em>13:02</em></li>
+            <li class="done"><b>Centru</b><span>Andrei Rusu</span><em>1.250,50 · 14:34</em></li>
+            <li class="now"><b>Râșcani</b><span>Tipografia Nord</span><em>str. Kiev 8/1</em></li>
+            <li style="visibility:hidden"></li><li style="visibility:hidden"></li><li style="visibility:hidden"></li><li style="visibility:hidden"></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="under">
+        <section>
+          <h3><i>2</i>La depozit, fără curier</h3>
+          <div class="item"><div><b>Bălți</b>, str. Independenței 1<span>Agenția Beta · de la 09:15</span></div>
+            <div class="pick"><button style="background:var(--ion)" title="Pune pe linia Ion">I</button><button style="background:var(--vas)" title="Pune pe linia Vasile">V</button></div></div>
+          <div class="item"><div><b>Ialoveni</b>, str. Alexandru cel Bun 3<span>Doina Lungu · 390 MDL · de la 10:40</span></div>
+            <div class="pick"><button style="background:var(--ion)">I</button><button style="background:var(--vas)">V</button></div></div>
+        </section>
+        <section>
+          <h3><i class="r">1</i>Cere atenție</h3>
+          <div class="item"><div><b>Igor Munteanu</b>, Durlești<span class="why">Nu răspunde · încercarea 1 din 3 · 915 MDL</span></div>
+            <button class="btn dark sm">Sună</button><button class="btn line sm">Reprogramează</button></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="sign"><i>I</i><div><b>Linia Ion</b><span>marți, 17 noiembrie</span></div><div class="n">4<small>/7</small></div></div>
+      <div class="trip">
+        <div class="s"><span>Stăuceni · Maria Popescu</span><span>12:10</span></div>
+        <div class="s"><span>Buiucani · Ana Botnaru</span><span>13:40</span></div>
+        <div class="s"><span>Botanica · Elena Ciobanu</span><span>14:50</span></div>
+        <div class="s"><span>Botanica · Victor Ceban</span><span>15:25</span></div>
+        <div class="s fail"><span>Durlești · nu răspunde</span><span>reîncearcă</span></div>
+        <div class="nowc">
+          <small>Următoarea oprire</small>
+          <h3>bd. Mircea cel Bătrân 30</h3>
+          <p>Ciocana <span>· Natalia Rusu</span></p>
+          <div class="money"><span>De încasat</span><b>250 MDL</b></div>
+          <div class="row">
+            <button class="btn line">Sună</button><button class="btn line">Hartă</button>
+            <button class="btn go">Livrat</button>
+            <div class="cant">Nu pot livra</div>
+          </div>
+        </div>
+        <div class="s todo"><div>Demo Shop SRL<br><span>de ridicat · str. Ismail 1</span></div></div>
+      </div>
+      <div class="tabs"><b class="on">Linia mea</b><b>Scanează</b><b>Numerar</b></div>
+    </div>
+  </div>
+</body>
+</html>

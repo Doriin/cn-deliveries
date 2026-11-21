@@ -1,0 +1,95 @@
+/* Today in the Expres design: pick a courier, read their day stop by stop. Flat tonal regions, shapes carry state. */
+@layer components {
+  .day-expres {
+    display: grid; grid-template-columns: 20rem minmax(0, 1fr); gap: 2rem; align-items: start; font-size: 0.90625rem; font-variant-numeric: tabular-nums;
+    @media (max-width: 1099px) { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+
+    .list { background: var(--d-dock); border-radius: 22px; padding: 1.4rem 0.875rem 1rem; display: flex; flex-direction: column; }
+    .list h1 { padding: 0 0.6rem; font-size: 1.5rem; line-height: 1.12; font-weight: 800; letter-spacing: -0.025em; }
+    .list h1::first-letter { text-transform: uppercase; }
+    .sum { padding: 0.25rem 0.6rem 0; color: var(--d-ink-2); }
+    .warn { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.9rem; padding: 0.75rem 0.875rem; border-radius: 14px; background: var(--d-stop-wash); color: color-mix(in srgb, var(--d-stop) 72%, black); font-weight: 600; transition: transform 100ms ease-out, background-color 120ms ease; }
+    .warn + .warn { margin-top: 0.4rem; }
+    .warn:active { transform: scale(0.98); }
+    .warn svg { width: 1.125rem; height: 1.125rem; flex: none; }
+    .warn svg:first-child { color: var(--d-stop); }
+    .warn span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .list h2 { padding: 0.9rem 0.6rem 0.4rem; font-size: 0.84375rem; font-weight: 600; color: var(--d-ink-3); }
+    .pick { display: flex; align-items: center; gap: 0.75rem; min-height: 4.5rem; padding: 0.6rem 0.875rem 0.6rem 0.6rem; border-radius: 18px; transition: background-color 120ms ease, transform 100ms ease-out; }
+    .pick:active { transform: scale(0.98); }
+    .pick[aria-current] { background: var(--d-page); }
+    .pick .av { display: grid; place-items: center; width: 2.875rem; height: 2.875rem; flex: none; border-radius: 16px; background: var(--d-ink); color: #fff; font-size: 0.9375rem; font-weight: 800; transition: border-radius 360ms var(--d-spring-x), background-color 120ms ease, color 120ms ease; }
+    .pick[aria-current] .av { border-radius: 50%; background: var(--d-accent); color: var(--d-on-accent); }
+    .pick .av.none { background: transparent; color: var(--d-ink-2); box-shadow: inset 0 0 0 2px var(--d-line); }
+    .pick[aria-current] .av.none { background: var(--d-accent); box-shadow: none; }
+    .pick .t { flex: 1; min-width: 0; }
+    .pick .t b { display: block; font-size: 1rem; font-weight: 700; }
+    .pick .t span { display: block; font-size: 0.84375rem; color: var(--d-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pick .f { font-size: 1.375rem; font-weight: 800; letter-spacing: -0.02em; }
+    .pick .f small { font-size: 0.875rem; font-weight: 600; color: var(--d-ink-3); }
+    .tot { display: block; margin-top: 1.25rem; padding: 1rem 0.6rem 0.25rem; border-top: 1px solid var(--d-line); }
+    .tot .line { display: flex; justify-content: space-between; align-items: baseline; gap: 0.6rem; color: var(--d-ink-2); }
+    .tot .line b { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; color: var(--d-ink); }
+    .meter { display: block; height: 8px; margin: 0.5rem 0 0.4rem; border-radius: 4px; background: var(--d-tone-2); overflow: hidden; }
+    .meter i { display: block; height: 100%; border-radius: 4px; background: var(--d-ok); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); transition: transform 600ms var(--d-ease); }
+
+    .dh { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; padding-top: 0.4rem; }
+    .dh h2 { font-size: 2.125rem; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em; }
+    .dh p { margin-top: 0.4rem; font-size: 1rem; color: var(--d-ink-2); }
+    .dh p b { font-weight: 600; color: var(--d-ink); }
+    .dh .sp { margin-left: auto; display: flex; gap: 0.5rem; }
+    .cashrow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin-top: 1.25rem; padding: 0.875rem 1.25rem; border-radius: 18px; background: var(--d-pay-wash); }
+    .cashrow .n { font-size: 1.625rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; }
+    .cashrow span { color: var(--d-pay-ink); font-weight: 500; }
+    .cashrow form { margin-left: auto; }
+    /* the one loud action: bigger, rounder, and it changes shape under the finger */
+    .loud { margin-left: auto; height: 2.875rem; padding: 0 1.25rem; border-radius: 16px; font-size: 0.96875rem; font-weight: 700; }
+    .loud:active:not(:disabled) { border-radius: 8px; }
+
+    .stops { margin-top: 0.6rem; }
+    .stop + .stop { box-shadow: inset 0 1px 0 var(--d-line); }
+    .stop { scroll-margin-top: 5rem; }
+    summary { display: flex; align-items: center; gap: 1rem; min-height: 4rem; padding: 0.6rem 0.25rem; cursor: pointer; border-radius: 12px; }
+    summary:focus-visible { outline: 2px solid var(--d-ink); outline-offset: 2px; }
+    .shape { display: grid; place-items: center; width: 2.125rem; height: 2.125rem; flex: none; border-radius: 50%; font-size: 0.875rem; font-weight: 800; color: var(--d-ink-2); box-shadow: inset 0 0 0 2px var(--d-line); transition: border-radius 360ms var(--d-spring-x), transform 360ms var(--d-spring-x), background-color 300ms ease; }
+    .shape svg { width: 1.125rem; height: 1.125rem; stroke-width: 2.8; }
+    [data-group="done"] .shape { background: var(--d-ok-wash); color: var(--d-ok); box-shadow: none; }
+    [data-group="road"] .shape { background: var(--d-accent); color: var(--d-on-accent); box-shadow: none; border-radius: 11px; transform: scale(1.14); }
+    [data-group="pickup"] .shape, [data-group="back"] .shape { border-radius: 11px; box-shadow: inset 0 0 0 2px var(--d-ink-2); }
+    [data-group="bad"] .shape { background: var(--d-stop); color: #fff; box-shadow: none; border-radius: 8px; transform: rotate(45deg); }
+    [data-group="bad"] .shape span { transform: rotate(-45deg); }
+    [data-group="depot"] .shape { box-shadow: none; border: 2px dashed var(--d-ink-3); }
+    summary .t { flex: 1; min-width: 0; }
+    summary .t b { font-size: 1rem; font-weight: 700; }
+    summary .t > span { color: var(--d-ink-2); }
+    summary .t small { display: block; font-size: 0.84375rem; color: var(--d-ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    [data-group="bad"] summary .t small { color: var(--d-stop); font-weight: 600; }
+    [data-group="done"] summary .t b { font-weight: 600; color: var(--d-ink-2); }
+    summary .a { flex: none; text-align: right; }
+    summary .a b { display: block; font-size: 1rem; font-weight: 700; }
+    summary .a b.nil { color: var(--d-ink-3); font-weight: 400; font-size: 0.875rem; }
+    summary .a small { font-size: 0.78125rem; color: var(--d-ink-3); }
+    .chev { width: 1.125rem; height: 1.125rem; flex: none; color: var(--d-ink-3); transition: transform 360ms var(--d-spring-x); }
+    .stop[open] .chev { transform: rotate(90deg); }
+    .in { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.75rem; margin: 0 0 0.875rem 3.125rem; padding: 0.875rem 1rem; border-radius: 14px; background: var(--d-dock); }
+    .in dl { display: flex; flex-wrap: wrap; gap: 0.4rem 1.75rem; flex: 1 1 20rem; }
+    .in dl div { min-width: 7.5rem; }
+    .in dt { font-size: 0.8125rem; color: var(--d-ink-3); }
+    .in dd { font-weight: 600; }
+    .in .acts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .empty { padding: 2.5rem 0; color: var(--d-ink-3); }
+
+    /* where the browser can, a stop opens and closes smoothly */
+    @supports (interpolate-size: allow-keywords) {
+      .stop { interpolate-size: allow-keywords; }
+      .stop::details-content { block-size: 0; overflow: hidden; transition: block-size 300ms var(--d-ease), content-visibility 300ms allow-discrete; }
+      .stop[open]::details-content { block-size: auto; }
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .pick:hover { background: color-mix(in srgb, var(--d-ink) 5%, transparent); }
+      .pick[aria-current]:hover { background: var(--d-page); }
+      .warn:hover { background: color-mix(in srgb, var(--d-stop) 16%, white); }
+      summary:hover .t b { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+    }
+  }
+}

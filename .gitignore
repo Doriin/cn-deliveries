@@ -1,0 +1,10 @@
+node_modules
+.next
+.next-alt
+.env
+secrets/
+*.tsbuildinfo
+next-env.d.ts
+.data
+uploads/
+.playwright-mcp

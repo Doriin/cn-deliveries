@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 7 · De făcut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kit.css">
+<style>
+  .shell { display: grid; grid-template-columns: 68px minmax(0, 1fr); }
+  .rail { background: var(--van); color: #fff; padding: 12px 6px; display: flex; flex-direction: column; align-items: stretch; gap: 2px; }
+  .rail .mark { display: grid; place-items: center; padding: 2px 0 14px; }
+  .rail a { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 0 7px; border-radius: var(--r-ctl); font-size: 11px; font-weight: 500; opacity: 0.74; transition: opacity 120ms, background-color 120ms; }
+  .rail a .i { width: 20px; height: 20px; }
+  .rail a:hover { opacity: 1; background: rgb(255 255 255 / 0.08); }
+  .rail a.on { opacity: 1; background: rgb(255 255 255 / 0.16); }
+  .rail a em { position: absolute; top: 4px; right: 10px; font-style: normal; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: #fff; color: var(--stop); font-size: 11px; font-weight: 600; display: grid; place-items: center; }
+  .rail .end { margin-top: auto; display: grid; gap: 8px; justify-items: stretch; }
+  .rail .me { justify-self: center; }
+
+  .head { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+  .head h1 { font-size: 20px; line-height: 1.2; font-weight: 600; letter-spacing: -0.015em; margin-right: auto; white-space: nowrap; }
+  .head h1 span { font-weight: 400; color: var(--ink-3); }
+  .search { display: flex; align-items: center; gap: 8px; width: 270px; height: 32px; padding: 0 8px 0 10px; border-radius: var(--r-ctl); background: var(--dock); border: 1px solid var(--line); color: var(--ink-3); }
+  .search kbd { margin-left: auto; }
+
+  .cols { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); }
+  .sec { display: flex; align-items: baseline; gap: 8px; padding: 16px 20px 10px; }
+  .sec h2 { font-size: 15px; font-weight: 600; letter-spacing: -0.005em; }
+  .sec .n { color: var(--ink-3); }
+  .sec a { margin-left: auto; color: var(--link); font-size: 12px; }
+
+  /* the queue: one row per thing that needs the dispatcher, with the action on the row */
+  .task { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 10px 20px; border-top: 1px solid var(--line); }
+  .task > .i { width: 18px; height: 18px; color: var(--ink-3); }
+  .task .txt { flex: 1; min-width: 0; }
+  .task b { display: block; font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task .txt span { display: block; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task .acts { display: flex; gap: 6px; flex: none; }
+  .task.bad { background: var(--stop-wash); }
+  .task.bad > .i, .task.bad b { color: var(--stop); }
+  .task.bad .txt span { color: #7d160e; }
+  .task.money > .i { color: #8a5a00; }
+  .more { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--ink-2); }
+  .more .i { color: var(--ink-4); }
+  .quiet { padding: 4px 0 16px; }
+  .quiet .row { display: grid; grid-template-columns: 52px minmax(0, 1.1fr) minmax(0, 1.4fr) 64px 120px; align-items: center; gap: 10px; height: 36px; padding: 0 20px; border-top: 1px solid var(--line); }
+  .quiet .row:first-of-type { border-top: 0; }
+  .quiet .row > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .side { border-left: 1px solid var(--line); background: var(--dock); --run-bg: var(--dock); }
+  .side section { padding: 0 20px 16px; border-bottom: 1px solid var(--line); }
+  .side section:last-child { border-bottom: 0; }
+  .side .sec { padding: 16px 0 10px; }
+  .split { display: flex; height: 10px; border-radius: 3px; overflow: hidden; gap: 2px; margin-bottom: 12px; }
+  .split i { display: block; }
+  .legend { display: grid; grid-template-columns: 1fr auto; row-gap: 2px; }
+  .legend a { display: contents; }
+  .legend span, .legend b { height: 28px; display: flex; align-items: center; gap: 8px; }
+  .legend span i { width: 10px; height: 10px; border-radius: 2px; }
+  .legend b { justify-content: flex-end; font-weight: 500; }
+  .legend .bad { color: var(--stop); font-weight: 500; }
+  .cr + .cr { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .cr .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .cr .top b { font-weight: 600; }
+  .cr .top span { color: var(--ink-3); font-size: 12px; }
+  .cr .run { margin: 4px 0; }
+  .cr p { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cr p span { color: var(--ink-3); }
+  dl { display: grid; grid-template-columns: 1fr auto; row-gap: 6px; }
+  dt { color: var(--ink-2); }
+  dd { text-align: right; font-weight: 500; }
+  dl .sum { padding-top: 7px; border-top: 1px solid var(--line-strong); font-weight: 600; color: var(--ink); }
+
+  /* phone: grouped by what to do, scanning first */
+  .scanrow { padding: 12px 16px; background: var(--dock); border-bottom: 1px solid var(--line); }
+  .grp { padding: 14px 16px 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); display: flex; justify-content: space-between; }
+  .grp span { font-weight: 400; color: var(--ink-3); }
+  .it { display: flex; align-items: center; gap: 12px; min-height: 60px; padding: 8px 12px 8px 16px; border-top: 1px solid var(--line); }
+  .it div { flex: 1; min-width: 0; }
+  .it b { display: block; font-weight: 500; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .it span { display: block; color: var(--ink-3); font-size: 13.5px; }
+  .it .amt { flex: none; font-weight: 600; }
+  .it .call { flex: none; width: 40px; height: 40px; border-radius: 20px; border: 1px solid var(--line-strong); display: grid; place-items: center; color: var(--done); }
+  .it .call .i { width: 18px; height: 18px; }
+  .it > .i { color: var(--ink-4); }
+  .it.bad b { color: var(--stop); }
+  .it.thin { min-height: 48px; }
+  .it.thin b { font-size: 15px; font-weight: 400; color: var(--ink-2); }
+  .groups { flex: 1; overflow: hidden; }
+  .groups .last { border-bottom: 1px solid var(--line); }
+  .phone .pay b { font-size: 16px; }
+  .phone .pay .i { color: #8a5a00; }
+  .phone .tabbar { margin-top: 0; }
+</style>
+</head>
+<body>
+<div class="intro"><b>Varianta 7 · De făcut</b><span>Pagina începe cu ce are nevoie de tine acum, fiecare rând cu butonul lui: sună, atribuie, confirmă, primește banii. Când lista e goală, ziua merge bine. Starea zilei, curierii și rambursul stau alături, pentru o privire.</span></div>
+
+<div class="stage">
+  <div class="app shell">
+    <nav class="rail">
+      <div class="mark"><svg width="30" height="30" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#fff"/><g stroke="#fff" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#0e3b8e"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#3f6fc4"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#7da3e3"/><path d="M19.23 6.87 22.27 8.63 12.77 14.13V19.4L9.73 17.64V12.37Z" fill="#ffb020" stroke-width="0"/></g></svg></div>
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#inbox"/></svg>Azi<em>6</em></a>
+      <a href="#"><svg class="i"><use href="icons.svg#box"/></svg>Expedieri</a>
+      <a href="#"><svg class="i"><use href="icons.svg#scan"/></svg>Scanare</a>
+      <a href="#"><svg class="i"><use href="icons.svg#route"/></svg>Foi</a>
+      <a href="#"><svg class="i"><use href="icons.svg#cash"/></svg>Ramburs</a>
+      <a href="#"><svg class="i"><use href="icons.svg#users"/></svg>Clienți</a>
+      <div class="end"><a href="#"><svg class="i"><use href="icons.svg#gear"/></svg>Setări</a><div class="me">AD</div></div>
+    </nav>
+
+    <div>
+      <div class="head">
+        <h1>Azi <span>· marți, 17 noiembrie</span></h1>
+        <div class="search"><svg class="i"><use href="icons.svg#search"/></svg>Caută nr., nume, telefon<kbd>/</kbd></div>
+        <button class="btn"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</button>
+        <button class="btn go"><svg class="i"><use href="icons.svg#plus"/></svg>Expediere nouă</button>
+      </div>
+
+      <div class="cols">
+        <div>
+          <div class="sec"><h2>De făcut</h2><span class="n num">6</span><a href="#">9 rezolvate azi</a></div>
+
+          <div class="task bad">
+            <svg class="i"><use href="icons.svg#alert"/></svg>
+            <div class="txt"><b>Igor Munteanu nu răspunde</b><span>Durlești, str. Codrilor 5 · încercarea 1 din 3 · ramburs 915,00 MDL</span></div>
+            <div class="acts"><button class="btn red"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button><button class="btn red">Reprogramează</button></div>
+          </div>
+          <div class="task">
+            <svg class="i"><use href="icons.svg#sheet"/></svg>
+            <div class="txt"><b>Comandă nouă din Google Sheets</b><span>Olga Moraru, Stăuceni · de ridicat de la Demo Shop SRL</span></div>
+            <div class="acts"><button class="btn">Vezi</button><button class="btn go">Confirmă</button></div>
+          </div>
+          <div class="task">
+            <svg class="i"><use href="icons.svg#box"/></svg>
+            <div class="txt"><b>Bălți așteaptă un curier</b><span>Agenția Beta, str. Independenței 1 · în depozit de la 09:15</span></div>
+            <div class="acts"><select class="field" style="width:132px"><option>Atribuie curier</option></select></div>
+          </div>
+          <div class="task">
+            <svg class="i"><use href="icons.svg#box"/></svg>
+            <div class="txt"><b>Ialoveni așteaptă un curier</b><span>Doina Lungu, str. Alexandru cel Bun 3 · în depozit de la 10:40 · 390,00 MDL</span></div>
+            <div class="acts"><select class="field" style="width:132px"><option>Atribuie curier</option></select></div>
+          </div>
+          <div class="task money">
+            <svg class="i"><use href="icons.svg#cash"/></svg>
+            <div class="txt"><b>Ion Curier are 1.470,00 MDL numerar</b><span>3 plăți încasate azi, încă nepredate la oficiu</span></div>
+            <div class="acts"><button class="btn">Primește numerarul</button></div>
+          </div>
+          <div class="task">
+            <svg class="i"><use href="icons.svg#print"/></svg>
+            <div class="txt"><b>2 etichete netipărite</b><span>Coletele pentru Bălți și Ialoveni</span></div>
+            <div class="acts"><button class="btn">Tipărește</button></div>
+          </div>
+
+          <div class="sec" style="padding-top:22px; border-top:1px solid var(--line)"><h2>În lucru, fără probleme</h2><span class="n num">2</span><a href="#">Toate cele 12 expedieri</a></div>
+          <div class="quiet">
+            <div class="row"><span class="mono">0007</span><span style="font-weight:500">Natalia Rusu</span><span class="soft">Ciocana, bd. Mircea cel Bătrân 30</span><span class="num r">250,00</span><span class="st road"><i></i>În livrare · Ion</span></div>
+            <div class="row"><span class="mono">0011</span><span style="font-weight:500">Tipografia Nord</span><span class="soft">Râșcani, str. Kiev 8/1</span><span class="nil r">—</span><span class="st road"><i></i>În livrare · Vasile</span></div>
+          </div>
+        </div>
+
+        <aside class="side">
+          <section>
+            <div class="sec"><h2>Starea zilei</h2><span class="n num">12 colete</span></div>
+            <div class="split" role="img" aria-label="6 livrate, 2 în livrare, 1 de ridicat, 2 în depozit, 1 problemă">
+              <i style="flex:6;background:var(--done)"></i><i style="flex:2;background:var(--link)"></i><i style="flex:1;background:#8fb0ec"></i><i style="flex:2;background:var(--ink-4)"></i><i style="flex:1;background:var(--stop)"></i>
+            </div>
+            <div class="legend num">
+              <a href="#"><span><i style="background:var(--done)"></i>Livrate</span><b>6</b></a>
+              <a href="#"><span><i style="background:var(--link)"></i>În livrare</span><b>2</b></a>
+              <a href="#"><span><i style="background:#8fb0ec"></i>De ridicat</span><b>1</b></a>
+              <a href="#"><span><i style="background:var(--ink-4)"></i>În depozit</span><b>2</b></a>
+              <a href="#"><span class="bad"><i style="background:var(--stop)"></i>Probleme</span><b class="bad">1</b></a>
+            </div>
+          </section>
+          <section>
+            <div class="sec"><h2>Curieri</h2><a href="#">Foi de parcurs</a></div>
+            <div class="cr">
+              <div class="top"><b>Ion Curier</b><span class="num">4 din 7</span></div>
+              <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+              <p><span>Acum:</span> Ciocana, bd. Mircea cel Bătrân 30</p>
+            </div>
+            <div class="cr">
+              <div class="top"><b>Vasile Curier</b><span class="num">2 din 3</span></div>
+              <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="n"></i></div>
+              <p><span>Acum:</span> Râșcani, str. Kiev 8/1</p>
+            </div>
+          </section>
+          <section>
+            <div class="sec"><h2>Ramburs azi</h2><a href="#">Detalii</a></div>
+            <dl class="num">
+              <dt>Încasat</dt><dd>2.720,50</dd>
+              <dt>De încasat pe drum</dt><dd>1.165,00</dd>
+              <dt>În depozit</dt><dd>390,00</dd>
+              <dt class="sum">Total, MDL</dt><dd class="sum">4.275,50</dd>
+            </dl>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="ptop">
+      <div class="row"><h1>Ion Curier</h1><span class="cnt num">4 din 7 livrate</span></div>
+      <div class="run on-van"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+    </div>
+    <div class="scanrow"><button class="btn go"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează eticheta</button></div>
+    <div class="groups">
+      <div class="grp">De livrat <span class="num">1</span></div>
+      <div class="it"><div><b>bd. Mircea cel Bătrân 30</b><span>Ciocana · Natalia Rusu</span></div><span class="amt num">250,00</span><a class="call" href="#" aria-label="Sună-l pe Natalia Rusu"><svg class="i"><use href="icons.svg#phone"/></svg></a></div>
+      <div class="grp" style="border-top:1px solid var(--line)">De ridicat <span class="num">1</span></div>
+      <div class="it"><div><b>Demo Shop SRL, str. Ismail 1</b><span>1 colet pentru Stăuceni</span></div><a class="call" href="#" aria-label="Sună la Demo Shop SRL"><svg class="i"><use href="icons.svg#phone"/></svg></a></div>
+      <div class="grp" style="border-top:1px solid var(--line)">De reîncercat <span class="num">1</span></div>
+      <div class="it bad"><div><b>Durlești, str. Codrilor 5</b><span>Igor Munteanu · nu răspunde, încercarea 1 din 3</span></div><span class="amt num">915,00</span><a class="call" href="#" aria-label="Sună-l pe Igor Munteanu"><svg class="i"><use href="icons.svg#phone"/></svg></a></div>
+      <div class="it thin last"><div><b>4 livrate azi</b></div><svg class="i"><use href="icons.svg#chev"/></svg></div>
+    </div>
+    <a class="pay" href="#"><span>Numerar la mine</span><b class="num" style="display:flex;align-items:center;gap:6px">1.470,00 MDL <svg class="i"><use href="icons.svg#chev"/></svg></b></a>
+    <div class="tabbar">
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#list"/></svg>Azi</a>
+      <a href="#"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</a>
+      <a href="#"><svg class="i"><use href="icons.svg#wallet"/></svg>Numerar</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

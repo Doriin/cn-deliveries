@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 12 · Aer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="proto.css">
+<style>
+  /* Light and floating: content on a pale sky, controls on frosted glass that the list scrolls beneath,
+     ink-black pill buttons, movement with a soft spring. Colour is kept for status only. */
+  :root {
+    --sky: #edf1f6; --paper: #ffffff; --ink: #14171c; --ink-2: #49505c; --ink-3: #6a7280; --ink-4: #a2a9b5;
+    --hair: rgb(20 23 28 / 0.08); --hair-2: rgb(20 23 28 / 0.14);
+    --glass: rgb(255 255 255 / 0.72); --glass-edge: rgb(255 255 255 / 0.9);
+    --float: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 0 0 1px rgb(20 23 28 / 0.05), 0 12px 32px -12px rgb(30 45 70 / 0.28);
+    --road: #2d6be4; --bad: #d92d20; --ok: #1e9a5a; --now: #f5a524; --flash: #e3f5ea;
+    /* soft springs computed from the spring equation: under 1% overshoot */
+    --spring: linear(0, 0.006 1.3%, 0.026 2.8%, 0.057 4.3%, 0.096 5.8%, 0.191 8.8%, 0.413 15%, 0.514 18%, 0.613 21.3%, 0.698 24.5%, 0.765 27.5%, 0.825 30.8%, 0.873 34%, 0.914 37.5%, 0.946 41.3%, 0.971 45.5%, 0.989 50.2%, 1 55.8%, 1.006 67.8%, 1);
+    --spring-sheet: linear(0, 0.005 1.3%, 0.023 2.8%, 0.051 4.3%, 0.094 6%, 0.182 9%, 0.394 15.5%, 0.494 18.8%, 0.592 22.3%, 0.671 25.5%, 0.738 28.7%, 0.795 32%, 0.845 35.5%, 0.884 39%, 0.921 43.3%, 0.95 48%, 0.972 53.3%, 0.986 59%, 0.995 65.5%, 1 73.5%, 1);
+    --t-press: 100ms; --t-fast: 140ms; --t-med: 420ms; --t-slow: 520ms; --t-sheet: 600ms; --e-move: var(--spring); --e-sheet: var(--spring-sheet); --press: 0.96;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: #cfe0fb; }
+  body { background: #d8dde5; color: var(--ink); font: 400 14.5px/1.45 "Onest", system-ui, sans-serif; -webkit-font-smoothing: antialiased; padding: 28px; }
+  svg { display: block; flex: none; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; }
+  .i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+  .intro { max-width: 1600px; margin: 0 auto 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; color: var(--ink-2); }
+  .intro b { font-size: 16px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .intro span { flex: 1 1 600px; max-width: 112ch; }
+  .stage { max-width: 1600px; margin: 0 auto; display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+  .glass { background: var(--glass); -webkit-backdrop-filter: blur(20px) saturate(1.7); backdrop-filter: blur(20px) saturate(1.7); box-shadow: var(--float); }
+
+  /* ---------- pill buttons: they squash a little and spring back ---------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 38px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--paper); font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none; box-shadow: 0 0 0 1px var(--hair-2);
+         transition: transform var(--t-med) var(--spring), background-color var(--t-fast) ease, box-shadow var(--t-fast) ease; }
+  .btn:hover { transition-duration: var(--t-med), 0ms, 0ms; background: #f6f7f9; box-shadow: 0 0 0 1px rgb(20 23 28 / 0.24); }
+  .btn:active:not(:disabled) { transition-duration: var(--t-press); transition-timing-function: ease-out; }
+  .btn:focus-visible, [data-tab]:focus-visible, .ring:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .btn.go { background: var(--ink); color: #fff; box-shadow: none; }
+  .btn.go:hover { background: #2a2f38; box-shadow: none; }
+  .btn.sm { height: 30px; padding: 0 12px; font-size: 13.5px; }
+  .btn.round { width: 38px; padding: 0; }
+  .btn.is-done:not(.go) { color: var(--ok); }
+
+  /* round tick box */
+  .pick { position: relative; width: 22px; height: 22px; flex: none; cursor: pointer; }
+  .pick input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .pick i { position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink-4); transition: background-color var(--t-fast) ease, box-shadow var(--t-fast) ease, transform var(--t-med) var(--spring); }
+  .pick svg { position: absolute; inset: 4px; width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 220ms ease-out 40ms; pointer-events: none; }
+  .pick input:checked + i { background: var(--ink); box-shadow: none; transform: scale(1.08); }
+  .pick input:checked ~ svg { stroke-dashoffset: 0; }
+  .pick input:focus-visible + i { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* ---------- office: a scrolling page under floating controls ---------- */
+  .app { flex: 1 1 1040px; min-width: 0; height: 900px; background: var(--sky); border-radius: 22px; overflow: hidden; box-shadow: 0 0 0 1px var(--hair-2); }
+  .scroll { height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--ink-4) transparent; }
+  .capsule { position: sticky; top: 12px; z-index: 5; margin: 12px auto 0; width: fit-content; max-width: calc(100% - 24px); display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 999px; }
+  .capsule .mark { margin: 0 8px 0 6px; }
+  .capsule a { display: flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 999px; font-weight: 500; color: var(--ink-2); white-space: nowrap; transition: background-color var(--t-fast) ease, color var(--t-fast) ease; }
+  .capsule a:hover { background: rgb(20 23 28 / 0.06); color: var(--ink); }
+  .capsule a.on { background: var(--paper); color: var(--ink); font-weight: 600; box-shadow: 0 0 0 1px var(--hair), 0 2px 6px -2px rgb(20 23 28 / 0.18); }
+  .capsule a em { font-style: normal; margin-left: 7px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--bad); color: #fff; font-size: 12px; font-weight: 600; display: grid; place-items: center; }
+  .capsule .sep { width: 1px; height: 22px; background: var(--hair-2); margin: 0 6px; }
+  .capsule .find { position: relative; }
+  .capsule .find .i { position: absolute; left: 12px; top: 9px; color: var(--ink-3); pointer-events: none; }
+  .capsule input { width: 190px; height: 36px; border: 0; border-radius: 999px; background: rgb(20 23 28 / 0.06); padding: 0 14px 0 38px; font: inherit; color: var(--ink); transition: width var(--t-med) var(--spring), background-color var(--t-fast) ease, box-shadow var(--t-fast) ease; }
+  .capsule input:focus { outline: none; width: 250px; background: var(--paper); box-shadow: 0 0 0 2px var(--ink); }
+  .me { width: 36px; height: 36px; border-radius: 50%; background: #dfe6ef; color: var(--ink-2); display: grid; place-items: center; font-size: 13px; font-weight: 600; margin-left: 2px; }
+
+  .page { max-width: 1060px; margin: 0 auto; padding: 34px 28px 20px; }
+  .page h1 { font-size: 36px; line-height: 1.08; font-weight: 700; letter-spacing: -0.035em; }
+  .page .lede { margin-top: 8px; font-size: 17px; color: var(--ink-2); }
+  .page .lede b { font-weight: 600; color: var(--ink); }
+
+  .chips { display: inline-flex; gap: 2px; margin: 22px 0 6px; padding: 4px; border-radius: 999px; background: rgb(20 23 28 / 0.06); }
+  .chips .ind { top: 4px; height: calc(100% - 8px); border-radius: 999px; background: var(--paper); box-shadow: 0 0 0 1px var(--hair), 0 2px 6px -2px rgb(20 23 28 / 0.2); }
+  .chips button { height: 34px; padding: 0 14px; border: 0; border-radius: 999px; background: none; font-weight: 500; color: var(--ink-2); cursor: pointer; white-space: nowrap; transition: color var(--t-fast) ease; }
+  .chips button.on { color: var(--ink); font-weight: 600; }
+  .chips button b { font-weight: 500; color: var(--ink-3); margin-left: 5px; }
+  .chips button[data-tab=bad] b { color: var(--bad); font-weight: 700; }
+
+  .cols { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 36px; align-items: start; margin-top: 8px; }
+  .grp { margin-top: 18px; }
+  .grp:not(:has([data-row]:not([hidden]))) { display: none; }
+  .grp h2 { display: flex; align-items: center; gap: 8px; padding: 0 12px 6px; font-size: 14px; font-weight: 600; color: var(--ink-2); }
+  .grp h2 i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-4); }
+  .grp[data-group=bad] h2 { color: var(--bad); } .grp[data-group=bad] h2 i { background: var(--bad); }
+  .grp[data-group=road] h2 i { background: var(--road); }
+  .grp[data-group=pickup] h2 i { background: none; box-shadow: inset 0 0 0 2px var(--road); }
+  .grp[data-group=done] h2 i { background: var(--ok); }
+  .grp h2 b { font-weight: 500; color: var(--ink-3); }
+  .rows { background: var(--paper); border-radius: 18px; box-shadow: 0 0 0 1px var(--hair); overflow: hidden; }
+  .row { display: flex; align-items: center; gap: 14px; min-height: 62px; padding: 8px 16px 8px 14px; cursor: pointer; }
+  .row + .row { box-shadow: inset 0 1px 0 var(--hair); }
+  @media (hover: hover) and (pointer: fine) { .row:hover { background: #f8f9fb; } }
+  .row.sel, .row.sel:hover { background: #f0f3f8; }
+  .row .t { flex: 1; min-width: 0; }
+  .row .t b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .t b span { font-weight: 400; color: var(--ink-2); }
+  .row .t small { display: block; font-size: 13.5px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .t small em { font-style: normal; color: var(--bad); font-weight: 500; }
+  .row .a { text-align: right; flex: none; }
+  .row .a b { display: block; font-weight: 600; }
+  .row .a b.nil { color: var(--ink-4); font-weight: 400; }
+  .row .a small { font-size: 13px; color: var(--ink-3); }
+  .row.past .t b { font-weight: 500; color: var(--ink-2); }
+
+  .side h2 { font-size: 14px; font-weight: 600; color: var(--ink-2); padding: 0 0 8px; margin-top: 18px; }
+  .who { display: flex; align-items: center; gap: 11px; }
+  .who .av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; background: #dbe6f8; color: #1f4fa8; }
+  .who .av.v { background: #e3efdc; color: #2f6a1e; }
+  .who b { display: block; font-weight: 600; font-size: 15.5px; }
+  .who > div > span { display: block; color: var(--ink-3); font-size: 13.5px; }
+  .left { list-style: none; padding: 0; margin: 10px 0 22px 19px; border-left: 2px solid var(--hair-2); }
+  .left li { position: relative; padding: 5px 0 5px 22px; color: var(--ink-2); transition: opacity var(--t-med) ease, color var(--t-fast) ease; }
+  .left li::before { content: ""; position: absolute; left: -6px; top: 11px; width: 10px; height: 10px; border-radius: 50%; background: var(--sky); box-shadow: inset 0 0 0 2px var(--ink-4); transition: background-color var(--t-fast) ease, box-shadow var(--t-fast) ease, transform var(--t-med) var(--spring); }
+  .left li b { font-weight: 600; color: var(--ink); }
+  .left li.now { color: var(--ink); }
+  .left li.now::before { background: var(--now); box-shadow: 0 0 0 4px rgb(245 165 36 / 0.25); transform: scale(1.15); }
+  .left li.done, .left li.moved { opacity: 0.45; text-decoration: line-through; }
+  .left li.done::before, .left li.moved::before { background: var(--ok); box-shadow: none; }
+  .left li.bad b { color: var(--bad); }
+  .lone { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; }
+  .lone span { color: var(--ink-3); }
+
+  /* the dock: money, always in reach; it steps aside when rows are selected */
+  .dock { position: sticky; bottom: 14px; z-index: 5; margin: 26px auto 14px; width: fit-content; max-width: calc(100% - 24px); display: flex; align-items: center; gap: 18px; padding: 10px 10px 10px 22px; border-radius: 999px; transition: transform var(--t-slow) var(--spring), opacity var(--t-fast) ease; }
+  .app:has([data-bulk].show) .dock { transform: translateY(140%); opacity: 0; }
+  .dock .m { min-width: 250px; }
+  .dock .m div { display: flex; justify-content: space-between; gap: 14px; font-size: 13.5px; color: var(--ink-2); white-space: nowrap; }
+  .dock .m div b { color: var(--ink); font-weight: 600; }
+  .meter { height: 6px; margin-top: 6px; border-radius: 3px; background: rgb(20 23 28 / 0.1); overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 100%; border-radius: 3px; background: var(--ok); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); transition: transform 700ms var(--spring); }
+  .dock .sep { width: 1px; height: 30px; background: var(--hair-2); }
+  .dock .c { white-space: nowrap; color: var(--ink-2); }
+  .dock .c b { color: var(--ink); font-weight: 700; }
+  [data-cash-row].settled .c b { color: var(--ink-3); }
+
+  .bulk { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 20px; border-radius: 999px; white-space: nowrap; }
+  .bulk b { font-weight: 600; margin-right: 6px; }
+
+  .drawer { top: 10px !important; right: 10px !important; bottom: 10px !important; border-radius: 26px; overflow: hidden; }
+  .drawer header { display: flex; align-items: center; gap: 10px; padding: 16px 14px 6px 22px; }
+  .drawer header span { color: var(--ink-3); font-weight: 500; }
+  .drawer header .btn { margin-left: auto; }
+  .drawer .body { padding: 6px 22px 18px; flex: 1; }
+  .drawer h2 { font-size: 26px; line-height: 1.12; font-weight: 700; letter-spacing: -0.03em; }
+  .drawer .addr { margin-top: 4px; color: var(--ink-2); font-size: 16px; }
+  .drawer .st { margin-top: 14px; }
+  .drawer ul { list-style: none; padding: 0; margin-top: 18px; background: var(--paper); border-radius: 18px; box-shadow: 0 0 0 1px var(--hair); }
+  .drawer li { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+  .drawer li + li { box-shadow: inset 0 1px 0 var(--hair); }
+  .drawer li span { color: var(--ink-3); } .drawer li b { font-weight: 600; text-align: right; }
+  .drawer footer { display: flex; gap: 8px; padding: 12px 18px 18px; }
+  .drawer footer .go { flex: 1; height: 46px; }
+  .drawer footer .btn { height: 46px; }
+  .st { display: inline-flex; align-items: center; gap: 7px; font-weight: 500; }
+  .st i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-4); }
+  .st.road i { background: var(--road); } .st.bad { color: var(--bad); } .st.bad i { background: var(--bad); } .st.done i { background: var(--ok); }
+  .st.pickup i { background: none; box-shadow: inset 0 0 0 2px var(--road); }
+
+  .toast { padding: 11px 18px 11px 14px; border-radius: 999px; font-weight: 600; background: var(--glass); -webkit-backdrop-filter: blur(20px) saturate(1.7); backdrop-filter: blur(20px) saturate(1.7); box-shadow: var(--float); }
+  .toast .i { color: var(--ok); stroke-width: 2.6; }
+  .tip { padding: 6px 10px; border-radius: 999px; background: var(--ink); color: #fff; font: 500 12.5px "Onest"; }
+
+  /* ---------- phone ---------- */
+  .phone { flex: 0 0 390px; height: 812px; background: var(--sky); border: 10px solid #15181d; border-radius: 46px; overflow: hidden; display: flex; flex-direction: column; font-size: 16px; }
+  .hello { padding: 22px 22px 6px; }
+  .hello h1 { font-size: 34px; line-height: 1.05; font-weight: 700; letter-spacing: -0.04em; }
+  .hello h1 b { display: inline-block; min-width: 0.6em; }
+  .hello p { margin-top: 6px; color: var(--ink-2); }
+  .hello p b { font-weight: 600; color: var(--ink); }
+  .stop { margin: 14px 14px 0; background: var(--paper); border-radius: 28px; box-shadow: 0 0 0 1px var(--hair); padding: 20px 20px 18px; }
+  .stop .meta { display: flex; justify-content: space-between; color: var(--ink-3); font-size: 13.5px; font-weight: 500; }
+  .stop h2 { margin-top: 10px; font-size: 27px; line-height: 1.1; font-weight: 700; letter-spacing: -0.035em; }
+  .stop .city { margin-top: 5px; font-size: 17px; font-weight: 600; }
+  .stop .person { margin-top: 1px; color: var(--ink-2); }
+  .stop .pay { display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px; padding-top: 14px; box-shadow: inset 0 1px 0 var(--hair-2); }
+  .stop .pay span { color: var(--ink-2); font-weight: 500; }
+  .stop .pay b { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .stop .note { margin-top: 10px; color: var(--ink-2); font-size: 14.5px; }
+  .then { margin: 16px 22px 0; }
+  .then h3 { font-size: 13.5px; font-weight: 600; color: var(--ink-3); margin-bottom: 4px; }
+  .then .left { margin: 6px 0 0 5px; }
+  .then .left li::before { background: var(--sky); }
+  .act { margin: auto 12px 10px; display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 999px; }
+  .act .btn { height: 54px; }
+  .act .btn.round { width: 54px; }
+  .act .btn.round .i { width: 21px; height: 21px; }
+  .act .btn.go { flex: 1; font-size: 17px; }
+  .act .btn .spin { width: 20px; height: 20px; } .act .btn .tick { width: 24px; height: 24px; }
+  .ptabs { margin: 0 auto 14px; display: flex; gap: 2px; padding: 5px; border-radius: 999px; width: fit-content; }
+  .ptabs a { display: flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px; border-radius: 999px; color: var(--ink-3); font-size: 14px; font-weight: 600; transition: transform var(--t-med) var(--spring), background-color var(--t-fast); }
+  .ptabs a:active { transform: scale(0.94); }
+  .ptabs a.on { background: var(--paper); color: var(--ink); box-shadow: 0 0 0 1px var(--hair), 0 2px 6px -2px rgb(20 23 28 / 0.2); }
+  .ptabs a .i { width: 20px; height: 20px; }
+
+  .psheet { margin: 0 8px 8px; border-radius: 34px; padding: 10px 20px 20px; }
+  .psheet .grab { width: 38px; height: 5px; border-radius: 3px; background: var(--hair-2); margin: 0 auto 16px; }
+  .psheet h3 { color: var(--ink-2); font-size: 15px; font-weight: 500; }
+  .psheet .amount { margin: 2px 0 18px; font-size: 42px; line-height: 1.05; font-weight: 700; letter-spacing: -0.04em; }
+  .pseg { display: grid; grid-template-columns: repeat(4, 1fr); padding: 4px; border-radius: 999px; background: rgb(20 23 28 / 0.07); margin-bottom: 14px; }
+  .pseg .thumb { border-radius: 999px; background: var(--paper); box-shadow: 0 0 0 1px var(--hair), 0 2px 6px -2px rgb(20 23 28 / 0.25); }
+  .pseg button { height: 42px; border: 0; background: none; border-radius: 999px; font-weight: 600; font-size: 14px; color: var(--ink-2); cursor: pointer; }
+  .pseg button[aria-checked=true] { color: var(--ink); }
+  .psheet .btn.go { width: 100%; height: 56px; font-size: 17px; }
+  .psheet .btn .spin { width: 20px; height: 20px; } .psheet .btn .tick { width: 24px; height: 24px; }
+  .psheet .x { display: block; width: 100%; padding: 14px 0 2px; border: 0; background: none; color: var(--ink-2); font-weight: 600; cursor: pointer; }
+  .psheet .ok { padding: 30px 0 34px; gap: 14px; text-align: center; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .psheet .ok svg { width: 84px; height: 84px; padding: 20px; border-radius: 50%; background: var(--ok); fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  [data-sheet].success .ok { animation: pop 520ms var(--spring); }
+</style>
+</head>
+<body>
+<div class="intro"><b>Varianta 12 · Aer</b><span>Prototip interactiv. Fără tabel și fără meniu lateral: coletele sunt o listă grupată pe etape, iar comenzile plutesc pe sticlă mată peste ea (derulează lista ca să vezi). Butoane-pastilă negre care se strâng și revin elastic. Încearcă filele, bifele rotunde, un rând, „Primește”, apoi „Livrat” pe telefon: coletul se mută singur la „Livrate”.</span></div>
+
+<div class="stage">
+  <div class="app">
+    <div class="scroll">
+      <div class="capsule glass">
+        <svg class="mark" width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="10" fill="#14171c"/><g stroke="#14171c" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#fff"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#c9cfd9"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#8d96a5"/></g></svg>
+        <a class="on" href="#">Azi</a><a href="#">Expedieri<em>1</em></a><a href="#">Scanare</a><a href="#">Foi de parcurs</a><a href="#">Ramburs</a><a href="#">Clienți</a>
+        <span class="sep"></span>
+        <label class="find"><svg class="i"><use href="icons.svg#search"/></svg><input data-search placeholder="Caută un colet" aria-label="Caută"></label>
+        <button class="btn go"><svg class="i"><use href="icons.svg#plus"/></svg>Expediere nouă</button>
+        <div class="me">AD</div>
+      </div>
+
+      <div class="page">
+        <h1>Marți, 17 noiembrie</h1>
+        <p class="lede"><b><span data-done-count>6</span> din 12</b> colete sunt livrate. <b>1</b> are nevoie de tine.</p>
+
+        <div class="chips" data-tabs role="tablist" aria-label="Filtrează după stare">
+          <span class="ind"></span>
+          <button class="on" role="tab" aria-selected="true" data-tab="all">Toate<b class="num" data-count="all"></b></button>
+          <button role="tab" data-tab="bad">Atenție<b class="num" data-count="bad"></b></button>
+          <button role="tab" data-tab="road">Pe drum<b class="num" data-count="road"></b></button>
+          <button role="tab" data-tab="pickup">De ridicat<b class="num" data-count="pickup"></b></button>
+          <button role="tab" data-tab="depot">În depozit<b class="num" data-count="depot"></b></button>
+          <button role="tab" data-tab="done">Livrate<b class="num" data-count="done"></b></button>
+        </div>
+
+        <div class="cols">
+          <div>
+            <div data-rows hidden></div>
+            <section class="grp" data-group="bad"><h2><i></i>Atenție</h2><div class="rows"></div></section>
+            <section class="grp" data-group="road"><h2><i></i>Pe drum</h2><div class="rows"></div></section>
+            <section class="grp" data-group="pickup"><h2><i></i>De ridicat</h2><div class="rows"></div></section>
+            <section class="grp" data-group="depot"><h2><i></i>În depozit, fără curier</h2><div class="rows"></div></section>
+            <section class="grp" data-group="done"><h2><i></i>Livrate <b class="num" data-count="done"></b></h2><div class="rows"></div></section>
+          </div>
+
+          <aside class="side">
+            <h2 style="margin-top:18px">Curieri</h2>
+            <div class="who"><div class="av">IC</div><div><b>Ion Curier</b><span>mai are <span data-ion-left>3</span> opriri</span></div></div>
+            <ol class="left">
+              <li class="now" data-stop="0007"><b>Ciocana</b> · Natalia Rusu</li>
+              <li data-stop="0009"><b>Demo Shop SRL</b> · de ridicat</li>
+              <li class="bad" data-stop="0005"><b>Durlești</b> · de reîncercat</li>
+            </ol>
+            <div class="who"><div class="av v">VC</div><div><b>Vasile Curier</b><span>mai are 1 oprire</span></div></div>
+            <ol class="left"><li class="now"><b>Râșcani</b> · Tipografia Nord</li></ol>
+            <h2>Fără curier</h2>
+            <div class="lone"><div><b style="font-weight:600">Bălți</b> <span>· Agenția Beta</span></div><button class="btn sm" data-async="task" data-toast="Bălți i-a fost dat lui Vasile"><span class="lbl">Atribuie</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button></div>
+            <div class="lone"><div><b style="font-weight:600">Ialoveni</b> <span>· Doina Lungu</span></div><button class="btn sm" data-async="task" data-toast="Ialoveni i-a fost dat lui Ion"><span class="lbl">Atribuie</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button></div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="dock glass" data-cash-row>
+        <div class="m">
+          <div><span>Ramburs încasat</span><span><b class="num" data-sum="collected"></b> din <span class="num" data-sum="total"></span> MDL</span></div>
+          <div class="meter" data-meter><i></i></div>
+        </div>
+        <span class="sep"></span>
+        <div class="c">Ion are <b class="num" data-sum="cashIon"></b> MDL</div>
+        <button class="btn go" data-async="cash" data-toast="Ai primit numerarul de la Ion"><span class="lbl">Primește</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+      </div>
+    </div>
+
+    <div class="bulk glass" data-bulk><b><span data-bulk-count>0</span> selectate</b><button class="btn sm">Schimbă starea</button><button class="btn sm">Atribuie curier</button><button class="btn sm">Etichete</button><button class="btn sm round" style="width:30px" data-bulk-clear aria-label="Anulează selecția"><svg class="i" style="width:15px;height:15px"><use href="icons.svg#x"/></svg></button></div>
+
+    <div data-scrim style="--scrim: rgb(20 30 50 / 0.18)"></div>
+    <aside class="drawer glass" data-drawer aria-label="Detalii colet">
+      <header><span class="num" data-f="n"></span><button class="btn round sm" style="width:34px;height:34px" data-close aria-label="Închide"><svg class="i"><use href="icons.svg#x"/></svg></button></header>
+      <div class="body">
+        <h2 data-f="who"></h2>
+        <div class="addr" data-f="addr"></div>
+        <div data-f="status"></div>
+        <ul><li><span>Telefon</span><b class="num" data-f="tel"></b></li><li><span>Ramburs</span><b class="num" data-f="cod"></b></li><li><span>Colet</span><b data-f="kg"></b></li><li><span>Client</span><b data-f="client"></b></li><li><span>Curier</span><b data-f="courier"></b></li></ul>
+      </div>
+      <footer><button class="btn go"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button><button class="btn">Reprogramează</button></footer>
+    </aside>
+  </div>
+
+  <div class="phone" data-phone>
+    <div class="hello">
+      <h1>Mai ai <b class="num" data-ion-left>3</b> opriri</h1>
+      <p><b><span data-ion-done>4</span> livrate</b> azi · <b class="num" data-sum="cashIon"></b> MDL la tine</p>
+    </div>
+    <div class="stop" data-next>
+      <div class="meta"><span data-p="label"></span><span class="num" data-p="n"></span></div>
+      <h2 data-p="title"></h2>
+      <div class="city" data-p="city"></div>
+      <div class="person" data-p="person"></div>
+      <div class="pay" data-pay><span>De încasat</span><b class="num" data-p="cod"></b></div>
+      <p class="note" data-p="note"></p>
+    </div>
+    <div class="then">
+      <h3>Apoi</h3>
+      <ol class="left">
+        <li data-stop="0009"><b>Demo Shop SRL</b> · de ridicat</li>
+        <li class="bad" data-stop="0005"><b>Durlești</b> · de reîncercat</li>
+      </ol>
+    </div>
+    <div class="act glass">
+      <button class="btn round" aria-label="Sună"><svg class="i"><use href="icons.svg#phone"/></svg></button>
+      <button class="btn round" aria-label="Hartă"><svg class="i"><use href="icons.svg#nav"/></svg></button>
+      <button class="btn go" data-deliver><span class="lbl" data-p="go"></span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+    </div>
+    <div class="ptabs glass">
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#list"/></svg>Azi</a>
+      <a href="#" aria-label="Scanează"><svg class="i"><use href="icons.svg#scan"/></svg></a>
+      <a href="#" aria-label="Numerar"><svg class="i"><use href="icons.svg#wallet"/></svg></a>
+    </div>
+
+    <div data-sheet-scrim style="--scrim: rgb(20 30 50 / 0.22)"></div>
+    <div class="psheet glass" data-sheet>
+      <div class="grab"></div>
+      <div class="form">
+        <h3>De încasat</h3>
+        <div class="amount num" data-sheet-cod></div>
+        <div class="pseg" data-seg role="radiogroup" aria-label="Metoda de plată"><span class="thumb"></span><button role="radio" aria-checked="true">Cu bon</button><button role="radio" aria-checked="false">Fără bon</button><button role="radio" aria-checked="false">Card</button><button role="radio" aria-checked="false">Transfer</button></div>
+        <button class="btn go" data-confirm><span class="lbl">Confirmă livrarea</span><i class="spin"></i><svg class="tick" viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></button>
+        <button class="x" data-sheet-close>Renunță</button>
+      </div>
+      <div class="ok"><svg viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg>Livrat</div>
+    </div>
+  </div>
+</div>
+<div data-toasts></div>
+
+<script src="proto.js"></script>
+<script>
+  const status = (p) => `<span class="st ${p.stage}"><i></i>${CN.STAGE[p.stage]}</span>`;
+  const sub = (p) => p.stage === "bad" ? `<em>Nu răspunde · încercarea 1 din 3</em> · ${p.courier}` : p.stage === "done" ? `Livrat ${p.time === "acum" ? "acum" : "la " + p.time} · ${p.courier}` : p.stage === "depot" ? `În depozit de la ${p.time} · ${p.client}` : `${p.client} · ${p.courier}`;
+  CN.mount({
+    status,
+    row: (p) => `<div class="row ${p.stage === "done" ? "past" : ""}" data-row="${p.n}" style="view-transition-name:p${p.n}">
+      <label class="pick"><input type="checkbox" aria-label="Selectează ${p.who}"><i></i><svg viewBox="0 0 24 24"><path pathLength="1" d="m5 12.5 4.5 4.5L19 7.5"/></svg></label>
+      <div class="t"><b>${p.who} <span>· ${p.city}, ${p.addr}</span></b><small data-status>${sub(p)}</small></div>
+      <div class="a"><b class="num ${p.cod ? "" : "nil"}">${p.cod ? CN.fmt(p.cod) : "—"}</b><small class="num">${p.n}</small></div></div>`,
+  });
+  // The list is grouped by stage; a parcel moves to its new group when its stage changes.
+  const group = (stage) => document.querySelector(`.grp[data-group="${stage}"] .rows`);
+  document.querySelectorAll("[data-row]").forEach((r) => group(CN.parcels.find((p) => p.n === r.dataset.row).stage).append(r));
+  CN.badge = status;
+  CN.status = (p) => sub(p);
+  CN.on.complete = (p) => {
+    const row = document.querySelector(`[data-row="${p.n}"]`), move = () => group(p.stage).prepend(row);
+    CN.vt(move);
+  };
+</script>
+</body>
+</html>

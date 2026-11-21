@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Varianta 10 · Verde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* A green light: go. Leaf green for actions, mint for quiet surfaces, plenty of white. */
+  :root {
+    --leaf: #0d6b43; --leaf-press: #0a5435; --mint: #edf5f0; --mint-2: #dcebe2;
+    --sheet: #ffffff; --ink: #14201a; --ink-2: #42524a; --ink-3: #63736a; --ink-4: #9aa8a0;
+    --line: rgb(20 32 26 / 0.10); --line-2: rgb(20 32 26 / 0.20);
+    --road: #2262c6; --pay: #fff3d1; --pay-ink: #6b4a00; --stop: #c2271b; --stop-wash: #fdeeeb;
+    --r: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  ::selection { background: #c4e6d2; }
+  body { background: #d9e2dc; color: var(--ink); font: 400 15px/1.45 "Wix Madefor Text", system-ui, sans-serif; -webkit-font-smoothing: antialiased; padding: 28px; }
+  svg { display: block; flex: none; }
+  a { color: inherit; text-decoration: none; }
+  .i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .num { font-variant-numeric: tabular-nums; }
+  .intro { max-width: 1600px; margin: 0 auto 16px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; color: var(--ink-2); }
+  .intro b { font-size: 17px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .intro span { flex: 1 1 600px; max-width: 110ch; }
+  .stage { max-width: 1600px; margin: 0 auto; display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 40px; padding: 0 16px; border-radius: var(--r); border: 1px solid var(--line-2); background: var(--sheet); color: var(--ink); font: 600 15px/1 "Wix Madefor Text"; white-space: nowrap; cursor: pointer; transition: background-color 120ms, transform 120ms cubic-bezier(.23,1,.32,1); }
+  .btn:hover { background: var(--mint); }
+  .btn:active { transform: scale(0.97); }
+  .btn:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
+  .btn.go { background: var(--leaf); border-color: transparent; color: #fff; }
+  .btn.go:hover { background: var(--leaf-press); }
+  .btn.sm { height: 34px; padding: 0 12px; font-size: 14px; border-radius: 8px; }
+  .sel { height: 40px; border-radius: var(--r); border: 1px solid var(--line-2); background-color: var(--sheet); color: var(--ink); padding: 0 32px 0 14px; font: 600 15px "Wix Madefor Text"; appearance: none;
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2314201a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; }
+
+  .app { flex: 1 1 1040px; min-width: 0; background: var(--sheet); border: 1px solid var(--line-2); border-radius: 14px; overflow: hidden; }
+  .bar { display: flex; align-items: center; gap: 6px; height: 64px; padding: 0 20px 0 24px; border-bottom: 1px solid var(--line); }
+  .brand { display: flex; align-items: center; gap: 10px; margin-right: 22px; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+  .brand span { font-weight: 500; color: var(--ink-2); }
+  .nav { display: flex; gap: 2px; }
+  .nav a { display: flex; align-items: center; height: 38px; padding: 0 13px; border-radius: 9px; font-weight: 500; color: var(--ink-2); white-space: nowrap; transition: background-color 120ms; }
+  .nav a:hover { background: var(--mint); }
+  .nav a.on { background: var(--mint-2); color: var(--leaf-press); font-weight: 600; }
+  .nav a em { font-style: normal; margin-left: 7px; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--stop); color: #fff; font-size: 12.5px; font-weight: 600; display: grid; place-items: center; }
+  .bar .right { flex: 1; min-width: 0; margin-left: 12px; display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+  .search { display: flex; align-items: center; gap: 9px; flex: 0 1 230px; min-width: 0; overflow: hidden; white-space: nowrap; height: 40px; padding: 0 14px; border-radius: var(--r); background: var(--mint); color: var(--ink-3); }
+  .me { width: 38px; height: 38px; border-radius: 19px; background: var(--mint-2); color: var(--leaf-press); display: grid; place-items: center; font-size: 13.5px; font-weight: 700; }
+
+  .cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(310px, 1fr); }
+  .main { padding: 30px 32px 28px; min-width: 0; }
+  .main h1 { font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -0.03em; }
+  .main .lede { margin-top: 6px; font-size: 17px; color: var(--ink-2); }
+  .main .lede b { font-weight: 600; color: var(--ink); }
+  .main .lede .bad { color: var(--stop); }
+
+  .h2 { display: flex; align-items: baseline; gap: 10px; margin: 30px 0 4px; }
+  .h2 h2 { font-size: 19px; font-weight: 700; letter-spacing: -0.015em; }
+  .h2 span { color: var(--ink-3); }
+  .h2 a { margin-left: auto; color: var(--leaf); font-weight: 600; font-size: 14px; }
+
+  .task { display: flex; align-items: center; gap: 16px; min-height: 76px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .task > .i { width: 22px; height: 22px; color: var(--ink-3); }
+  .task .txt { flex: 1; min-width: 0; }
+  .task b { display: block; font-size: 16.5px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task .txt span { display: block; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .task .acts { display: flex; gap: 8px; flex: none; }
+  .task.bad > .i, .task.bad b { color: var(--stop); }
+  .task.bad .txt span { color: #8a2a21; }
+  .task.cash > .i { color: var(--pay-ink); }
+
+  .quiet .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) 76px 150px; align-items: center; gap: 14px; min-height: 52px; border-bottom: 1px solid var(--line); }
+  .quiet .row > * { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .quiet .row b { font-weight: 600; }
+  .quiet .row .where { color: var(--ink-2); }
+  .quiet .row .amt { text-align: right; font-weight: 600; }
+  .quiet .row .amt.nil { color: var(--ink-4); font-weight: 400; }
+  .st { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); }
+  .st i { width: 10px; height: 10px; border-radius: 50%; background: var(--road); }
+
+  .side { background: var(--mint); border-left: 1px solid var(--line); padding: 30px 26px 26px; --run-bg: var(--mint); }
+  .side h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: baseline; }
+  .side h2 a { color: var(--leaf); font-weight: 600; font-size: 14px; }
+  .side h2 span { color: var(--ink-3); font-weight: 400; font-size: 15px; }
+  .side section + section { margin-top: 26px; padding-top: 24px; border-top: 1px solid var(--line-2); }
+  .split { display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; margin-bottom: 12px; }
+  .split i { display: block; }
+  .legend { display: grid; grid-template-columns: 1fr auto; }
+  .legend a { display: contents; }
+  .legend span, .legend b { height: 32px; display: flex; align-items: center; gap: 10px; }
+  .legend span i { width: 10px; height: 10px; border-radius: 50%; }
+  .legend b { justify-content: flex-end; font-weight: 600; }
+  .legend .bad { color: var(--stop); font-weight: 600; }
+  .cr + .cr { margin-top: 16px; }
+  .cr .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .cr .top b { font-weight: 600; font-size: 16px; }
+  .cr .top span { color: var(--ink-2); font-weight: 600; }
+  .run { display: flex; align-items: center; height: 26px; margin: 4px 0 2px; }
+  .run i { position: relative; flex: 0 1 38px; height: 4px; background: var(--mint-2); }
+  .run i:first-child { flex: 0 0 6px; border-radius: 2px 0 0 2px; }
+  .run i::after { content: ""; position: absolute; right: -6px; top: -4px; width: 12px; height: 12px; border-radius: 50%; background: var(--run-bg, var(--sheet)); border: 2.5px solid var(--ink-4); z-index: 1; }
+  .run i:first-child::after { display: none; }
+  .run i.d, .run i.f, .run i.n { background: var(--leaf); }
+  .run i.d::after { background: var(--leaf); border-color: var(--leaf); }
+  .run i.f::after { background: var(--stop); border-color: var(--stop); }
+  .run i.n::after { width: 18px; height: 18px; right: -9px; top: -7px; background: var(--sheet); border: 5px solid var(--leaf); }
+  .cr p { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  dl { display: grid; grid-template-columns: 1fr auto; row-gap: 8px; }
+  dt { color: var(--ink-2); } dd { text-align: right; font-weight: 600; }
+  dl .sum { padding-top: 10px; border-top: 1px solid var(--line-2); font-weight: 700; color: var(--ink); font-size: 17px; }
+
+  /* phone */
+  .phone { flex: 0 0 390px; height: 812px; background: var(--sheet); border: 10px solid #101914; border-radius: 42px; overflow: hidden; display: flex; flex-direction: column; font-size: 16px; }
+  .ptop { padding: 18px 20px 14px; border-bottom: 1px solid var(--line); }
+  .ptop .row { display: flex; align-items: baseline; justify-content: space-between; }
+  .ptop h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.03em; }
+  .ptop .cnt { color: var(--ink-2); font-weight: 600; }
+  .ptop .run { margin: 12px 3px 0; }
+  .ptop .run i { flex: 1; } .ptop .run i:first-child { flex: 0 0 6px; }
+  .next { padding: 18px 20px 16px; border-bottom: 10px solid var(--mint); }
+  .next .meta { color: var(--ink-3); font-size: 14px; margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .next h2 { font-size: 26px; line-height: 1.15; font-weight: 700; letter-spacing: -0.03em; }
+  .next .city { margin-top: 4px; font-size: 17px; font-weight: 600; }
+  .next .person { margin-top: 1px; color: var(--ink-2); }
+  .paybox { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 12px; padding: 12px 14px; border-radius: var(--r); background: var(--pay); }
+  .paybox span { color: var(--pay-ink); font-weight: 600; }
+  .paybox b { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .note { color: var(--ink-2); margin-bottom: 14px; }
+  .note b { font-weight: 600; color: var(--ink); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .phone .btn { height: 50px; font-size: 16px; border-radius: 12px; }
+  .phone .btn.go { height: 58px; font-size: 18px; margin-top: 10px; width: 100%; }
+  .cant { display: block; text-align: center; padding: 14px 0 0; color: var(--leaf); font-weight: 600; }
+  .li { display: flex; align-items: center; gap: 14px; min-height: 60px; padding: 8px 14px 8px 20px; border-bottom: 1px solid var(--line); }
+  .li div { flex: 1; min-width: 0; }
+  .li b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .li span { display: block; color: var(--ink-3); font-size: 14px; }
+  .li.bad b, .li.bad svg:first-child { color: var(--stop); }
+  .li svg:first-child { width: 20px; height: 20px; color: var(--ink-3); }
+  .li svg:last-child { color: var(--ink-4); }
+  .tabbar { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line-2); padding: 8px 0 14px; }
+  .tabbar a { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--ink-3); font-size: 12.5px; font-weight: 600; }
+  .tabbar a.on { color: var(--leaf); }
+  .tabbar svg { width: 24px; height: 24px; }
+</style>
+</head>
+<body>
+<div class="intro"><b>Varianta 10 · Verde</b><span>Verde și alb, cu text mai mare și mult aer: calm, ușor de citit, pentru cine nu vrea un ecran încărcat. Pagina începe cu o propoziție despre zi și cu lista de lucruri de făcut, fiecare cu butonul lui. Verdele înseamnă mereu „acționează”.</span></div>
+
+<div class="stage">
+  <div class="app">
+    <div class="bar">
+      <div class="brand">
+        <svg width="32" height="32" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#0d6b43"/><g stroke="#0d6b43" stroke-width="1.2" stroke-linejoin="round"><path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="#fff"/><path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="#d5ecdf"/><path d="M25.5 10.5V21.5L16 27V16Z" fill="#a3d3b9"/></g></svg>
+        CN <span>Deliveries</span>
+      </div>
+      <nav class="nav">
+        <a class="on" href="#">Azi</a><a href="#">Expedieri<em>1</em></a><a href="#">Scanare</a><a href="#">Foi de parcurs</a><a href="#">Ramburs</a><a href="#">Clienți</a><a href="#">Setări</a>
+      </nav>
+      <div class="right">
+        <div class="search"><svg class="i"><use href="icons.svg#search"/></svg>Caută un colet</div>
+        <button class="btn go"><svg class="i"><use href="icons.svg#plus"/></svg>Expediere nouă</button>
+        <div class="me">AD</div>
+      </div>
+    </div>
+
+    <div class="cols">
+      <div class="main">
+        <h1>Marți, 17 noiembrie</h1>
+        <p class="lede"><b>6 din 12</b> colete sunt livrate. <b class="bad">1 livrare</b> are nevoie de tine.</p>
+
+        <div class="h2"><h2>De făcut</h2><span class="num">5</span><a href="#">9 rezolvate azi</a></div>
+        <div class="task bad">
+          <svg class="i"><use href="icons.svg#alert"/></svg>
+          <div class="txt"><b>Igor Munteanu nu răspunde</b><span>Durlești, str. Codrilor 5 · încercarea 1 din 3 · 915,00 MDL</span></div>
+          <div class="acts"><button class="btn sm">Reprogramează</button><button class="btn sm go"><svg class="i" style="width:16px;height:16px"><use href="icons.svg#phone"/></svg>Sună</button></div>
+        </div>
+        <div class="task">
+          <svg class="i"><use href="icons.svg#sheet"/></svg>
+          <div class="txt"><b>Comandă nouă din Google Sheets</b><span>Olga Moraru, Stăuceni · de ridicat de la Demo Shop SRL</span></div>
+          <div class="acts"><button class="btn sm">Vezi</button><button class="btn sm go">Confirmă</button></div>
+        </div>
+        <div class="task">
+          <svg class="i"><use href="icons.svg#box"/></svg>
+          <div class="txt"><b>Bălți așteaptă un curier</b><span>Agenția Beta · în depozit de la 09:15</span></div>
+          <div class="acts"><select class="sel" style="height:34px;font-size:14px;border-radius:8px;width:170px"><option>Atribuie curier</option></select></div>
+        </div>
+        <div class="task">
+          <svg class="i"><use href="icons.svg#box"/></svg>
+          <div class="txt"><b>Ialoveni așteaptă un curier</b><span>Doina Lungu · în depozit de la 10:40 · 390,00 MDL</span></div>
+          <div class="acts"><select class="sel" style="height:34px;font-size:14px;border-radius:8px;width:170px"><option>Atribuie curier</option></select></div>
+        </div>
+        <div class="task cash">
+          <svg class="i"><use href="icons.svg#cash"/></svg>
+          <div class="txt"><b>Ion Curier are 1.470,00 MDL numerar</b><span>3 plăți încasate azi, nepredate la oficiu</span></div>
+          <div class="acts"><button class="btn sm">Primește numerarul</button></div>
+        </div>
+
+        <div class="h2"><h2>Pe drum acum</h2><span class="num">2</span><a href="#">Toate cele 12 expedieri</a></div>
+        <div class="quiet">
+          <div class="row"><b>Natalia Rusu</b><span class="where">Ciocana, bd. Mircea cel Bătrân 30</span><span class="amt num">250,00</span><span class="st"><i></i>Ion Curier</span></div>
+          <div class="row"><b>Tipografia Nord</b><span class="where">Râșcani, str. Kiev 8/1</span><span class="amt nil">—</span><span class="st"><i></i>Vasile Curier</span></div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <section>
+          <h2>Starea zilei <span class="num">12 colete</span></h2>
+          <div class="split" role="img" aria-label="6 livrate, 2 în livrare, 1 de ridicat, 2 în depozit, 1 problemă">
+            <i style="flex:6;background:var(--leaf)"></i><i style="flex:2;background:var(--road)"></i><i style="flex:1;background:#8db4ea"></i><i style="flex:2;background:var(--ink-4)"></i><i style="flex:1;background:var(--stop)"></i>
+          </div>
+          <div class="legend num">
+            <a href="#"><span><i style="background:var(--leaf)"></i>Livrate</span><b>6</b></a>
+            <a href="#"><span><i style="background:var(--road)"></i>În livrare</span><b>2</b></a>
+            <a href="#"><span><i style="background:#8db4ea"></i>De ridicat</span><b>1</b></a>
+            <a href="#"><span><i style="background:var(--ink-4)"></i>În depozit</span><b>2</b></a>
+            <a href="#"><span class="bad"><i style="background:var(--stop)"></i>Probleme</span><b class="bad">1</b></a>
+          </div>
+        </section>
+        <section>
+          <h2>Curieri <a href="#">Foi de parcurs</a></h2>
+          <div class="cr">
+            <div class="top"><b>Ion Curier</b><span class="num">4 din 7</span></div>
+            <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+            <p>Acum la Ciocana</p>
+          </div>
+          <div class="cr">
+            <div class="top"><b>Vasile Curier</b><span class="num">2 din 3</span></div>
+            <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="n"></i></div>
+            <p>Acum la Râșcani</p>
+          </div>
+        </section>
+        <section>
+          <h2>Ramburs azi <a href="#">Detalii</a></h2>
+          <dl class="num">
+            <dt>Încasat</dt><dd>2.720,50</dd>
+            <dt>De încasat pe drum</dt><dd>1.165,00</dd>
+            <dt>În depozit</dt><dd>390,00</dd>
+            <dt class="sum">Total, MDL</dt><dd class="sum">4.275,50</dd>
+          </dl>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="ptop">
+      <div class="row"><h1>Azi</h1><span class="cnt num">4 din 7 livrate</span></div>
+      <div class="run"><i></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i><i class="f"></i><i class="n"></i><i></i></div>
+    </div>
+    <div class="next">
+      <div class="meta"><span>Următoarea livrare</span><span class="num">CN-261117-0007</span></div>
+      <h2>bd. Mircea cel Bătrân 30</h2>
+      <div class="city">Ciocana</div>
+      <div class="person">Natalia Rusu · +373 60 123 123</div>
+      <div class="paybox"><span>De încasat</span><b class="num">250,00 MDL</b></div>
+      <p class="note"><b>Notă:</b> sunați cu 10 minute înainte. 1 colet, 2 kg.</p>
+      <div class="two">
+        <button class="btn"><svg class="i"><use href="icons.svg#phone"/></svg>Sună</button>
+        <button class="btn"><svg class="i"><use href="icons.svg#nav"/></svg>Hartă</button>
+      </div>
+      <button class="btn go">Livrat</button>
+      <a class="cant" href="#">Nu pot livra</a>
+    </div>
+    <div class="li"><svg class="i"><use href="icons.svg#box"/></svg><div><b>Demo Shop SRL, str. Ismail 1</b><span>De ridicat · 1 colet pentru Stăuceni</span></div><svg class="i"><use href="icons.svg#chev"/></svg></div>
+    <div class="li bad"><svg class="i"><use href="icons.svg#alert"/></svg><div><b>Durlești, str. Codrilor 5</b><span>Nu răspunde · încearcă din nou</span></div><svg class="i"><use href="icons.svg#chev"/></svg></div>
+    <div class="tabbar">
+      <a class="on" href="#"><svg class="i"><use href="icons.svg#list"/></svg>Azi</a>
+      <a href="#"><svg class="i"><use href="icons.svg#scan"/></svg>Scanează</a>
+      <a href="#"><svg class="i"><use href="icons.svg#wallet"/></svg>Numerar</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

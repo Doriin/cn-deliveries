@@ -1,0 +1,177 @@
+@import "tailwindcss";
+@import "./designs/tokens.css";
+@import "./designs/base.css";
+@import "./designs/day-dispecerat.css";
+@import "./designs/day-kraft.css";
+@import "./designs/day-semnal.css";
+@import "./designs/day-verde.css";
+@import "./designs/day-tactil.css";
+@import "./designs/day-aer.css";
+@import "./designs/day-expres.css";
+@import "./designs/courier.css";
+@import "./designs/insula.css";
+@import "./designs/radar.css";
+@import "./designs/triaj.css";
+@import "./designs/val.css";
+@import "./designs/settings.css";
+
+@theme {
+  /* Brand blue, taken from cn-deliveries.com (primary) and the logo mark (400). */
+  --color-brand-50: #eff5fe;
+  --color-brand-100: #dde9fc;
+  --color-brand-200: #bdd4f9;
+  --color-brand-300: #8fb5f2;
+  --color-brand-400: #5388c9;
+  --color-brand-500: #2f74e0;
+  --color-brand-600: #1862dc;
+  --color-brand-700: #134fb3;
+  --color-brand-800: #133f89;
+  --color-brand-900: #12305f;
+
+  /* Ink: the navy of the logo wordmark. Sidebar, courier header, headings. */
+  --color-ink-700: #1e3f55;
+  --color-ink-800: #17304a;
+  --color-ink-900: #11243a;
+  --color-ink-950: #0c1a2b;
+
+  /* Signal amber: only for parcels on the road and the courier's scan button. */
+  --color-accent-100: #fef0c7;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f5a30a;
+  --color-accent-600: #d98206;
+
+  --color-floor: #f3f6fa;
+
+  --font-sans: "Onest Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --shadow-card: 0 1px 2px rgb(12 26 43 / 0.05), 0 2px 8px -2px rgb(12 26 43 / 0.05);
+  --shadow-raised: 0 1px 2px rgb(12 26 43 / 0.06), 0 8px 24px -6px rgb(12 26 43 / 0.12);
+  --shadow-float: 0 2px 6px rgb(12 26 43 / 0.08), 0 20px 48px -12px rgb(12 26 43 / 0.28);
+
+  --animate-enter: enter 260ms var(--ease-out) both;
+  --animate-fade: fade 200ms ease both;
+  --animate-pop: pop 180ms var(--ease-out) both;
+  --animate-rise: rise 240ms var(--ease-out) both;
+  --animate-shimmer: shimmer 1.4s linear infinite;
+  --animate-pulse-ring: pulse-ring 1.8s var(--ease-out) infinite;
+  --animate-scanline: scanline 2.2s var(--ease-in-out) infinite alternate;
+  --animate-draw: draw 420ms var(--ease-out) 120ms both;
+  --animate-grow-x: grow-x 700ms var(--ease-out) both;
+  --animate-travel: travel 2.8s var(--ease-in-out) 350ms both;
+
+  @keyframes enter {
+    from { opacity: 0; transform: translateY(6px); }
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.96); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(100%); }
+  }
+  @keyframes shimmer {
+    to { background-position: -200% 0; }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 0.55; }
+    80%, 100% { transform: scale(2.4); opacity: 0; }
+  }
+  @keyframes scanline {
+    from { transform: translateY(0); }
+    to { transform: translateY(var(--scan-travel, 220px)); }
+  }
+  @keyframes draw {
+    from { stroke-dashoffset: var(--draw-length, 48); }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes grow-x {
+    from { transform: scaleX(0); }
+  }
+  @keyframes travel {
+    from { offset-distance: 0%; }
+    to { offset-distance: 100%; }
+  }
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  color-scheme: light;
+}
+html, body { @apply bg-floor text-slate-900 antialiased; }
+
+h1, h2, h3 { letter-spacing: -0.015em; text-wrap: balance; }
+.tabular-nums, table { font-variant-numeric: tabular-nums; }
+::selection { background: var(--color-brand-200); }
+
+/* Clickable things look clickable and answer a press straight away, with no double-tap delay. */
+button:not(:disabled), [role="button"], summary, label:has(> input[type="file"]), select { cursor: pointer; }
+button, a, summary, [role="button"], label:has(> input[type="file"]) { touch-action: manipulation; }
+button, summary, [role="button"], label:has(> input[type="file"]) { user-select: none; -webkit-user-select: none; }
+summary { list-style: none; }
+summary::-webkit-details-marker { display: none; }
+
+/* Keyboard users always see where they are. */
+:focus-visible { outline: 2px solid var(--color-brand-500); outline-offset: 2px; }
+
+/* iOS zooms the page when a focused field is under 16px, so touch screens get 16px fields. */
+@media (pointer: coarse) {
+  input, textarea, select { font-size: 16px !important; }
+}
+
+/* The courier app is an app shell, not a document: no rubber-banding behind the fixed bars. */
+html:has(.app-shell) { overscroll-behavior: none; }
+
+/* First load of a page: children arrive one after another, once. */
+.stagger > * { animation: enter 320ms var(--ease-out) both; }
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 75ms; }
+.stagger > *:nth-child(4) { animation-delay: 105ms; }
+.stagger > *:nth-child(5) { animation-delay: 130ms; }
+.stagger > *:nth-child(6) { animation-delay: 150ms; }
+.stagger > *:nth-child(n + 7) { animation-delay: 165ms; }
+
+.skeleton {
+  border-radius: 0.5rem;
+  background: linear-gradient(90deg, #e6ebf2 0%, #f1f4f8 40%, #e6ebf2 80%) 0 0 / 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Custom select arrow so every browser draws the same control. */
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+}
+
+/* Checkboxes in the brand colour. */
+input[type="checkbox"], input[type="radio"] { accent-color: var(--color-brand-600); }
+input[type="checkbox"] { width: 1rem; height: 1rem; cursor: pointer; }
+
+/* Toasts (sonner) in the app's own type and shape. */
+[data-sonner-toaster] { --border-radius: 14px; font-family: var(--font-sans); }
+[data-sonner-toast] { box-shadow: var(--shadow-raised) !important; }
+
+@media print {
+  .no-print { display: none !important; }
+  html, body { background: white; }
+}
+
+/* Less motion: keep colour and opacity changes, drop movement. */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+  * { transition-property: color, background-color, border-color, opacity, box-shadow !important; }
+}

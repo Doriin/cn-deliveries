@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  DISPATCHER
+  COURIER
+  CLIENT
+}
+
+enum ShipmentStatus {
+  NEW
+  CONFIRMED
+  PICKED_UP
+  AT_WAREHOUSE
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED_ATTEMPT
+  POSTPONED
+  ON_HOLD
+  REFUSED
+  RETURNING
+  RETURNED
+  CANCELLED
+}
+
+enum ShipmentSource {
+  MANUAL
+  SHEET
+  PORTAL
+}
+
+enum ShipmentType {
+  PARCEL
+  DOCUMENTS
+}
+
+enum FeeMode {
+  INVOICE
+  DEDUCT_FROM_COD
+}
+
+enum PaymentMethod {
+  CASH_RECEIPT
+  CASH_NO_RECEIPT
+  CARD
+  TRANSFER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  phone        String?
+  passwordHash String
+  role         Role
+  locale       String   @default("ro")
+  active       Boolean  @default(true)
+  clientId     String?
+  client       Client?  @relation(fields: [clientId], references: [id])
+  createdAt    DateTime @default(now())
+
+  assignedShipments Shipment[]     @relation("ShipmentCourier")
+  statusEvents      StatusEvent[]
+  codCollected      CodPayment[]   @relation("CodCourier")
+  codRecorded       CodPayment[]   @relation("CodRecorder")
+  handoversGiven    CashHandover[] @relation("HandoverCourier")
+  handoversReceived CashHandover[] @relation("HandoverReceiver")
+}
+
+model Client {
+  id          String  @id @default(cuid())
+  name        String
+  contactName String?
+  phone       String?
+  email       String?
+  address     String?
+  fiscalCode  String?
+  iban        String?
+  feeMode     FeeMode @default(INVOICE)
+  notes       String?
+  active      Boolean @default(true)
+
+  // Google Sheets sync
+  sheetId          String?
+  sheetTab         String?
+  columnMap        Json?
+  sheetSyncEnabled Boolean   @default(false)
+  lastSyncedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shipments Shipment[]
+  prices    ClientZonePrice[]
+  users     User[]
+  syncLogs  SheetSyncLog[]
+}
+
+/// Prices are stored in bani (1 MDL = 100 bani).
+model Zone {
+  id         String @id @default(cuid())
+  code       String @unique
+  nameRo     String
+  nameRu     String
+  nameEn     String
+  basePrice  Int
+  includedKg Int    @default(5)
+  extraPerKg Int    @default(400)
+  sortOrder  Int    @default(0)
+
+  localities   Locality[]
+  clientPrices ClientZonePrice[]
+  shipments    Shipment[]
+}
+
+model ClientZonePrice {
+  id       String @id @default(cuid())
+  clientId String
+  zoneId   String
+  price    Int
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  zone     Zone   @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, zoneId])
+}
+
+/// `key` is the normalized name (lowercase, no diacritics) used for matching.
+model Locality {
+  id     String @id @default(cuid())
+  name   String
+  key    String @unique
+  zoneId String
+  zone   Zone   @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+}
+
+model Shipment {
+  id          String         @id @default(cuid())
+  trackingNo  String         @unique
+  clientId    String
+  client      Client         @relation(fields: [clientId], references: [id])
+  source      ShipmentSource @default(MANUAL)
+  sheetRowKey String?
+
+  senderName    String?
+  senderPhone   String?
+  senderAddress String?
+
+  recipientName     String
+  recipientPhone    String
+  recipientAddress  String
+  recipientLocality String?
+
+  zoneId      String?
+  zone        Zone?        @relation(fields: [zoneId], references: [id])
+  weightGrams Int          @default(0)
+  pieces      Int          @default(1)
+  type        ShipmentType @default(PARCEL)
+  contents    String?
+
+  /// bani
+  codAmount     Int     @default(0)
+  /// bani
+  deliveryFee   Int     @default(0)
+  feeOverridden Boolean @default(false)
+  feeMode       FeeMode @default(INVOICE)
+
+  desiredDate  DateTime?      @db.Date
+  notes        String?
+  status       ShipmentStatus @default(NEW)
+  statusReason String?
+  courierId    String?
+  courier      User?          @relation("ShipmentCourier", fields: [courierId], references: [id])
+
+  sheetNeedsSync Boolean   @default(false)
+  deliveredAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  events      StatusEvent[]
+  codPayments CodPayment[]
+
+  @@unique([clientId, sheetRowKey])
+  @@index([status])
+  @@index([courierId])
+  @@index([createdAt])
+}
+
+model StatusEvent {
+  id         String          @id @default(cuid())
+  shipmentId String
+  shipment   Shipment        @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  fromStatus ShipmentStatus?
+  toStatus   ShipmentStatus
+  reason     String?
+  note       String?
+  userId     String?
+  user       User?           @relation(fields: [userId], references: [id])
+  createdAt  DateTime        @default(now())
+
+  /// Proof of delivery / attempt, captured by the courier app. Paths are relative to UPLOAD_DIR.
+  receivedBy    String?
+  photoPath     String?
+  signaturePath String?
+
+  @@index([shipmentId])
+}
+
+model CodPayment {
+  id           String        @id @default(cuid())
+  shipmentId   String
+  shipment     Shipment      @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  /// bani
+  amount       Int
+  method       PaymentMethod
+  receiptNo    String?
+  courierId    String?
+  courier      User?         @relation("CodCourier", fields: [courierId], references: [id])
+  recordedById String?
+  recordedBy   User?         @relation("CodRecorder", fields: [recordedById], references: [id])
+  collectedAt  DateTime      @default(now())
+  /// Set when the office confirms it received this cash from the courier.
+  handoverId   String?
+  handover     CashHandover? @relation(fields: [handoverId], references: [id])
+
+  @@index([shipmentId])
+  @@index([collectedAt])
+  @@index([handoverId])
+}
+
+/// Cash a courier hands over to the office, confirmed by an office user.
+model CashHandover {
+  id           String       @id @default(cuid())
+  courierId    String
+  courier      User         @relation("HandoverCourier", fields: [courierId], references: [id])
+  receivedById String
+  receivedBy   User         @relation("HandoverReceiver", fields: [receivedById], references: [id])
+  /// bani
+  amount       Int
+  note         String?
+  createdAt    DateTime     @default(now())
+  payments     CodPayment[]
+}
+
+model SheetSyncLog {
+  id         String    @id @default(cuid())
+  clientId   String
+  client     Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+  imported   Int       @default(0)
+  updated    Int       @default(0)
+  errors     Int       @default(0)
+  message    String?
+}
+
+model Counter {
+  key   String @id
+  value Int
+}

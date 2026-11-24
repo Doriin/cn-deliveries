@@ -1,35 +1,33 @@
-import type { ComponentType } from "react";
-import { getDesign } from "@/lib/design.server";
-import type { Design } from "@/lib/design";
-import { DAY_GROUPS, loadDay, type DayGroup } from "@/lib/day";
+import { getLocale } from "next-intl/server";
+import { db } from "@/lib/db";
+import { loadDay } from "@/lib/day";
+import { loadStats, loadTodayFlow, parsePeriod } from "@/lib/stats";
+import { zoneName } from "@/lib/zones";
 import { AutoRefresh } from "@/components/AutoRefresh";
-import type { DayViewProps } from "@/components/day/shared";
-import { DayDispecerat } from "@/components/day/Dispecerat";
-import { DayKraft } from "@/components/day/Kraft";
-import { DaySemnal } from "@/components/day/Semnal";
-import { DayVerde } from "@/components/day/Verde";
-import { DayTactil } from "@/components/day/Tactil";
-import { DayAer } from "@/components/day/Aer";
-import { DayExpres } from "@/components/day/Expres";
-import { DayInsula } from "@/components/day/Insula";
-import { DayRadar } from "@/components/day/Radar";
-import { DayTriaj } from "@/components/day/Triaj";
-import { DayVal } from "@/components/day/Val";
+import { Live } from "@/components/home/Live";
+import { Performance } from "@/components/home/Performance";
 
-/** One screen per design, all drawn from the same day of data. */
-const VIEWS: Record<Design, ComponentType<DayViewProps>> = {
-  insula: DayInsula, radar: DayRadar, triaj: DayTriaj, val: DayVal,
-  dispecerat: DayDispecerat, kraft: DayKraft, semnal: DaySemnal, verde: DayVerde, tactil: DayTactil, aer: DayAer, expres: DayExpres,
-};
-
-export default async function TodayPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
-  const [design, day, sp] = await Promise.all([getDesign(), loadDay(), searchParams]);
-  const filter = (DAY_GROUPS as readonly string[]).includes(sp.g ?? "") ? (sp.g as DayGroup) : "all";
-  const View = VIEWS[design];
+/** The homepage: today live at the top, how the last 7/30/90 days went below. The same page in every design. */
+export default async function HomePage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const period = parsePeriod((await searchParams).p);
+  const [day, flow, stats, couriers, zones, locale] = await Promise.all([
+    loadDay(),
+    loadTodayFlow(),
+    loadStats(period),
+    db.user.findMany({ where: { role: "COURIER" }, select: { id: true, name: true } }),
+    db.zone.findMany(),
+    getLocale(),
+  ]);
   return (
-    <>
+    <div className="hm">
       <AutoRefresh seconds={30} />
-      <View day={day} filter={filter} params={sp} />
-    </>
+      <Live day={day} flow={flow} />
+      <Performance
+        stats={stats}
+        period={period}
+        couriers={new Map(couriers.map((c) => [c.id, c.name]))}
+        zones={new Map(zones.map((z) => [z.code, zoneName(z, locale)]))}
+      />
+    </div>
   );
 }

@@ -1,0 +1,25 @@
+{
+  "slug": "03-mascot",
+  "name": "Parcelhead",
+  "idea": "The universal running pictogram, built on a strict stroke grammar, with a taped parcel in place of its head: a courier who is the delivery.",
+  "why": "Everyone already knows the running figure, so changing one shape makes it readable at 32 px and impossible to mistake for another carrier.",
+  "risks": "It echoes the emergency-exit runner and can read as comic, and the signal pink (chosen over the suggested tangerine because orange belongs to Cargus) may feel too playful to conservative B2B clients.",
+  "bg": "#FF3D7F",
+  "colors": [
+    {
+      "hex": "#FF3D7F",
+      "name": "Signal Pink",
+      "use": "Parcel head, far limbs, icon tile, brand background"
+    },
+    {
+      "hex": "#1B1435",
+      "name": "Ink",
+      "use": "Body, tape, wordmark"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "Reversed artwork, parcel head on the icon"
+    }
+  ]
+}

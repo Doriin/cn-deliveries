@@ -1,0 +1,40 @@
+{
+  "slug": "15-plane",
+  "name": "Paper Dart",
+  "idea": "The X of CNX is drawn by a coral paper dart flying across a folded indigo paper strip, so the last letter of the name is literally your parcel in flight.",
+  "why": "A paper plane that is also a letter is a two-second story anyone can retell, and the coral dart crossing the indigo fold stays recognisable from a van side down to a favicon.",
+  "risks": "Paper planes are the universal \"send\" icon, so the dart must always appear as part of the X and never alone, and the overshooting nose needs extra clear space in tight layouts.",
+  "bg": "#2B2D8F",
+  "colors": [
+    {
+      "hex": "#2B2D8F",
+      "name": "Fold Indigo",
+      "use": "wordmark, upper face of the paper strip, app icon and brand background"
+    },
+    {
+      "hex": "#1B1C61",
+      "name": "Crease Indigo",
+      "use": "shaded face of the folded strip"
+    },
+    {
+      "hex": "#FF6F59",
+      "name": "Flight Coral",
+      "use": "lit wing of the paper dart"
+    },
+    {
+      "hex": "#DE4C38",
+      "name": "Ember Coral",
+      "use": "shaded wing of the paper dart"
+    },
+    {
+      "hex": "#C9CBF4",
+      "name": "Lavender",
+      "use": "shaded face of the strip on reversed and icon versions"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "reversed logo on Fold Indigo"
+    }
+  ]
+}

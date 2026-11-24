@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-8.26 0.00 569.67 273.70" role="img" aria-label="CNX"><title>CNX</title><style>
+.st{transform-box:view-box;transform-origin:440.9px 128.0px;animation:unfold .5s cubic-bezier(.3,0,.2,1) .05s both}
+.dt{transform-box:view-box;transform-origin:443.4px 126.0px;animation:dart .95s cubic-bezier(.12,.75,.25,1) .35s both}
+.wg{transform-box:view-box;transform-origin:547.4px 14.0px;animation:wing .5s cubic-bezier(.3,0,.2,1) .55s both}
+.lt{animation:slide .55s cubic-bezier(.2,.8,.2,1) both}.lc{animation-delay:.95s}.ln{animation-delay:1.08s}
+@keyframes unfold{from{transform:scale(0,1)}to{transform:scale(1,1)}}
+@keyframes dart{0%{transform:translate(-520px,260px) rotate(-14deg) scale(.55);opacity:0}15%{opacity:1}100%{transform:none;opacity:1}}
+@keyframes wing{from{transform:rotate(-47.12deg) scale(1,0) rotate(47.12deg)}to{transform:rotate(-47.12deg) scale(1,1) rotate(47.12deg)}}
+@keyframes slide{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.st,.dt,.wg,.lt{animation:none}}</style><g id="wordmark" fill="#2B2D8F"><path class="lt lc" d="M169.78 71.25L164.85 98.34L127.04 98.34L129.78 82.77L121.75 72.85L74.59 72.85L61.11 84.31L45.49 172.24L54.48 183.15L101.65 183.15L113.92 172.66L116.82 157.66L154.62 157.66L148.86 189.22L117.49 216L32.05 216L5.74 184.01L26.4 67.27L58.26 40L143.69 40Z"/><path class="lt ln" d="M275.51 152.25L295.12 40L331.72 40L300.54 216L267.4 216L213.76 104L193.91 216L157.32 216L188.25 40L221.39 40Z"/></g><g id="symbol"><g class="st"><path fill="#1B1C61" d="M483.41 216L460.41 216L437.49 168.52L451.53 149.96ZM431.55 108.57L415.4 122.77L375.44 40L398.44 40Z"/><path fill="#2B2D8F" d="M506.41 216L483.41 216L451.53 149.96L465.56 131.39ZM447.69 94.37L431.55 108.57L398.44 40L421.44 40Z"/></g><g class="dt"><path fill="#DE4C38" d="M547.41 14L362.13 259.09L374.77 199.92Z"/><path class="wg" fill="#FF6F59" d="M547.41 14L374.77 199.92L316.69 216.91Z"/></g></g></svg>

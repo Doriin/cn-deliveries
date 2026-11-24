@@ -19,15 +19,15 @@ export type Shell = "topbar" | "sidebar" | "capsule" | "rail" | "island" | "dock
 export type IconSet = "lucide" | "phosphor" | "remix" | "tabler" | "material";
 
 export const DESIGN_META: Record<Design, { shell: Shell; icons: IconSet; draft?: string; statusBar: string; no?: number }> = {
-  insula: { shell: "island", icons: "phosphor", statusBar: "#f2f2f7" },
-  radar: { shell: "dock", icons: "tabler", statusBar: "#f3f7f7" },
+  insula: { shell: "island", icons: "phosphor", statusBar: "#f3f5f7" },
+  radar: { shell: "dock", icons: "tabler", statusBar: "#f3f5f7" },
   triaj: { shell: "inbox", icons: "remix", statusBar: "#ffffff" },
-  val: { shell: "navrail", icons: "material", statusBar: "#f3f6ec" },
-  dispecerat: { shell: "topbar", icons: "lucide", draft: "4-dispecerat", statusBar: "#0e3b8e", no: 4 },
-  kraft: { shell: "sidebar", icons: "lucide", draft: "8-kraft", statusBar: "#f6f0e7", no: 8 },
-  semnal: { shell: "topbar", icons: "lucide", draft: "9-semnal", statusBar: "#ffcd00", no: 9 },
+  val: { shell: "navrail", icons: "material", statusBar: "#ecf1f9" },
+  dispecerat: { shell: "topbar", icons: "lucide", draft: "4-dispecerat", statusBar: "#1b4f98", no: 4 },
+  kraft: { shell: "sidebar", icons: "lucide", draft: "8-kraft", statusBar: "#f3f5f7", no: 8 },
+  semnal: { shell: "topbar", icons: "lucide", draft: "9-semnal", statusBar: "#186adc", no: 9 },
   verde: { shell: "topbar", icons: "lucide", draft: "10-verde", statusBar: "#ffffff", no: 10 },
-  tactil: { shell: "sidebar", icons: "lucide", draft: "11-tactil", statusBar: "#f3f4f6", no: 11 },
+  tactil: { shell: "sidebar", icons: "lucide", draft: "11-tactil", statusBar: "#f3f5f7", no: 11 },
   aer: { shell: "capsule", icons: "lucide", draft: "12-aer", statusBar: "#edf1f6", no: 12 },
   expres: { shell: "rail", icons: "lucide", draft: "13-expres", statusBar: "#e2e9f1", no: 13 },
 };

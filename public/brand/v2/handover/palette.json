@@ -1,0 +1,23 @@
+{
+  "name": "CNX Handover",
+  "colors": [
+    {
+      "name": "Relay Ultramarine",
+      "hex": "#2433FF",
+      "rgb": "36, 51, 255",
+      "use": "the whole logo; brand background"
+    },
+    {
+      "name": "Graphite",
+      "hex": "#0B0D12",
+      "rgb": "11, 13, 18",
+      "use": "text and the one-colour dark version"
+    },
+    {
+      "name": "White",
+      "hex": "#FFFFFF",
+      "rgb": "255, 255, 255",
+      "use": "reversed logo on ultramarine"
+    }
+  ]
+}

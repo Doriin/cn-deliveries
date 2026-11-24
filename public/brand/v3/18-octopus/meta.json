@@ -1,0 +1,13 @@
+{
+  "slug": "18-octopus",
+  "name": "All Hands",
+  "idea": "A three-quarter azure octopus with a taped parcel cupped in each reaching arm and its eyes on the next drop: one courier handling many deliveries at once, in every direction.",
+  "why": "\"The blue octopus juggling boxes\" is a picture people can retell after a single glance, and no courier in the region owns an octopus.",
+  "risks": "It is busier than a pictogram, so below about 24 px it reduces to a blue shape with white specks, and the cartoon octopus (in a crowded azure family near Telegram and Docker blue) may feel too playful for conservative B2B clients.",
+  "bg": "#0A1E3C",
+  "colors": [
+    { "hex": "#26A5FF", "name": "CNX Azure", "use": "Octopus body, parcel tape on white, the brand's signature colour" },
+    { "hex": "#0A1E3C", "name": "Deep Navy", "use": "Wordmark, parcels and pupils on white; icon tile and brand background" },
+    { "hex": "#FFFFFF", "name": "White", "use": "Eyes; parcels and wordmark on navy" }
+  ]
+}

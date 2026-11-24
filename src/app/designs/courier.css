@@ -259,7 +259,7 @@
      ===================================================================== */
   [data-design="dispecerat"] { --cr-on: var(--d-shell); --cr-run-line: rgb(255 255 255 / 0.3); --cr-run-edge: rgb(255 255 255 / 0.55); --cr-run-on: #fff; --cr-run-bad: #ff8f85; --cr-run-now-bg: var(--d-now); --cr-run-now-edge: #fff; }
   [data-design="dispecerat"] .cr { font-size: 0.9375rem; }
-  [data-design="dispecerat"] .cr-me span { background: #0a2f73; }
+  [data-design="dispecerat"] .cr-me span { background: var(--color-brand-900); }
 
   /* =====================================================================
      8 · Kraft: kraft board top, label-white stop, stamp-blue action
@@ -295,7 +295,7 @@
   [data-design="semnal"] .cr-title { font-size: 1.75rem; line-height: 1.15; font-weight: 800; letter-spacing: 0 !important; }
   [data-design="semnal"] .cr-count { font-size: 1rem; font-weight: 700; opacity: 1; }
   [data-design="semnal"] .cr-back { margin-bottom: -0.5rem; }
-  [data-design="semnal"] .cr-me span { background: #111; color: var(--d-shell); }
+  [data-design="semnal"] .cr-me span { background: #fff; color: var(--d-shell); }
   [data-design="semnal"] .cr-run { margin: 10px 3px 0; }
   [data-design="semnal"] .cr-run i:first-child { flex-basis: 6px; }
   [data-design="semnal"] .cr-meta { font-size: 0.875rem; }

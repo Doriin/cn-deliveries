@@ -6,6 +6,7 @@ import { barcodeSvg, qrSvg } from "@/lib/labels";
 import { formatKg, formatMDL } from "@/lib/money";
 import { ArrowLeft, Tag } from "lucide-react";
 import { PrintButton } from "@/components/PrintButton";
+import { LogoMark } from "@/components/Logo";
 import { EmptyState, LinkButton } from "@/components/ui";
 import { headers } from "next/headers";
 
@@ -35,13 +36,9 @@ export default async function LabelsPage({ searchParams }: { searchParams: Promi
         <div key={s.id} className="label mx-auto mb-6 flex h-[150mm] w-[100mm] flex-col overflow-hidden bg-white p-[5mm] text-[10pt] leading-snug text-black shadow-lg">
           <div className="flex items-center justify-between border-b-2 border-black pb-1.5">
             <div className="flex items-center gap-[2mm] text-[14pt] font-extrabold leading-none tracking-tight">
-              {/* The parcel mark in plain black lines, so it prints cleanly on a thermal label. */}
-              <svg viewBox="0 0 32 32" className="h-[7mm] w-[7mm]" fill="none" stroke="#000" strokeWidth="2.2" strokeLinejoin="round" aria-hidden>
-                <path d="M16 4 27 10.5V21.5L16 28 5 21.5V10.5Z" />
-                <path d="M5 10.5 16 17 27 10.5M16 17V28" />
-                <path d="M10.5 7.3 21.5 13.8V18" />
-              </svg>
-              CN DELIVERIES
+              {/* The company boxes in plain black lines, so they print cleanly on a thermal label. */}
+              <LogoMark size={28} color="#000" className="h-[8mm] w-[8mm]" />
+              <span className="font-normal tracking-[0.02em]" style={{ fontFamily: '"Times New Roman", Tinos, "Liberation Serif", "Noto Serif", serif' }}>CN DELIVERIES</span>
             </div>
             <div className="text-right text-[8pt]">{[process.env.COMPANY_PHONE, "cn-deliveries.com"].filter(Boolean).join(" · ")}</div>
           </div>

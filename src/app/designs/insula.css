@@ -48,7 +48,7 @@
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9), 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 6px 16px -8px rgb(0 0 0 / 0.25); transition: transform 500ms var(--d-ease); }
   .isl-round:active { transform: scale(0.9); transition-duration: 120ms; }
   .isl-round svg { width: 1.25rem; height: 1.25rem; }
-  .isl-new { height: 2.375rem; padding: 0 1rem 0 0.8rem; box-shadow: 0 8px 20px -10px rgb(0 122 255 / 0.8); }
+  .isl-new { height: 2.375rem; padding: 0 1rem 0 0.8rem; box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--d-accent) 80%, transparent); }
   .isl-new svg { width: 1.1rem; height: 1.1rem; }
 
   /* Dynamic Island: one black shape that grows from a capsule into a panel on a spring */
@@ -266,7 +266,7 @@
   [data-design="insula"] .cr-li { border-bottom: 0.5px solid var(--d-line); }
   [data-design="insula"] .cr-addr { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.025em !important; }
   [data-design="insula"] .cr-pay { border-radius: 14px; margin: 0; border-bottom: 0; }
-  [data-design="insula"] .cr-go { height: 3.375rem; font-size: 1.0625rem; box-shadow: 0 10px 24px -12px rgb(0 122 255 / 0.9); }
+  [data-design="insula"] .cr-go { height: 3.375rem; font-size: 1.0625rem; box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--d-accent) 90%, transparent); }
   [data-design="insula"] .cr-nav { left: 1rem; right: 1rem; bottom: max(0.75rem, env(safe-area-inset-bottom)); max-width: 22rem; padding: 0.25rem; border: 0; border-radius: 999px;
     background: rgb(255 255 255 / 0.66); -webkit-backdrop-filter: blur(24px) saturate(1.9); backdrop-filter: blur(24px) saturate(1.9);
     box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.95), 0 0 0 0.5px rgb(0 0 0 / 0.08), 0 16px 40px -14px rgb(0 0 0 / 0.3); }

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.46 -109.74 412.83 119.49" width="640" height="185.2"><title>CNX</title><style>
+  .c{animation:c-in .45s cubic-bezier(.2,.8,.2,1) both}
+  .nx{animation:nx-in .6s .15s cubic-bezier(.16,1,.3,1) both, kick .42s 1.22s cubic-bezier(.3,0,.2,1) both}
+  .slot{transform-box:fill-box;transform-origin:right center;animation:open-slot .42s .72s cubic-bezier(.7,0,.2,1) both}
+  .tip{transform-box:fill-box;transform-origin:right center;animation:open-tip .2s 1.08s cubic-bezier(.5,0,.2,1) both}
+  @keyframes c-in{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+  @keyframes nx-in{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
+  @keyframes kick{0%{transform:none}35%{transform:translateX(4px)}100%{transform:none}}
+  @keyframes open-slot{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+  @keyframes open-tip{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+  @media (prefers-reduced-motion: reduce){.c,.nx,.slot,.tip{animation:none!important}.slot,.tip{display:none}}</style><g class="c"><path fill="#00C2A8" d="M129.83,-39.17c-4.36,26.6 -25.57,40.92 -61.22,40.92c-40.22,0 -62.06,-18.21 -62.06,-51.74c0,-33.53 21.85,-51.74 62.06,-51.74c35.58,0 56.79,14.26 61.2,40.77h-89.83c-6.02,0 -10.9,4.88 -10.9,10.9c0,6.02 4.88,10.9 10.9,10.9z"/><path class="slot" fill="#00C2A8" d="M39.97,-61.99h89.65c0.69,3.75 1.04,7.75 1.04,11.99c0,4.19 -0.34,8.14 -1.02,11.85h-89.68c-6.58,0 -11.92,-5.34 -11.92,-11.92c0,-6.58 5.34,-11.92 11.92,-11.92z"/></g><g class="nx"><path fill="#0E1116" d="M134.48,0v-27.54l22.53,-22.53l-22.53,-22.53v-27.4h31.25l59.88,49.85v-49.85h33.72v100h-30.96l-60.17,-49.85v49.85z M307.3,0h-42.73l47.67,-51.6l-43.31,-48.4h46.37l20.2,24.38l21.51,-24.38h42.44l-43.6,46.95l47.53,53.05h-46.22l-24.48,-28.95z"/><path class="tip" fill="#0E1116" d="M134.48,-74.34l24.13,24.27l-24.13,24.27z"/></g></svg>

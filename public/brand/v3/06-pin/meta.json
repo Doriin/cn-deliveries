@@ -1,0 +1,25 @@
+{
+  "slug": "06-pin",
+  "name": "Drop",
+  "idea": "A map pin whose head is an open C holding a parcel, so the location marker, the initial and the package are one shape.",
+  "why": "Every delivery ends at a pin on a map, and this pin carries the parcel inside its C, so the app, the tracking page and the van all show the same promise: your parcel, at your spot.",
+  "risks": "Map pins are a crowded symbol in delivery apps, and this magenta is very close to Telekom magenta, so a trademark check and possibly a small hue shift are needed.",
+  "bg": "#E2007A",
+  "colors": [
+    {
+      "hex": "#E2007A",
+      "name": "CNX Magenta",
+      "use": "Pin symbol, app icon field, reversed-logo background"
+    },
+    {
+      "hex": "#2B2B31",
+      "name": "Charcoal",
+      "use": "Wordmark, parcel, text, 1-bit labels"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "Reversed logo and pin on magenta"
+    }
+  ]
+}

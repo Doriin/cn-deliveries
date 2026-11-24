@@ -283,6 +283,44 @@
   --radius-md: 8px; --radius-lg: 8px; --radius-xl: 12px; --radius-2xl: 14px; --radius-3xl: 24px;
 }
 
+/* Company brand (cn-deliveries.com, 2026-11-21). Every design wears the website's blue, cool neutrals, status colours
+   and DM Sans; each design keeps its own layout, shapes, sizes and motion. Same specificity as the blocks above,
+   so this block wins by coming last. Values are the website's CSS variables (hsl 215 blue). */
+:root { --brand-logo: #0c77eb; }
+[data-design] {
+  --d-ink: #1d2530; --d-ink-2: #434f60; --d-ink-3: #647287; --d-ink-4: #9ca6b4;
+  --d-line: rgb(29 37 48 / 0.10); --d-line-2: rgb(29 37 48 / 0.18);
+  --d-accent: #186adc; --d-accent-hover: #2d78e1; --d-accent-press: #1659b6; --d-on-accent: #ffffff;
+  --d-link: #186adc; --d-pick: #e8f1fc; --d-road: #186adc;
+  /* status: the site's success / destructive / warning, darkened where they are read as text */
+  --d-stop: #db2424; --d-stop-wash: #fdecec; --d-ok: #1e8f4d; --d-ok-wash: #e7f8ee; --d-now: #f59f0a;
+  --d-pay-wash: #fef3e2; --d-pay-ink: #7b420a;
+  --d-display: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --logo-mark: var(--brand-logo);
+  --color-brand-50: #f1f6fd; --color-brand-100: #dfebfb; --color-brand-200: #bbd4f7; --color-brand-300: #8bb4ee; --color-brand-400: #528de0;
+  --color-brand-500: #2d78e1; --color-brand-600: #186adc; --color-brand-700: #1659b6; --color-brand-800: #184a91; --color-brand-900: #143667;
+  --color-ink-700: #434f60; --color-ink-800: #2c3644; --color-ink-900: #1d2530; --color-ink-950: #121821;
+  --color-accent-100: #fdf0d8; --color-accent-400: #f7b23b; --color-accent-500: #f59f0a; --color-accent-600: #d57e0b;
+  --color-slate-50: #f9fafb; --color-slate-100: #f3f5f7; --color-slate-200: #e3e7ed; --color-slate-300: #ccd3db; --color-slate-400: #9ca6b4;
+  --color-slate-500: #7d8a9b; --color-slate-600: #647287; --color-slate-700: #434f60; --color-slate-800: #2c3644; --color-slate-900: #1d2530; --color-slate-950: #10161e;
+}
+/* Where a design's own colour was its identity, it now uses the company's. */
+[data-design="insula"] { --d-page: #f3f5f7; --d-dock: #e9edf2; --color-floor: #f3f5f7; }
+[data-design="radar"] { --d-page: #f3f5f7; --d-dock: #e9edf2; --color-floor: #f3f5f7; }
+[data-design="val"] {
+  --d-page: #f6f8fb; --d-dock: #e9eef5; --d-tonal: #dee6f2; --d-tonal-low: #ecf1f9; --d-line-2: #c9d0d9;
+  --d-pick: #d6e4f8; --d-on-pick: #0b1f3a; --d-shell: #ecf1f9;
+  --d-primary-c: #cfe2fc; --d-on-primary-c: #071f40; --d-tertiary: #18658b; --d-tertiary-c: #d2ecf9; --d-on-tertiary-c: #062737;
+  --color-floor: #f6f8fb;
+}
+/* the blue bar is the site's hero blue; its main button turns white like the site's hero button */
+[data-design="dispecerat"] { --d-shell: #1b4f98; --d-on-shell: #ffffff; --logo-on-shell: #ffffff; }
+[data-design="semnal"] { --d-shell: #186adc; --d-on-shell: #ffffff; --logo-on-shell: #ffffff; }
+[data-design="kraft"] { --d-dock: #f1f4f8; --d-shell: #f3f5f7; }
+[data-design="verde"] { --d-dock: #f1f4f8; }
+[data-design="tactil"] { --d-page: #f3f5f7; --color-floor: #f3f5f7; }
+
 /* Shadows are written into the utility classes, so each design restates what "a card" casts. */
 [data-design] .shadow-card { --tw-shadow: 0 0 #0000; }
 [data-design="tactil"] .shadow-card { --tw-shadow: 0 1px 2px rgb(22 25 30 / 0.05), 0 10px 28px -14px rgb(22 25 30 / 0.16); }

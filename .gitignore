@@ -8,3 +8,4 @@ next-env.d.ts
 .data
 uploads/
 .playwright-mcp
+.DS_Store

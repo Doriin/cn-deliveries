@@ -1,0 +1,13 @@
+{
+  "slug": "07-stork",
+  "name": "Herald",
+  "idea": "The white stork, Moldova's bringer of good news, flies level with a parcel hanging from its coral beak, drawn as one crescent-wing silhouette.",
+  "why": "Everyone in Moldova already says the stork brings things, so the mark explains the service without a word and claims a local, emotional symbol no carrier uses.",
+  "risks": "A pictorial bird loses detail below about 32 px, and any stork carrying something from its beak can still remind locals of the national 'Wine of Moldova' stork, so it needs a trademark check.",
+  "bg": "#22252A",
+  "colors": [
+    { "hex": "#22252A", "name": "Graphite", "use": "Stork, parcel and wordmark; brand ground behind the reversed logo and the app icon" },
+    { "hex": "#FF4D3A", "name": "Stork coral", "use": "Beak and legs only, the single accent" },
+    { "hex": "#FFFFFF", "name": "White", "use": "Reversed stork and wordmark on graphite, van body" }
+  ]
+}

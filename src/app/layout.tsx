@@ -4,6 +4,8 @@ import { getLocale } from "next-intl/server";
 import { Toaster } from "sonner";
 import { getDesign } from "@/lib/design.server";
 import { DESIGN_META } from "@/lib/design";
+// The company typeface (as on cn-deliveries.com) for every design; the others remain for their monospace figures.
+import "@fontsource-variable/dm-sans";
 // One typeface family per design; a font file is only downloaded when its design is the one on screen.
 import "@fontsource/ibm-plex-sans/400.css";
 import "@fontsource/ibm-plex-sans/500.css";

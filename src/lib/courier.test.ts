@@ -7,6 +7,10 @@ describe("courier rules", () => {
     expect(courierNextStatuses("OUT_FOR_DELIVERY")).toContain("DELIVERED");
     expect(courierNextStatuses("ON_HOLD")).not.toContain("CANCELLED");
   });
+  it("offers handing a parcel back to the sender without the in-transit step", () => {
+    expect(courierNextStatuses("FAILED_ATTEMPT")).toContain("RETURNED");
+    expect(courierNextStatuses("REFUSED")).toContain("RETURNED");
+  });
   it("requires receiver name and photo or signature on delivery", () => {
     expect(validateProof({ to: "DELIVERED", receivedBy: "", hasPhoto: true, hasSignature: false })).toBe("receivedByRequired");
     expect(validateProof({ to: "DELIVERED", receivedBy: "Ana", hasPhoto: false, hasSignature: false })).toBe("proofRequired");

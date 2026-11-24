@@ -1,0 +1,30 @@
+{
+  "slug": "05-cube",
+  "name": "Crate",
+  "idea": "An isometric parcel whose two walls are built from the letters C and N, with a lid split into four flaps by an X-shaped seam.",
+  "why": "From a distance it is simply a box in three violets, and up close the box spells CNX, so the parcel and the name are one object.",
+  "risks": "The see-through letter walls are a lot of detail below 24 px, and some viewers may see the lid seam as a cross on a box, so it should not be enlarged on its own.",
+  "bg": "#5B2BE0",
+  "colors": [
+    {
+      "hex": "#A68BFF",
+      "name": "Lavender",
+      "use": "Lid (top face), light accents"
+    },
+    {
+      "hex": "#5B2BE0",
+      "name": "CNX Violet",
+      "use": "C wall, primary brand colour, reversed-logo background"
+    },
+    {
+      "hex": "#2E1080",
+      "name": "Deep Violet",
+      "use": "N wall, wordmark, text"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "Seams and counters, reversed logo"
+    }
+  ]
+}

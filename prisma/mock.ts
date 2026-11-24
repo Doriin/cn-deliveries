@@ -10,7 +10,7 @@ try {
 
 /** Mock data for local work: `npm run seed:mock` (add `-- --reset` to replace an earlier run, `--seed <n>` to repeat one). */
 
-const DAYS_BACK = 30;
+const DAYS_BACK = 120;
 const seedAt = process.argv.indexOf("--seed");
 const SEED = seedAt > 0 ? Number(process.argv[seedAt + 1]) : Math.floor(Math.random() * 1_000_000);
 if (!Number.isInteger(SEED)) throw new Error("--seed needs a whole number, e.g. --seed 4821");

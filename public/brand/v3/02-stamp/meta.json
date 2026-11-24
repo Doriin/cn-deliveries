@@ -1,0 +1,25 @@
+{
+  "slug": "02-stamp",
+  "name": "Perfin",
+  "idea": "An ultramarine postage stamp with CNX punched through it as a perfin (the perforated initials firms used to mark their own stamps), struck by a CNX · CHIȘINĂU · EXPRESS 24H postmark.",
+  "why": "It reads as a real object rather than a drawing: every van, label and roll of tape becomes a stamped parcel, and punched holes print cleanly on a 1-bit thermal label.",
+  "risks": "Stamp plus postmark is a familiar mail pictogram and the dot letters dissolve below about 60 px, so the perfin and the 24H postmark have to carry the ownership, and the artwork is detailed (63 holes plus ring text).",
+  "bg": "#2338C8",
+  "colors": [
+    {
+      "hex": "#2338C8",
+      "name": "Ultramarine",
+      "use": "Stamp, wordmark, brand background"
+    },
+    {
+      "hex": "#F4EFE4",
+      "name": "Paper",
+      "use": "Frame line, reversed artwork, icon field"
+    },
+    {
+      "hex": "#16171C",
+      "name": "Postmark ink",
+      "use": "Postmark, cancellation waves, descriptor"
+    }
+  ]
+}

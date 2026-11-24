@@ -1,0 +1,14 @@
+{
+  "slug": "10-route",
+  "name": "Courier Run",
+  "idea": "One unbroken cobalt route writes C-N-X on a 45/90-degree street grid, leaving from a mint pickup dot and ending where a mint stroke crosses its last leg to mark the drop-off: X marks the spot.",
+  "why": "The whole name is a single delivery run with a visible start and finish, and the X is literally the delivery point, so the logo is a one-sentence story people can retell.",
+  "risks": "Continuous-line wordmarks are a familiar genre, and the octagonal C and rounded N hairpins can read as a cable or neon tube until the animation shows the route; the small CX monogram is less distinctive than the full wordmark.",
+  "bg": "#1F4BFF",
+  "colors": [
+    { "hex": "#1F4BFF", "name": "Route cobalt", "use": "Route line on white; background behind logo-white and the app icon" },
+    { "hex": "#00B386", "name": "Drop-off mint", "use": "Pickup dot and X stroke on white and light backgrounds" },
+    { "hex": "#19E3A1", "name": "Signal mint", "use": "Pickup dot and X stroke on cobalt and dark backgrounds" },
+    { "hex": "#FFFFFF", "name": "White", "use": "Route line on cobalt" }
+  ]
+}

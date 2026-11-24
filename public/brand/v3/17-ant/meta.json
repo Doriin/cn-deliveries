@@ -1,0 +1,13 @@
+{
+  "slug": "17-ant",
+  "name": "Heavy Lifter",
+  "idea": "A chunky, engineered worker ant strides along with a parcel far bigger than itself pressed up overhead, retelling the fact everyone loves (ants carry 50 times their weight) as CNX's promise: small, fast, carries anything.",
+  "why": "It is a story people already know and will retell in five words, \"the ant lifting a huge box\", and the tilted jade parcel over a black ant stays one distinct silhouette from a van side down to a 32 px icon.",
+  "risks": "Some people see ants as pests, which is an odd thought next to their parcels, and with six legs and two antennae the mark is busier than a pictogram, so below about 24 px it shrinks to a green box on a dark bug and the parcel does most of the recognising.",
+  "bg": "#0BA360",
+  "colors": [
+    { "hex": "#0BA360", "name": "Worker Jade", "use": "Parcel, app icon tile, brand background behind the white logo" },
+    { "hex": "#0D1A14", "name": "Anthill Ink", "use": "Ant, parcel tape, CNX wordmark" },
+    { "hex": "#FFFFFF", "name": "White", "use": "Reversed logo on Worker Jade, parcel on the app icon" }
+  ]
+}

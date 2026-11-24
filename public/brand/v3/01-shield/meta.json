@@ -1,0 +1,25 @@
+{
+  "slug": "01-shield",
+  "name": "Exchange",
+  "idea": "A heraldic tag-shield split down the middle into emerald and cream, with CNX counterchanged across the split and a brass grommet that turns the crest into a parcel tag.",
+  "why": "Nobody in the market owns a half-green, half-cream tag silhouette, and the counterchange tells the cash-on-delivery story at a glance: the parcel goes one way, the payment comes back.",
+  "risks": "Shields are a category staple (UPS, and Cargus's orange shield), so without the split and the grommet it drifts toward a generic club or university crest, and the inner letters stop reading below about 40 px.",
+  "bg": "#0B5D3B",
+  "colors": [
+    {
+      "hex": "#0B5D3B",
+      "name": "Emerald",
+      "use": "Left half of the crest, wordmark, brand background"
+    },
+    {
+      "hex": "#C8A24A",
+      "name": "Brass",
+      "use": "Rim and grommet; descriptor on emerald"
+    },
+    {
+      "hex": "#F3EBD8",
+      "name": "Cream",
+      "use": "Right half of the crest; wordmark on emerald"
+    }
+  ]
+}

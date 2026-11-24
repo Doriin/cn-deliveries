@@ -1,0 +1,13 @@
+{
+  "slug": "08-ornament",
+  "name": "Heirloom",
+  "idea": "A Moldovan carpet rhombus with ram's-horn hooks and a parcel-shaped eye at its heart, built only from cross-stitches (every stitch is an X), with CNX stitched on the same grid.",
+  "why": "It looks like the embroidery on every Moldovan towel and blouse, so it reads as ours at a glance, and the stitch grid becomes a whole system: tape borders, embroidered jackets and a crisp 1-bit label print.",
+  "risks": "Folk ornament can feel handmade rather than fast, and the lacy horn hooks fill in below about 32 px, so small uses should rely on the solid crimson tile icon.",
+  "bg": "#B3122E",
+  "colors": [
+    { "hex": "#B3122E", "name": "Scoarță crimson", "use": "Ornament, brand ground behind the reversed logo and the app icon" },
+    { "hex": "#16161A", "name": "Thread black", "use": "Stitched wordmark and the parcel eye at the centre" },
+    { "hex": "#F4E9D8", "name": "Linen cream", "use": "Reversed artwork on crimson, packaging and paper ground" }
+  ]
+}

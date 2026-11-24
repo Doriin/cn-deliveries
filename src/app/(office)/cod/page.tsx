@@ -75,7 +75,7 @@ export default async function CodPage({ searchParams }: { searchParams: Promise<
   });
 
   const outstanding = await db.shipment.aggregate({
-    where: { codAmount: { gt: 0 }, status: { in: ["OUT_FOR_DELIVERY", "AT_WAREHOUSE", "PICKED_UP", "FAILED_ATTEMPT", "POSTPONED"] } },
+    where: { codAmount: { gt: 0 }, status: { in: ["OUT_FOR_DELIVERY", "AT_WAREHOUSE", "PICKED_UP", "POSTPONED"] } },
     _sum: { codAmount: true },
     _count: true,
   });

@@ -1,0 +1,35 @@
+{
+  "slug": "20-hedgehog",
+  "name": "Homeward",
+  "idea": "The folk-tale hedgehog that carries apples home on its back, now hurrying your parcel home on a fan of swept-back spines that double as speed lines.",
+  "why": "Everyone in Moldova, Romanian and Russian speakers alike, grew up with the hedgehog carrying an apple on its spines, so people retell it at once as \"the hedgehog with the box on its back\" and read it as warm, local and careful.",
+  "risks": "It is the most illustrative and the cutest character in the set, so conservative B2B clients may find it playful; at favicon size (16 px) it shrinks to a spiky blob with a mint dot, and the mint parcel sits close to the ant's green.",
+  "bg": "#C98C4F",
+  "colors": [
+    {
+      "hex": "#C98C4F",
+      "name": "Kraft",
+      "use": "Hedgehog body and the brand colour: app icon, van stripe, packing tape, background for the reversed logo"
+    },
+    {
+      "hex": "#1F1A17",
+      "name": "Ink",
+      "use": "Spines, eye, nose, feet, parcel tape and the wordmark"
+    },
+    {
+      "hex": "#5ED3AE",
+      "name": "Mint",
+      "use": "The parcel, the one fresh accent (it arrives in mint condition)"
+    },
+    {
+      "hex": "#FBEEDB",
+      "name": "Cream",
+      "use": "Hedgehog body on kraft (app icon, reversed logo)"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "Wordmark on kraft"
+    }
+  ]
+}

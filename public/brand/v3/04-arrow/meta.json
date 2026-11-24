@@ -1,0 +1,25 @@
+{
+  "slug": "04-arrow",
+  "name": "Dart",
+  "idea": "The slot inside the teal C and a notch cut into the N line up into one forward arrow that flies from the symbol into the wordmark.",
+  "why": "Like the FedEx arrow it hides in the letters until you notice it, and after that the dart shooting from C into N is the first thing you see.",
+  "risks": "The arrowhead needs a notch cut into the N, so the N is a modified letter, and electric teal on a white van is light, so small text should stay in Ink.",
+  "bg": "#0E1116",
+  "colors": [
+    {
+      "hex": "#00C2A8",
+      "name": "Electric Teal",
+      "use": "The C symbol, app icon glyph, accents"
+    },
+    {
+      "hex": "#0E1116",
+      "name": "Ink",
+      "use": "Wordmark, app icon background, reversed-logo background, 1-bit labels"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "Reversed logo on Ink; the hidden arrow on light backgrounds"
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { PackageSearch } from "lucide-react";
 import { LoginForm } from "./LoginForm";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
-import { Logo } from "@/components/Logo";
+import { BrandLogo, Logo } from "@/components/Logo";
 
 const ROUTE = "M36 232 C150 232 128 140 236 140 S330 52 444 52";
 
@@ -21,12 +21,9 @@ function RouteArt({ labels }: { labels: [string, string, string] }) {
       ))}
       <g className="animate-travel [offset-rotate:0deg]" style={{ offsetPath: `path("${ROUTE}")` }}>
         <rect x="-17" y="-17" width="34" height="34" rx="9" fill="var(--d-surface)" stroke="currentColor" strokeOpacity="0.25" />
-        <g transform="translate(-13.6 -13.6) scale(0.85)" stroke="var(--d-surface)" strokeWidth="1.3" strokeLinejoin="round">
-          <path d="M16 5 25.5 10.5 16 16 6.5 10.5Z" fill="var(--d-accent)" />
-          <path d="M6.5 10.5 16 16V27L6.5 21.5Z" fill="var(--d-ink)" fillOpacity="0.85" />
-          <path d="M25.5 10.5V21.5L16 27V16Z" fill="var(--d-ink)" fillOpacity="0.5" />
-          
-        </g>
+        {/* one box of the company mark */}
+        <path transform="translate(-24.5 -21.4) scale(0.19)" d="M73.9 80.4L128.9 48.4L184.2 80.4V145.1L128.9 177.1L73.9 145.1ZM73.9 80.4L128.9 112.4L184.2 80.4M128.9 112.4V177.1"
+          stroke="var(--brand-logo)" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
       </g>
     </svg>
   );
@@ -49,11 +46,12 @@ export default async function LoginPage() {
 
       <main className="flex flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] sm:px-10">
         <div className="flex items-center justify-between">
-          <div className="lg:invisible"><Logo tag={null} /></div>
+          <span aria-hidden />
           <LocaleSwitcher />
         </div>
         <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-10">
           <div>
+            <BrandLogo width={150} className="mb-8" />
             <h1 className="text-[28px] font-bold tracking-tight text-ink-950">{t("welcome")}</h1>
             <p className="mt-1.5 text-[15px] text-slate-500">{t("intro")}</p>
             <div className="mt-8"><LoginForm /></div>

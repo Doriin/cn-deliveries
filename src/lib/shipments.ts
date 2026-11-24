@@ -4,6 +4,7 @@ import { calculateFee } from "./pricing";
 import { validateTransition } from "./status";
 import { normalizeLocality } from "./text";
 import { nextTrackingNo } from "./tracking";
+import { checkDetailsChange, checkPaymentChange, DETAIL_FIELDS, diffDetails, undoTarget, type PaymentValues } from "./corrections";
 
 type Tx = Prisma.TransactionClient;
 
@@ -99,15 +100,37 @@ export async function createShipment(
   });
 }
 
-export async function updateShipment(id: string, input: ShipmentInput) {
+/** Saves corrected order details. Every changed field is written into the order's history. Throws ActionError. */
+export async function updateShipment(id: string, input: ShipmentInput, userId?: string | null) {
   return db.$transaction(async (tx) => {
-    const current = await tx.shipment.findUniqueOrThrow({ where: { id } });
+    const current = await tx.shipment.findUniqueOrThrow({ where: { id }, include: { codPayments: { select: { amount: true } } } });
     const data = await buildData(input, tx);
-    return tx.shipment.update({
+    const err = checkDetailsChange({ status: current.status, codAmount: data.codAmount, paid: current.codPayments.reduce((a, p) => a + p.amount, 0) });
+    if (err) throw new ActionError(err);
+    const changed = diffDetails(current, data, DETAIL_FIELDS);
+    const saved = await tx.shipment.update({
       where: { id },
       data: { ...data, sheetNeedsSync: current.source === "SHEET" ? true : current.sheetNeedsSync },
     });
+    if (Object.keys(changed).length) {
+      await tx.shipmentChange.create({ data: { shipmentId: id, kind: "DETAILS", data: await readableIds(changed, tx), userId: userId ?? null } });
+    }
+    return saved;
   });
+}
+
+/** Courier, client and zone are stored by id; the history keeps their names so it stays readable later. */
+async function readableIds(changed: Record<string, [string | number | null, string | number | null]>, tx: Tx) {
+  const name = async (field: string, v: string | number | null) => {
+    if (typeof v !== "string") return v;
+    if (field === "courierId") return (await tx.user.findUnique({ where: { id: v }, select: { name: true } }))?.name ?? v;
+    if (field === "clientId") return (await tx.client.findUnique({ where: { id: v }, select: { name: true } }))?.name ?? v;
+    if (field === "zoneId") return (await tx.zone.findUnique({ where: { id: v }, select: { code: true } }))?.code ?? v;
+    return v;
+  };
+  const out: Record<string, [string | number | null, string | number | null]> = {};
+  for (const [f, [a, b]] of Object.entries(changed)) out[f] = [await name(f, a), await name(f, b)];
+  return out;
 }
 
 export type StatusChange = {
@@ -215,4 +238,53 @@ export function recordCodAndChangeStatus(cod: CodInput | null, c: StatusChange):
 
 export async function assignCourier(ids: string[], courierId: string | null) {
   await db.shipment.updateMany({ where: { id: { in: ids } }, data: { courierId } });
+}
+
+/**
+ * Corrects or deletes (`next: null`) a COD payment entered by mistake. Cash the office already received keeps its amount
+ * and method; a delivered order keeps enough COD. The change is written into the order's history. Returns an error key or null.
+ */
+export function fixPayment(p: { paymentId: string; next: PaymentValues | null; userId?: string | null }): Promise<string | null> {
+  return run(async (tx) => {
+    const pay = await tx.codPayment.findUnique({ where: { id: p.paymentId }, include: { shipment: { include: { codPayments: { select: { id: true, amount: true } } } } } });
+    if (!pay) throw new ActionError("notFound");
+    const current: PaymentValues = { amount: pay.amount, method: pay.method, receiptNo: pay.receiptNo };
+    const next = p.next && { ...p.next, receiptNo: p.next.receiptNo || null };
+    const paidOthers = pay.shipment.codPayments.filter((x) => x.id !== pay.id).reduce((a, x) => a + x.amount, 0);
+    const err = checkPaymentChange({ current, next, handedOver: !!pay.handoverId, status: pay.shipment.status, codAmount: pay.shipment.codAmount, paidOthers });
+    if (err) throw new ActionError(err);
+    if (!next) {
+      await tx.codPayment.delete({ where: { id: pay.id } });
+      await tx.shipmentChange.create({ data: { shipmentId: pay.shipmentId, kind: "PAYMENT_DELETED", data: { before: current }, userId: p.userId ?? null } });
+      return;
+    }
+    if (next.amount === current.amount && next.method === current.method && next.receiptNo === current.receiptNo) return;
+    await tx.codPayment.update({ where: { id: pay.id }, data: next });
+    await tx.shipmentChange.create({ data: { shipmentId: pay.shipmentId, kind: "PAYMENT_EDITED", data: { before: current, after: next }, userId: p.userId ?? null } });
+  });
+}
+
+/**
+ * Office correction for a status set by mistake: the latest step is marked undone (it stays in the history, crossed out,
+ * with who and why) and the order goes back to the step before. The only status change outside changeStatus().
+ */
+export function undoLastStatus(u: { shipmentId: string; reason: string | null; userId?: string | null }): Promise<string | null> {
+  return run(async (tx) => {
+    const reason = u.reason?.trim();
+    if (!reason) throw new ActionError("undoReasonRequired");
+    const s = await tx.shipment.findUnique({ where: { id: u.shipmentId }, include: { events: true } });
+    if (!s) throw new ActionError("notFound");
+    const target = undoTarget(s.events, s.status);
+    if (!target) throw new ActionError("nothingToUndo");
+    await tx.statusEvent.update({ where: { id: target.event.id }, data: { undoneAt: new Date(), undoneById: u.userId ?? null, undoReason: reason } });
+    await tx.shipment.update({
+      where: { id: s.id },
+      data: {
+        status: target.back,
+        statusReason: target.reason,
+        deliveredAt: target.event.toStatus === "DELIVERED" ? null : undefined,
+        sheetNeedsSync: s.source === "SHEET" ? true : undefined,
+      },
+    });
+  });
 }

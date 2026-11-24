@@ -16,16 +16,17 @@ export const STATUSES: ShipmentStatus[] = [
   "CANCELLED",
 ];
 
+/** RETURNED can follow any undeliverable state directly when the parcel goes straight back to the sender; RETURNING is for a return that takes time. */
 export const TRANSITIONS: Record<ShipmentStatus, ShipmentStatus[]> = {
   NEW: ["CONFIRMED", "PICKED_UP", "ON_HOLD", "CANCELLED"],
   CONFIRMED: ["PICKED_UP", "ON_HOLD", "CANCELLED"],
   PICKED_UP: ["AT_WAREHOUSE", "OUT_FOR_DELIVERY", "ON_HOLD"],
-  AT_WAREHOUSE: ["OUT_FOR_DELIVERY", "POSTPONED", "ON_HOLD", "RETURNING"],
+  AT_WAREHOUSE: ["OUT_FOR_DELIVERY", "POSTPONED", "ON_HOLD", "RETURNING", "RETURNED"],
   OUT_FOR_DELIVERY: ["DELIVERED", "FAILED_ATTEMPT", "POSTPONED", "REFUSED", "AT_WAREHOUSE", "ON_HOLD"],
-  FAILED_ATTEMPT: ["OUT_FOR_DELIVERY", "AT_WAREHOUSE", "POSTPONED", "ON_HOLD", "RETURNING"],
-  POSTPONED: ["OUT_FOR_DELIVERY", "AT_WAREHOUSE", "ON_HOLD", "RETURNING"],
-  ON_HOLD: ["CONFIRMED", "PICKED_UP", "AT_WAREHOUSE", "OUT_FOR_DELIVERY", "RETURNING", "CANCELLED"],
-  REFUSED: ["RETURNING", "AT_WAREHOUSE"],
+  FAILED_ATTEMPT: ["OUT_FOR_DELIVERY", "AT_WAREHOUSE", "POSTPONED", "ON_HOLD", "RETURNING", "RETURNED"],
+  POSTPONED: ["OUT_FOR_DELIVERY", "AT_WAREHOUSE", "ON_HOLD", "RETURNING", "RETURNED"],
+  ON_HOLD: ["CONFIRMED", "PICKED_UP", "AT_WAREHOUSE", "OUT_FOR_DELIVERY", "RETURNING", "RETURNED", "CANCELLED"],
+  REFUSED: ["RETURNING", "RETURNED", "AT_WAREHOUSE"],
   RETURNING: ["RETURNED", "AT_WAREHOUSE"],
   RETURNED: [],
   DELIVERED: [],
@@ -33,6 +34,17 @@ export const TRANSITIONS: Record<ShipmentStatus, ShipmentStatus[]> = {
 };
 
 export const FINAL_STATUSES: ShipmentStatus[] = ["DELIVERED", "RETURNED", "CANCELLED"];
+
+/**
+ * No COD is expected while a delivery failed or is blocked, nor once the parcel goes back or the order is cancelled.
+ * Nothing is collected, so nothing is owed to the client; the COD counts again only when the parcel is sent out again.
+ */
+export const COD_NOT_DUE: ShipmentStatus[] = ["FAILED_ATTEMPT", "ON_HOLD", "REFUSED", "RETURNING", "RETURNED", "CANCELLED"];
+
+/** COD still to collect on a parcel, bani. */
+export function codDue(status: ShipmentStatus, codAmount: number, paid: number): number {
+  return COD_NOT_DUE.includes(status) ? 0 : Math.max(0, codAmount - paid);
+}
 
 /** Shipments that need an office decision (call the recipient, fix the address, arrange a return...). */
 export const PROBLEM_STATUSES: ShipmentStatus[] = ["FAILED_ATTEMPT", "ON_HOLD", "REFUSED"];

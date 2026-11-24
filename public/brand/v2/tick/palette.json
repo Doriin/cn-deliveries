@@ -1,0 +1,23 @@
+{
+  "name": "CNX Tick",
+  "colors": [
+    {
+      "name": "Graphite",
+      "hex": "#0B0D12",
+      "rgb": "11, 13, 18",
+      "use": "letters C and N, the last arm of the X"
+    },
+    {
+      "name": "Tick Azure",
+      "hex": "#0A6CFF",
+      "rgb": "10, 108, 255",
+      "use": "the tick inside the X; accents"
+    },
+    {
+      "name": "White",
+      "hex": "#FFFFFF",
+      "rgb": "255, 255, 255",
+      "use": "app icon ground; reversed logo"
+    }
+  ]
+}

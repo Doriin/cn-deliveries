@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { requireUser, COURIER_APP_ROLES } from "@/lib/auth";
 import { claimShipment } from "@/app/actions/courier";
 import { courierNextStatuses, courierPrimaryStatus, courierSection, mapsUrl } from "@/lib/courier";
-import { FINAL_STATUSES, STATUS_TONE } from "@/lib/status";
+import { codDue, FINAL_STATUSES, STATUS_TONE } from "@/lib/status";
 import { formatKg, formatMDL } from "@/lib/money";
 import { fmtDate, fmtDateTime } from "@/lib/dates";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -40,12 +40,12 @@ export default async function CourierParcel({ params }: { params: Promise<{ id: 
   const locale = await getLocale();
   const s = await db.shipment.findUnique({
     where: { id },
-    include: { client: true, courier: { select: { name: true } }, codPayments: true, events: { orderBy: { createdAt: "desc" }, take: 5 } },
+    include: { client: true, courier: { select: { name: true } }, codPayments: true, events: { where: { undoneAt: null }, orderBy: { createdAt: "desc" }, take: 5 } },
   });
   if (!s) notFound();
   const mine = s.courierId === user.id;
   const closed = FINAL_STATUSES.includes(s.status);
-  const codLeft = Math.max(0, s.codAmount - s.codPayments.reduce((a, p) => a + p.amount, 0));
+  const codLeft = codDue(s.status, s.codAmount, s.codPayments.reduce((a, p) => a + p.amount, 0));
   const pickupAddress = s.senderAddress ?? s.client.address;
   const atPickup = courierSection(s.status) === "pickup";
   const next = courierNextStatuses(s.status);

@@ -1,7 +1,7 @@
 import type { ShipmentStatus } from "@prisma/client";
 import { db } from "./db";
 import { dayBounds, todayMD } from "./dates";
-import { FINAL_STATUSES } from "./status";
+import { codDue, FINAL_STATUSES } from "./status";
 import { dayGroup, type DayGroup } from "./dayGroups";
 import { CASH_METHODS } from "./courier";
 
@@ -115,7 +115,7 @@ export async function loadDay(): Promise<Day> {
         client: { select: { name: true, address: true } },
         courier: { select: { name: true } },
         codPayments: { select: { amount: true, collectedAt: true } },
-        events: { where: { toStatus: "FAILED_ATTEMPT" }, select: { id: true } },
+        events: { where: { toStatus: "FAILED_ATTEMPT", undoneAt: null }, select: { id: true } },
       },
     }),
     db.user.findMany({ where: { role: "COURIER", active: true }, orderBy: { name: "asc" }, select: { id: true, name: true, phone: true } }),
@@ -149,7 +149,7 @@ export async function loadDay(): Promise<Day> {
       courierId: s.courierId,
       courierName: s.courier?.name ?? null,
       cod: s.codAmount,
-      codLeft: Math.max(0, s.codAmount - paid),
+      codLeft: codDue(s.status, s.codAmount, paid),
       time: clock.format(moment),
       at: onDayLine(moment),
       noZone: !s.zoneId,

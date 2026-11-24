@@ -27,7 +27,7 @@ Exceptions:
 - `FAILED_ATTEMPT` with reason (no answer, recipient absent, wrong address, no money, other) → back to warehouse / out for delivery again
 - `POSTPONED` (recipient asked for another date)
 - `ON_HOLD` / Blocked with reason (damaged, address unclear, unpaid, other)
-- `REFUSED` → `RETURNING` → `RETURNED` (back to sender)
+- `REFUSED` → `RETURNING` → `RETURNED` (back to sender). Since 2026-11-21 `RETURNED` can also be set directly from failed attempt, refused, at warehouse, blocked or postponed, when the parcel goes straight back to the sender; `RETURNING` stays for a return that takes time. `RETURNED` is not `CANCELLED`: the parcel was picked up and came back.
 - `CANCELLED` (only before pickup)
 
 Reasons are stored separately from the status. Every status change is recorded as a `StatusEvent`. The allowed transitions live in `src/lib/status.ts`.
@@ -41,6 +41,7 @@ Reasons are stored separately from the status. Every status change is recorded a
   - bank transfer / MIA instant payment
 - **Delivery fee payment**: either a **monthly invoice** to the client, or **deducted from the COD** before paying the client.
 - A shipment with COD > 0 cannot be marked DELIVERED without a recorded COD payment.
+- Clients are paid only COD that was actually collected. A failed, blocked, refused, returned or cancelled parcel brings no COD, so nothing is owed to the client for it (agreed 2026-11-22). Its COD stops counting as "to collect" (`COD_NOT_DUE` / `codDue()` in `src/lib/status.ts`) and counts again when the parcel goes out for delivery again.
 
 ## Pricing (confirmed by owner)
 | Zone | Base price |

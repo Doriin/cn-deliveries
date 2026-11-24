@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { AlertTriangle, ArrowLeft, ExternalLink, MapPin, Pencil, Phone, Printer } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ExternalLink, MapPin, Pencil, PencilLine, Phone, Printer } from "lucide-react";
 import { db } from "@/lib/db";
 import { ActionForm } from "@/components/ActionForm";
 import { SubmitButton } from "@/components/SubmitButton";
@@ -9,12 +9,14 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { RouteLine, type RouteStop } from "@/components/RouteLine";
 import { Card, Field, Input, LinkButton, Select, Tracking, cx } from "@/components/ui";
 import { assignCourierAction, recordCodAction } from "@/app/actions/shipments";
-import { MAIN_FLOW, STATUS_COLORS, STATUS_DOT, TRANSITIONS } from "@/lib/status";
+import { codDue, COD_NOT_DUE, MAIN_FLOW, STATUS_COLORS, STATUS_DOT, TRANSITIONS } from "@/lib/status";
 import { mapsUrl } from "@/lib/courier";
 import { fmtDateTime, fmtDayShort } from "@/lib/dates";
 import { formatKg, formatMDL } from "@/lib/money";
 import { zoneName } from "@/lib/zones";
 import { StatusChanger } from "./StatusChanger";
+import { ChangeLines, PaymentFix, UndoStep } from "./Corrections";
+import { undoTarget } from "@/lib/corrections";
 
 const METHODS = ["CASH_RECEIPT", "CASH_NO_RECEIPT", "CARD", "TRANSFER"] as const;
 
@@ -40,20 +42,30 @@ export default async function ShipmentPage({ params }: { params: Promise<{ id: s
       client: true,
       zone: true,
       courier: true,
-      events: { orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } },
+      events: { orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } }, undoneBy: { select: { name: true } } } },
+      changes: { orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } } } },
       codPayments: { orderBy: { collectedAt: "desc" }, include: { courier: { select: { name: true } } } },
     },
   });
   if (!s) notFound();
-  const couriers = await db.user.findMany({ where: { role: "COURIER", active: true }, orderBy: { name: "asc" } });
+  const [couriers, zones] = await Promise.all([
+    db.user.findMany({ where: { role: "COURIER", active: true }, orderBy: { name: "asc" } }),
+    db.zone.findMany(),
+  ]);
+  /** Steps still in force; steps undone by the office only show in the history. */
+  const active = s.events.filter((e) => !e.undoneAt);
+  const undo = undoTarget(s.events, s.status);
   const codPaid = s.codPayments.reduce((a, p) => a + p.amount, 0);
-  const codLeft = Math.max(0, s.codAmount - codPaid);
+  const codLeft = codDue(s.status, s.codAmount, codPaid);
+  /** Delivery failed, blocked or going back: the missing COD is not expected, and nothing is owed to the client for it. */
+  const codNotDue = COD_NOT_DUE.includes(s.status) && codPaid < s.codAmount;
+  const codGone = ["REFUSED", "RETURNING", "RETURNED", "CANCELLED"].includes(s.status);
   const fmt = (d: Date) => fmtDateTime(d, locale);
 
   // On the normal journey the route shows where the parcel is; on an exception it shows how far it got.
   const at = MAIN_FLOW.indexOf(s.status);
   const exception = at === -1;
-  const reached = exception ? Math.max(0, ...s.events.map((e) => MAIN_FLOW.indexOf(e.toStatus))) : at;
+  const reached = exception ? Math.max(0, ...active.map((e) => MAIN_FLOW.indexOf(e.toStatus))) : at;
   const stops: RouteStop[] = MAIN_FLOW.map((m, i) => ({
     key: m,
     label: ts(m),
@@ -78,7 +90,7 @@ export default async function ShipmentPage({ params }: { params: Promise<{ id: s
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <LinkButton variant="ghost" href={`/track/${s.trackingNo}`} target="_blank"><ExternalLink className="h-4 w-4" aria-hidden /> {t("publicPage")}</LinkButton>
-          <LinkButton variant="secondary" href={`/shipments/${s.id}/edit`}><Pencil className="h-4 w-4" aria-hidden /> {tc("edit")}</LinkButton>
+          <LinkButton variant="secondary" href={`/shipments/${s.id}/edit`}><Pencil className="h-4 w-4" aria-hidden /> {t("editOrder")}</LinkButton>
           <LinkButton variant="secondary" href={`/labels?ids=${s.id}`} target="_blank"><Printer className="h-4 w-4" aria-hidden /> {t("printLabel")}</LinkButton>
         </div>
       </div>
@@ -91,7 +103,7 @@ export default async function ShipmentPage({ params }: { params: Promise<{ id: s
             <div>
               <span className="font-semibold">{ts(s.status)}</span>
               {s.statusReason && <span> · {tr(s.statusReason)}</span>}
-              {s.events[0]?.note && <div className="mt-0.5 opacity-80">{s.events[0].note}</div>}
+              {active[0]?.note && <div className="mt-0.5 opacity-80">{active[0].note}</div>}
             </div>
           </div>
         )}
@@ -137,35 +149,59 @@ export default async function ShipmentPage({ params }: { params: Promise<{ id: s
 
           <Card title={t("history")}>
             <ol className="relative space-y-5 before:absolute before:bottom-2 before:left-[7px] before:top-2 before:w-0.5 before:rounded-full before:bg-slate-100">
-              {s.events.map((e, i) => (
-                <li key={e.id} className="relative flex gap-3.5 text-sm">
-                  <span className={cx("relative z-10 mt-0.5 h-4 w-4 shrink-0 rounded-full ring-4 ring-white", i === 0 ? STATUS_DOT[e.toStatus] : "border-[3px] border-slate-300 bg-white")} aria-hidden />
-                  <div className="min-w-0">
-                    <div className={cx(i === 0 ? "font-semibold text-slate-900" : "font-medium text-slate-700")}>
-                      {ts(e.toStatus)}{e.reason && <span className="font-normal text-slate-500"> · {tr(e.reason)}</span>}
-                    </div>
-                    {e.note && <div className="mt-0.5 text-slate-600">{e.note}</div>}
-                    {e.receivedBy && <div className="mt-0.5 text-slate-600">{t("receivedBy")}: {e.receivedBy}</div>}
-                    {(e.photoPath || e.signaturePath) && (
-                      <div className="mt-2 flex gap-2">
-                        {e.photoPath && (
-                          <a href={`/api/files/${e.photoPath}`} target="_blank" rel="noreferrer" className="overflow-hidden rounded-xl ring-1 ring-slate-200 transition-shadow duration-150 hover:shadow-raised">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={`/api/files/${e.photoPath}`} alt={t("photo")} className="h-24 w-32 object-cover" />
-                          </a>
+              {[...s.events.map((e) => ({ at: e.createdAt, e, c: null })), ...s.changes.map((c) => ({ at: c.createdAt, e: null, c }))]
+                .sort((x, y) => y.at.getTime() - x.at.getTime())
+                .map(({ e, c }) => {
+                  if (c) {
+                    const { title, lines } = ChangeLines({ change: c, t, tc, zoneLabel: (code) => { const z = zones.find((x) => x.code === code); return z ? zoneName(z, locale) : code; }, dayLabel: (iso) => fmtDayShort(new Date(`${iso}T00:00:00Z`), locale) });
+                    return (
+                      <li key={c.id} className="relative flex gap-3.5 text-sm">
+                        <span className="relative z-10 mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-amber-100 ring-4 ring-white" aria-hidden><PencilLine className="h-2.5 w-2.5 text-amber-700" /></span>
+                        <div className="min-w-0">
+                          <div className="font-medium text-slate-700">{title}</div>
+                          {lines.map((l, i) => <div key={i} className="mt-0.5 text-slate-600">{l}</div>)}
+                          <div className="mt-0.5 text-xs text-slate-400">{fmt(c.createdAt)}{c.user && ` · ${c.user.name}`}</div>
+                        </div>
+                      </li>
+                    );
+                  }
+                  const ev = e!;
+                  const current = ev.id === active[0]?.id;
+                  return (
+                    <li key={ev.id} className="relative flex gap-3.5 text-sm">
+                      <span className={cx("relative z-10 mt-0.5 h-4 w-4 shrink-0 rounded-full ring-4 ring-white", current ? STATUS_DOT[ev.toStatus] : "border-[3px] border-slate-300 bg-white")} aria-hidden />
+                      <div className="min-w-0">
+                        <div className={cx(ev.undoneAt ? "text-slate-400 line-through" : current ? "font-semibold text-slate-900" : "font-medium text-slate-700")}>
+                          {ts(ev.toStatus)}{ev.reason && <span className="font-normal text-slate-500"> · {tr(ev.reason)}</span>}
+                        </div>
+                        {ev.undoneAt && (
+                          <div className="mt-0.5 text-[13px] text-red-700">
+                            {t("undoneBy", { name: ev.undoneBy?.name ?? "—", time: fmt(ev.undoneAt) })}{ev.undoReason && `: ${ev.undoReason}`}
+                          </div>
                         )}
-                        {e.signaturePath && (
-                          <a href={`/api/files/${e.signaturePath}`} target="_blank" rel="noreferrer" className="overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 transition-shadow duration-150 hover:shadow-raised">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={`/api/files/${e.signaturePath}`} alt={t("signature")} className="h-24 w-40 object-contain" />
-                          </a>
+                        {ev.note && <div className="mt-0.5 text-slate-600">{ev.note}</div>}
+                        {ev.receivedBy && <div className="mt-0.5 text-slate-600">{t("receivedBy")}: {ev.receivedBy}</div>}
+                        {(ev.photoPath || ev.signaturePath) && (
+                          <div className="mt-2 flex gap-2">
+                            {ev.photoPath && (
+                              <a href={`/api/files/${ev.photoPath}`} target="_blank" rel="noreferrer" className="overflow-hidden rounded-xl ring-1 ring-slate-200 transition-shadow duration-150 hover:shadow-raised">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={`/api/files/${ev.photoPath}`} alt={t("photo")} className="h-24 w-32 object-cover" />
+                              </a>
+                            )}
+                            {ev.signaturePath && (
+                              <a href={`/api/files/${ev.signaturePath}`} target="_blank" rel="noreferrer" className="overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 transition-shadow duration-150 hover:shadow-raised">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={`/api/files/${ev.signaturePath}`} alt={t("signature")} className="h-24 w-40 object-contain" />
+                              </a>
+                            )}
+                          </div>
                         )}
+                        <div className="mt-0.5 text-xs text-slate-400">{fmt(ev.createdAt)}{ev.user && ` · ${ev.user.name}`}</div>
                       </div>
-                    )}
-                    <div className="mt-0.5 text-xs text-slate-400">{fmt(e.createdAt)}{e.user && ` · ${e.user.name}`}</div>
-                  </div>
-                </li>
-              ))}
+                    </li>
+                  );
+                })}
             </ol>
           </Card>
         </div>
@@ -173,6 +209,7 @@ export default async function ShipmentPage({ params }: { params: Promise<{ id: s
         <div className="space-y-5 lg:sticky lg:top-20">
           <Card title={next.length ? t("nextStep") : t("currentStatus")}>
             <StatusChanger key={s.status} id={s.id} next={next} />
+            {undo && <UndoStep shipmentId={s.id} step={ts(undo.event.toStatus)} back={ts(undo.back)} t={t} />}
           </Card>
 
           <Card title={t("courier")}>
@@ -196,10 +233,10 @@ export default async function ShipmentPage({ params }: { params: Promise<{ id: s
                   <span className="text-sm text-slate-500 tabular-nums">/ {formatMDL(s.codAmount)}</span>
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100" aria-hidden>
-                  <div className={cx("h-full origin-left animate-grow-x rounded-full", codLeft ? "bg-accent-500" : "bg-emerald-500")} style={{ width: `${Math.min(100, (codPaid / s.codAmount) * 100)}%` }} />
+                  <div className={cx("h-full origin-left animate-grow-x rounded-full", codNotDue ? "bg-slate-300" : codLeft ? "bg-accent-500" : "bg-emerald-500")} style={{ width: `${Math.min(100, (codPaid / s.codAmount) * 100)}%` }} />
                 </div>
-                <p className={cx("mt-2 text-[13px] font-medium", codLeft ? "text-amber-700" : "text-emerald-700")}>
-                  {codLeft ? `${t("codLeft")}: ${formatMDL(codLeft)}` : t("codDone")}
+                <p className={cx("mt-2 text-[13px] font-medium", codNotDue ? "text-slate-600" : codLeft ? "text-amber-700" : "text-emerald-700")}>
+                  {codNotDue ? t(codGone ? "codNone" : "codPaused") : codLeft ? `${t("codLeft")}: ${formatMDL(codLeft)}` : t("codDone")}
                 </p>
                 {s.codPayments.length > 0 && (
                   <ul className="mt-3 divide-y divide-slate-100 border-t border-slate-100 text-sm">
@@ -207,6 +244,7 @@ export default async function ShipmentPage({ params }: { params: Promise<{ id: s
                       <li key={p.id} className="py-2">
                         <div className="flex justify-between gap-2"><span className="font-medium">{tc(`method.${p.method}`)}</span><span className="font-semibold tabular-nums">{formatMDL(p.amount)}</span></div>
                         <div className="text-xs text-slate-500">{fmt(p.collectedAt)}{p.receiptNo && ` · ${t("receiptNo")} ${p.receiptNo}`}{p.courier && ` · ${p.courier.name}`}</div>
+                        <PaymentFix shipmentId={s.id} payment={p} t={t} tc={tc} />
                       </li>
                     ))}
                   </ul>

@@ -1,0 +1,29 @@
+{
+  "name": "CNX Overpass",
+  "colors": [
+    {
+      "name": "Ultramarine Night",
+      "hex": "#0A1B7E",
+      "rgb": "10, 27, 126",
+      "use": "letters C and N, the lower route of the X"
+    },
+    {
+      "name": "Signal Cobalt",
+      "hex": "#1F4BFF",
+      "rgb": "31, 75, 255",
+      "use": "the upper route of the X; brand background"
+    },
+    {
+      "name": "Route Tint",
+      "hex": "#A9B9FF",
+      "rgb": "169, 185, 255",
+      "use": "lower route on the cobalt app icon only"
+    },
+    {
+      "name": "White",
+      "hex": "#FFFFFF",
+      "rgb": "255, 255, 255",
+      "use": "reversed logo on cobalt"
+    }
+  ]
+}

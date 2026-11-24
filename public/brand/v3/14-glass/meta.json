@@ -1,0 +1,40 @@
+{
+  "slug": "14-glass",
+  "name": "Arrival",
+  "idea": "A parcel in liquid glass arrives through two fading glass after-images that slide back into depth, an app icon built the way iOS 26 icons are built.",
+  "why": "It looks native on an iPhone home screen and shows the brand promise in one picture, your parcel coming towards you, so the courier app is the identity rather than a container for it.",
+  "risks": "The glass effect needs screens; on vans, tape and the 1-bit label it falls back to a flat three-tile mark, and stacked rounded squares sit close to generic \"layers\" icons.",
+  "bg": "#5B47FF",
+  "colors": [
+    {
+      "hex": "#3A5BFF",
+      "name": "Signal Blue",
+      "use": "farthest glass layer, start of the gradient"
+    },
+    {
+      "hex": "#8A5CFF",
+      "name": "Iris Violet",
+      "use": "middle glass layer, gradient midpoint"
+    },
+    {
+      "hex": "#FF7AC8",
+      "name": "Petal Pink",
+      "use": "front parcel layer, end of the gradient"
+    },
+    {
+      "hex": "#5B47FF",
+      "name": "Deep Iris",
+      "use": "brand background behind the reversed logo"
+    },
+    {
+      "hex": "#1C1840",
+      "name": "Night Ink",
+      "use": "wordmark and the flat one-colour mark"
+    },
+    {
+      "hex": "#F3F0FF",
+      "name": "Lilac Ground",
+      "use": "light ground of the app icon"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "slug": "13-loop",
+  "name": "Round Trip",
+  "idea": "A single ribbon runs out around the C and, at the mouth, makes a Möbius half-twist that brings it back on its other side: parcel out, cash (ramburs) back, one endless loop.",
+  "why": "A C that is secretly a closed Möbius loop is simple enough to draw from memory, and the two-tone twist in the mouth gives it one ownable detail no other courier has.",
+  "risks": "Ring-shaped C marks are common in other sectors, so recognition rests on the twist, which shrinks to a small notch below about 24 px.",
+  "bg": "#006D77",
+  "colors": [
+    {
+      "hex": "#006D77",
+      "name": "Deep Teal",
+      "use": "ribbon body, app icon and brand background"
+    },
+    {
+      "hex": "#2EC4B6",
+      "name": "Lagoon Aqua",
+      "use": "the returning side of the ribbon (lower twist)"
+    },
+    {
+      "hex": "#00474E",
+      "name": "Fold Shadow",
+      "use": "the turning side of the ribbon (upper twist)"
+    },
+    {
+      "hex": "#0F2328",
+      "name": "Ink",
+      "use": "wordmark and one-colour dark version"
+    },
+    {
+      "hex": "#8FE3DA",
+      "name": "Mist",
+      "use": "upper twist on the reversed and icon versions"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "reversed logo on Deep Teal"
+    }
+  ]
+}

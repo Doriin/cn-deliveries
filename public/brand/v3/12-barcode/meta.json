@@ -1,0 +1,13 @@
+{
+  "slug": "12-barcode",
+  "name": "Scanline",
+  "idea": "A solid barcode block whose bars break around the letters CNX, read by an electric-cyan scan line across its lower band.",
+  "why": "It is the one graphic every parcel already carries, so on a label, tape or van side it says shipping instantly, while the knocked-out word makes it unmistakably CNX.",
+  "risks": "The bars borrow the bar widths of the real Code 128 symbol for CNX with the spaces closed up, so the logo itself does not scan; the dense block is heavy, the app icon turns grey below about 32 px, and on 203-dpi labels it needs roughly 30 mm of width for even bars.",
+  "bg": "#000000",
+  "colors": [
+    { "hex": "#000000", "name": "Label black", "use": "Bars on white; background behind logo-white" },
+    { "hex": "#00B8FF", "name": "Scan cyan", "use": "Scan line" },
+    { "hex": "#FFFFFF", "name": "White", "use": "Bars on black; app icon ground" }
+  ]
+}

@@ -10,10 +10,10 @@
   [data-design="val"] .ui-btn-ghost { color: var(--d-accent); }
   @media (hover: hover) and (pointer: fine) {
     [data-design="val"] .ui-btn-primary:hover { background: var(--d-accent-hover); box-shadow: 0 1px 3px rgb(0 0 0 / 0.2); }
-    [data-design="val"] .ui-btn-secondary:hover { background: #cfdcc1; border-color: transparent; }
-    [data-design="val"] .ui-btn-ghost:hover { background: rgb(56 106 32 / 0.08); color: var(--d-accent); }
+    [data-design="val"] .ui-btn-secondary:hover { background: var(--d-pick); border-color: transparent; }
+    [data-design="val"] .ui-btn-ghost:hover { background: color-mix(in srgb, var(--d-accent) 8%, transparent); color: var(--d-accent); }
   }
-  [data-design="val"] .ui-field { border-color: #74796d; border-radius: 12px; background-color: transparent; }
+  [data-design="val"] .ui-field { border-color: var(--d-ink-3); border-radius: 12px; background-color: transparent; }
   [data-design="val"] .ui-field:focus { border-color: var(--d-accent); box-shadow: inset 0 0 0 1px var(--d-accent); }
   [data-design="val"] .ui-card, [data-design="val"] .ui-table-wrap { border-radius: 28px; background: var(--d-shell); box-shadow: none; }
   [data-design="val"] .ui-card-head { border-bottom: 0; padding: 1rem 1.5rem 0.25rem; }

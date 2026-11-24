@@ -21,7 +21,7 @@ Next.js 15 (App Router, TypeScript) · PostgreSQL · Prisma 6 · next-intl (ro/r
 - `messages/{ro,ru,en}.json`: all UI strings, keep the 3 files in sync
 
 ## Rules
-- Status changes go only through `changeStatus()` / `recordCodAndChangeStatus()` in `src/lib/shipments.ts` (validate the transition, write `StatusEvent`, queue the Sheets write-back).
+- Status changes go only through `changeStatus()` / `recordCodAndChangeStatus()` in `src/lib/shipments.ts` (validate the transition, write `StatusEvent`, queue the Sheets write-back). The one exception is the office correction `undoLastStatus()` (same file), which marks the last step undone instead of adding one; queries that count steps filter `undoneAt: null`.
 - Prices come only from `calculateFee()` in `src/lib/pricing.ts`.
 - Money is stored as integer **bani** (1 MDL = 100 bani) and shown as MDL.
 - Every new UI string goes into all 3 message files.

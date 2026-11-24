@@ -1,0 +1,14 @@
+{
+  "slug": "09-twine",
+  "name": "Tied",
+  "idea": "The X of CNX is a red cord and a white cord bound together with a mărțișor twist, the same knot that closes a parcel.",
+  "why": "Red-and-white twisted cord is the best-known good-luck sign in Moldova and Romania, and making it the X turns the name itself into something tied, sealed and delivered.",
+  "risks": "The outlined cord is more illustrative than the flat C and N, the coil detail softens at 16 px, and the white strand depends on its navy outline on light backgrounds.",
+  "bg": "#14244B",
+  "colors": [
+    { "hex": "#14244B", "name": "Ink navy", "use": "C and N, cord outline, brand ground behind the reversed logo" },
+    { "hex": "#E0262F", "name": "Mărțișor red", "use": "Red strand of the cord" },
+    { "hex": "#FFFFFF", "name": "White", "use": "White strand of the cord, reversed letters" },
+    { "hex": "#C9A47A", "name": "Kraft", "use": "App icon ground, packaging and tape" }
+  ]
+}

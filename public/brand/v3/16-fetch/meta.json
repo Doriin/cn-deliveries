@@ -1,0 +1,13 @@
+{
+  "slug": "16-fetch",
+  "name": "Fetch",
+  "idea": "A proud black hound trots up with your parcel swinging from its mouth on a loop of string: CNX fetches it and brings it to your door.",
+  "why": "Everyone, child or adult, reads 'fetch' in one glance, and a black dog in a yellow collar carrying a yellow parcel is a picture people retell as 'the courier with the dog'.",
+  "risks": "Sunflower with near-black is also worn by Yandex Go and by tool brands, the carved details drop out below about 32 px so favicons rely on the silhouette alone, and a dog may feel too playful to some conservative B2B clients.",
+  "bg": "#1B1813",
+  "colors": [
+    { "hex": "#FFC21A", "name": "Sunflower", "use": "Parcel, collar, icon tile, brand background" },
+    { "hex": "#1B1813", "name": "Hound Ink", "use": "Dog, string, wordmark, background for the reversed logo" },
+    { "hex": "#FFFFFF", "name": "White", "use": "Reversed artwork, parcel on the sunflower icon" }
+  ]
+}

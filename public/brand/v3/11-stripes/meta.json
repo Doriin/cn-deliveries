@@ -1,0 +1,15 @@
+{
+  "slug": "11-stripes",
+  "name": "Rally",
+  "idea": "A heavy extended italic CNX in deep navy whose X is finished by three 1970s rally stripes that run under the word and kick up to become the X's forward stroke.",
+  "why": "The stripe is both livery and letter: run it the full length of a van and it rises into the X at the front, so the vehicle itself becomes the logo.",
+  "risks": "Italic plus speed stripes is a well-worn courier formula (DHL), warm tri-stripes recall 1970s Toyota/TRD rally liveries, and someone primed by the rejected round could still read the kick-up as a tick.",
+  "bg": "#132049",
+  "colors": [
+    { "hex": "#132049", "name": "Rally navy", "use": "Wordmark on light backgrounds; background behind logo-white" },
+    { "hex": "#FFB000", "name": "Amber", "use": "Top (inner) stripe" },
+    { "hex": "#FF6A13", "name": "Tangerine", "use": "Middle stripe" },
+    { "hex": "#E0245E", "name": "Raspberry", "use": "Bottom (outer) stripe" },
+    { "hex": "#F7F0E3", "name": "Cream", "use": "Wordmark on navy; app icon ground" }
+  ]
+}

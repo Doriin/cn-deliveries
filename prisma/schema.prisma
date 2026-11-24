@@ -66,12 +66,14 @@ model User {
   client       Client?  @relation(fields: [clientId], references: [id])
   createdAt    DateTime @default(now())
 
-  assignedShipments Shipment[]     @relation("ShipmentCourier")
-  statusEvents      StatusEvent[]
-  codCollected      CodPayment[]   @relation("CodCourier")
-  codRecorded       CodPayment[]   @relation("CodRecorder")
-  handoversGiven    CashHandover[] @relation("HandoverCourier")
-  handoversReceived CashHandover[] @relation("HandoverReceiver")
+  assignedShipments Shipment[]       @relation("ShipmentCourier")
+  statusEvents      StatusEvent[]    @relation("StatusEventUser")
+  statusUndone      StatusEvent[]    @relation("StatusUndoneBy")
+  shipmentChanges   ShipmentChange[]
+  codCollected      CodPayment[]     @relation("CodCourier")
+  codRecorded       CodPayment[]     @relation("CodRecorder")
+  handoversGiven    CashHandover[]   @relation("HandoverCourier")
+  handoversReceived CashHandover[]   @relation("HandoverReceiver")
 }
 
 model Client {
@@ -185,6 +187,7 @@ model Shipment {
 
   events      StatusEvent[]
   codPayments CodPayment[]
+  changes     ShipmentChange[]
 
   @@unique([clientId, sheetRowKey])
   @@index([status])
@@ -201,8 +204,14 @@ model StatusEvent {
   reason     String?
   note       String?
   userId     String?
-  user       User?           @relation(fields: [userId], references: [id])
+  user       User?           @relation("StatusEventUser", fields: [userId], references: [id])
   createdAt  DateTime        @default(now())
+
+  /// Set when the office undid this step because it was entered by mistake. It stays in the history, crossed out.
+  undoneAt   DateTime?
+  undoneById String?
+  undoneBy   User?     @relation("StatusUndoneBy", fields: [undoneById], references: [id])
+  undoReason String?
 
   /// Proof of delivery / attempt, captured by the courier app. Paths are relative to UPLOAD_DIR.
   receivedBy    String?
@@ -263,4 +272,25 @@ model SheetSyncLog {
 model Counter {
   key   String @id
   value Int
+}
+
+enum ChangeKind {
+  DETAILS
+  PAYMENT_EDITED
+  PAYMENT_DELETED
+}
+
+/// Corrections made after an order was entered (edited details, edited or deleted payments), kept for the order's history.
+model ShipmentChange {
+  id         String     @id @default(cuid())
+  shipmentId String
+  shipment   Shipment   @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  kind       ChangeKind
+  /// DETAILS: { field: [before, after] }. PAYMENT_EDITED: { before, after }. PAYMENT_DELETED: { before }. Payments as { amount (bani), method, receiptNo }.
+  data       Json
+  userId     String?
+  user       User?      @relation(fields: [userId], references: [id])
+  createdAt  DateTime   @default(now())
+
+  @@index([shipmentId])
 }

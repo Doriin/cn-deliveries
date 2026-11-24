@@ -1,6 +1,6 @@
 import type { ShipmentStatus } from "@prisma/client";
 import { dayBounds, todayMD } from "./dates";
-import { FINAL_STATUSES } from "./status";
+import { codDue, FINAL_STATUSES } from "./status";
 import { CASH_METHODS, COURIER_ORDER, COURIER_SECTIONS, courierNextStatuses, courierPrimaryStatus, courierSection, type CourierSection } from "./courier";
 
 /**
@@ -116,7 +116,7 @@ export async function loadCourierDay(courierId: string): Promise<CourierDay> {
         recipientName: s.recipientName,
         recipientLocality: s.recipientLocality,
         client: s.client.name,
-        codLeft: Math.max(0, s.codAmount - s.codPayments.reduce((a, p) => a + p.amount, 0)),
+        codLeft: codDue(s.status, s.codAmount, s.codPayments.reduce((a, p) => a + p.amount, 0)),
         notes: s.notes,
         pieces: s.pieces,
         weightGrams: s.weightGrams,

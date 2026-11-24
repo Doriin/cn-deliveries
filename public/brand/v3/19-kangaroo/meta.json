@@ -1,0 +1,25 @@
+{
+  "slug": "19-kangaroo",
+  "name": "Bound",
+  "idea": "An aubergine kangaroo in full leap with a taped parcel riding in its pouch: big fast jumps, and your parcel stays safe.",
+  "why": "It is a story people retell in one breath, 'the kangaroo with the box in its pouch', and it puts speed and safekeeping into a single picture.",
+  "risks": "Kangaroos say Australia and Deliveroo already uses a kangaroo head in delivery, so the whole leaping body with its pouch parcel must always appear (never a head-only crop), the parcel shrinks to a dot below about 32 px, and a trademark search against other kangaroo-themed couriers is needed.",
+  "bg": "#571848",
+  "colors": [
+    {
+      "hex": "#571848",
+      "name": "Aubergine",
+      "use": "Kangaroo, wordmark, parcel tape, icon tile and brand background"
+    },
+    {
+      "hex": "#F2C2A4",
+      "name": "Pouch Sand",
+      "use": "The parcel, the only accent"
+    },
+    {
+      "hex": "#FFFFFF",
+      "name": "White",
+      "use": "Reversed kangaroo and wordmark on Aubergine"
+    }
+  ]
+}

@@ -7,7 +7,7 @@
   [data-design="radar"] .ui-btn { transition: transform 160ms var(--d-ease), background-color 140ms ease, box-shadow 160ms ease, color 140ms ease; }
   [data-design="radar"] .ui-btn-primary { box-shadow: 0 1px 0 rgb(255 255 255 / 0.2) inset, 0 6px 14px -8px rgb(10 143 138 / 0.9); }
   [data-design="radar"] .ui-btn-secondary { border-color: var(--d-line-2); box-shadow: 0 1px 2px rgb(12 31 34 / 0.05); }
-  [data-design="radar"] .ui-field:focus { box-shadow: 0 0 0 4px rgb(10 143 138 / 0.15); border-color: var(--d-accent); }
+  [data-design="radar"] .ui-field:focus { box-shadow: 0 0 0 4px color-mix(in srgb, var(--d-accent) 15%, transparent); border-color: var(--d-accent); }
   [data-design="radar"] .ui-page-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; }
   [data-design="radar"] .ui-th { background: transparent; text-transform: uppercase; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.05em; }
   [data-design="radar"] .ui-stat { border-top: 0; padding: 0.9rem 1rem; border-radius: 16px; background: #fff; box-shadow: var(--d-card-shadow); }

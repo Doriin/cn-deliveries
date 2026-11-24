@@ -57,7 +57,7 @@ export function mapsUrl(parts: (string | null | undefined)[]): string {
 }
 
 /** Preference order for the one big button on a parcel: move it forward before anything else. */
-const PRIMARY_ORDER: ShipmentStatus[] = ["DELIVERED", "OUT_FOR_DELIVERY", "PICKED_UP", "RETURNED", "RETURNING", "AT_WAREHOUSE"];
+const PRIMARY_ORDER: ShipmentStatus[] = ["DELIVERED", "OUT_FOR_DELIVERY", "PICKED_UP", "RETURNING", "RETURNED", "AT_WAREHOUSE"];
 
 /** The step a courier most likely takes next, or null when the parcel is closed. */
 export function courierPrimaryStatus(from: ShipmentStatus): ShipmentStatus | null {

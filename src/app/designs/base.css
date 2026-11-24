@@ -96,6 +96,10 @@
   @media (min-width: 640px) { .sh-main { padding: 1.5rem 1.5rem 3rem; } }
   .sh-brand { display: flex; align-items: center; gap: 0.6rem; font-size: 0.9375rem; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; }
   .sh-brand span span { font-weight: 400; opacity: 0.85; }
+  /* the wordmark as on the company logo: serif capitals in the logo blue (white on a blue menu bar) */
+  .sh-brand .brand-word { font-family: "Times New Roman", Tinos, "Liberation Serif", "Noto Serif", Georgia, serif; font-size: 1.0625rem; font-weight: 400;
+    line-height: 1.1; letter-spacing: 0.02em; text-transform: uppercase; color: var(--logo-mark, var(--brand-logo)); opacity: 1; }
+  .sh-brand .brand-word small { font-family: var(--font-sans); letter-spacing: 0; text-transform: none; }
   .sh-link { position: relative; display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; font-size: 0.84375rem; font-weight: 500; transition: opacity 120ms ease, background-color 120ms ease, color 120ms ease; }
   .sh-ico { display: grid; place-items: center; flex: none; }
   .sh-ico svg { width: 1.0625rem; height: 1.0625rem; }
@@ -164,6 +168,11 @@
   .sh-bar .ui-btn-secondary { background: transparent; color: inherit; border-color: color-mix(in srgb, currentColor 35%, transparent); }
   @media (hover: hover) { .sh-bar .ui-btn-secondary:hover { background: color-mix(in srgb, currentColor 10%, transparent); } }
   .sh-bar .sh-search { min-width: 9.5rem; }
+  /* on a company-blue bar the logo turns white and the main button turns white, like the website's hero button */
+  .sh-bar, .sh-mobile, .brand-panel { --logo-mark: var(--logo-on-shell, var(--brand-logo)); }
+  .sh-drawer, .sh-pop { --logo-mark: var(--brand-logo); }
+  :is([data-design="dispecerat"], [data-design="semnal"]) :is(.sh-bar, .sh-mobile) .sh-new.ui-btn-primary { background: #fff; color: var(--color-brand-700); }
+  @media (hover: hover) { :is([data-design="dispecerat"], [data-design="semnal"]) :is(.sh-bar, .sh-mobile) .sh-new.ui-btn-primary:hover { background: var(--color-brand-50); } }
   /* small laptops: the menu keeps its words, the buttons fall back to icons */
   @media (max-width: 1239px) {
     .sh-bar { padding: 0 0.75rem 0 1rem; }
@@ -179,16 +188,16 @@
   .sh-railbar .sh-menu > .sh-link { width: 4.75rem; }
   .sh-railbar .sh-pop { left: calc(100% + 0.25rem); bottom: 0; top: auto; right: auto; transform-origin: 0 100%; }
 
-  [data-design="semnal"] .sh-bar { height: 3.625rem; --sh-mark: #111; --sh-search-bg: #fff; --sh-search-ink: #666; --sh-search-text: #111; }
+  [data-design="semnal"] .sh-bar { height: 3.625rem; --sh-mark: #fff; --sh-search-bg: #fff; --sh-search-ink: var(--d-ink-3); --sh-search-text: var(--d-ink); }
   [data-design="semnal"] .sh-bar .sh-link { opacity: 1; font-weight: 600; box-shadow: inset 0 -4px 0 transparent; }
   [data-design="semnal"] .sh-bar .sh-link:hover { background: rgb(0 0 0 / 0.07); }
-  [data-design="semnal"] .sh-bar .sh-link[aria-current="page"] { font-weight: 700; box-shadow: inset 0 -4px 0 #111; }
+  [data-design="semnal"] .sh-bar .sh-link[aria-current="page"] { font-weight: 700; box-shadow: inset 0 -4px 0 #fff; }
   [data-design="semnal"] .sh-bar .sh-badge { background: var(--d-stop); color: #fff; }
   [data-design="semnal"] .sh-brand { font-family: var(--d-display); font-size: 1.375rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.005em; }
   [data-design="semnal"] .sh-brand span span { font-weight: 800; opacity: 1; }
-  [data-design="semnal"] .sh-avatar { background: #111; color: var(--d-shell); }
+  [data-design="semnal"] .sh-avatar { background: #fff; color: var(--d-shell); }
   [data-design="semnal"] .ui-btn-secondary, [data-design="semnal"] .ui-field { border-width: 1.5px; }
-  [data-design="semnal"] .ui-btn-secondary { border-color: #111; }
+  [data-design="semnal"] .ui-btn-secondary { border-color: var(--d-ink); }
   [data-design="semnal"] .ui-page-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.005em; }
 
   [data-design="verde"] .sh-bar { height: 4rem; border-bottom: 1px solid var(--d-line); --sh-search-bg: var(--d-dock); --sh-search-ink: var(--d-ink-3); --sh-search-text: var(--d-ink); }
@@ -224,7 +233,7 @@
   .sh-who span span { display: block; font-size: 0.75rem; color: var(--d-ink-3); }
   .sh-head { position: sticky; top: 0; z-index: 20; align-items: center; gap: 0.5rem; padding: 0.6rem 1.5rem; background: color-mix(in srgb, var(--d-page) 88%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--d-line); }
   @media (min-width: 1024px) { .sh-head.sh-desktop { display: flex; } }
-  [data-design="kraft"] .sh-side .sh-link[aria-current="page"] .sh-ico { color: #8b5a2b; }
+  [data-design="kraft"] .sh-side .sh-link[aria-current="page"] .sh-ico { color: var(--d-accent); }
   [data-design="kraft"] .sh-brand { font-size: 1.0625rem; font-weight: 700; }
   [data-design="kraft"] .sh-avatar { background: #8b5a2b; color: #fff; }
   [data-design="kraft"] .ui-page-title { font-size: 1.5rem; font-weight: 700; }
@@ -238,7 +247,7 @@
   [data-design="tactil"] .ui-btn-primary:active:not(:disabled) { background: var(--d-accent-press); box-shadow: 0 0 0 1px var(--d-accent-press), inset 0 2px 3px rgb(0 0 0 / 0.22); }
   @media (hover: hover) { [data-design="tactil"] .ui-btn-primary:hover { filter: brightness(1.06); } }
   [data-design="tactil"] .ui-field { border-color: transparent; box-shadow: 0 0 0 1px var(--d-line-2), inset 0 1px 1px rgb(22 25 30 / 0.04); }
-  [data-design="tactil"] .ui-field:focus { box-shadow: 0 0 0 1px var(--d-link), 0 0 0 4px rgb(47 91 234 / 0.16); }
+  [data-design="tactil"] .ui-field:focus { box-shadow: 0 0 0 1px var(--d-link), 0 0 0 4px color-mix(in srgb, var(--d-link) 16%, transparent); }
 
   /* ----- floating capsule (Aer) ----- */
   .sh-cap { position: sticky; top: 0.75rem; z-index: 20; margin: 0.75rem auto 0; width: fit-content; max-width: calc(100% - 1.5rem); align-items: center; gap: 0.25rem; padding: 0.375rem; border-radius: 999px;
@@ -292,7 +301,7 @@
   .sh-railhead { position: sticky; top: 0; z-index: 20; align-items: center; gap: 0.5rem; padding: 0.6rem 1.5rem; background: color-mix(in srgb, var(--d-page) 90%, transparent); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
   @media (min-width: 1024px) { .sh-railhead.sh-desktop { display: flex; } }
 
-  [data-design="dispecerat"] .sh-avatar { background: #0a2f73; color: #fff; }
+  [data-design="dispecerat"] .sh-avatar { background: var(--color-brand-900); color: #fff; }
 
   /* the brand-coloured block on sign-in and on the public tracking page */
   .brand-panel { background: var(--d-shell); color: var(--d-on-shell); }

@@ -28,7 +28,7 @@ export default async function TrackPage({ params }: { params: Promise<{ tracking
     select: {
       trackingNo: true, status: true, recipientLocality: true, desiredDate: true, deliveredAt: true, createdAt: true,
       client: { select: { name: true } },
-      events: { orderBy: { createdAt: "desc" }, select: { toStatus: true, createdAt: true } },
+      events: { where: { undoneAt: null }, orderBy: { createdAt: "desc" }, select: { toStatus: true, createdAt: true } },
     },
   });
 

@@ -1,13 +1,7 @@
 @import "tailwindcss";
 @import "./designs/tokens.css";
 @import "./designs/base.css";
-@import "./designs/day-dispecerat.css";
-@import "./designs/day-kraft.css";
-@import "./designs/day-semnal.css";
-@import "./designs/day-verde.css";
-@import "./designs/day-tactil.css";
-@import "./designs/day-aer.css";
-@import "./designs/day-expres.css";
+@import "./designs/home.css";
 @import "./designs/courier.css";
 @import "./designs/insula.css";
 @import "./designs/radar.css";
@@ -42,7 +36,7 @@
 
   --color-floor: #f3f6fa;
 
-  --font-sans: "Onest Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "DM Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
